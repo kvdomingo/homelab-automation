@@ -1,0 +1,9 @@
+- name: Setup K3s worker nodes
+  hosts: k8s_workers
+  become: true
+
+  tasks:
+    - name: Install K3s
+      shell: |
+        curl -sfL https://get.k3s.io | \
+        K3S_URL=https://srv-prod-01.lab:6443 K3S_TOKEN={{ lookup('ansible.builtin.env', 'K3S_NODE_TOKEN') }} sh -

@@ -1,0 +1,20 @@
+- name: Setup K3s master node
+  hosts: k8s_master
+  become: true
+
+  tasks:
+    - name: Install K3s
+      shell: |
+        curl -sfL https://get.k3s.io | sh -
+
+    - name: Get kubeconfig
+      fetch:
+        src: /etc/rancher/k3s/k3s.yaml
+        dest: ../outputs/kubeconfig.yaml
+        flat: true
+
+    - name: Get node token
+      fetch:
+        src: /var/lib/rancher/k3s/server/node-token
+        dest: ../outputs/node-token
+        flat: true
