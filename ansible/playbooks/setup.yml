@@ -17,6 +17,7 @@
           - ca-certificates
           - apt-transport-https
           - neovim
+          - nfs-common
         state: latest
 
     - name: Remove conflicting Docker packages
@@ -52,6 +53,17 @@
           - docker-buildx-plugin
           - docker-compose-plugin
         state: latest
+
+    - name: Update default Docker daemon.json
+      copy:
+        src: ../files/daemon.json
+        dest: /etc/docker
+        force: true
+
+    - name: Restart Docker daemon
+      service:
+        name: docker
+        state: restarted
 
     - name: Create Docker group
       group:
