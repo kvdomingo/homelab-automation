@@ -3,3 +3,4 @@
 
 ansible/outputs/
 .envrc
+secrets.yaml
