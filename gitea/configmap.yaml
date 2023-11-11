@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gitea-app-ini-configmap
+  labels:
+    app: gitea
+data:
+  server: |
+    SSH_PORT=22
+    SSH_LISTEN_PORT=2222
+    DOMAIN=git.lab.kvd.studio
+    SSH_DOMAIN=git.lab.kvd.studio
+    ROOT_URL=https://git.lab.kvd.studio
+  repository: |
+    DEFAULT_REPO_UNITS=repo.code, repo.releases, repo.issues, repo.pulls, repo.wiki, repo.projects, repo.packages, repo.actions
+    DEFAULT_BRANCH=main
+  repository.pull-request: |
+    DEFAULT_MERGE_STYLE=squash
+    POPULATE_SQUASH_COMMENT_WITH_COMMIT_MESSAGES=true
+  service.explore: |
+    REQUIRE_SIGNIN_VIEW=true
+  webhook: |
+    ALLOWED_HOST_LIST=loopback,private,*.dev.kvd.studio,*.lab.kvd.studio
+  markup: |
+    ENABLED=true
+  actions: |
+    ENABLED=true
+  security: |
+    LOGIN_REMEMBER_DAYS=14

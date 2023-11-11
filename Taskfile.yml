@@ -4,6 +4,9 @@ vars:
   SHORT_SHA:
     shell: git rev-parse --short HEAD
 
+dotenv:
+  - ./gitea/.env
+
 tasks:
   setup-k8s:
     desc: Run first-time K8s setup
@@ -51,7 +54,6 @@ tasks:
   setup-traefik:
     desc: Setup Traefik
     dir: traefik
-    ignore_error: true
     cmds:
       - kubectl apply -f namespace.yaml
       - kubectl apply -f secrets.yaml
@@ -60,3 +62,20 @@ tasks:
         helm upgrade --install traefik traefik/traefik
         --namespace traefik
         --values values.yaml
+
+  setup-gitea:
+    desc: Setup Gitea
+    dir: gitea
+    cmds:
+      - kubectl apply -f namespace.yaml
+      - kubectl apply -f configmap.yaml
+      - >
+        helm upgrade --install gitea gitea/gitea
+        --namespace gitea
+        --values values.yaml
+        --set gitea.admin.username={{.GITEA_ADMIN_USERNAME}}
+        --set gitea.admin.password={{.GITEA_ADMIN_PASSWORD}}
+        --set gitea.admin.email={{.GITEA_ADMIN_EMAIL}}
+        --set postgresql.auth.database={{.GITEA_POSTGRES_DATABASE}}
+        --set postgresql.auth.password={{.GITEA_POSTGRES_PASSWORD}}
+        --set postgresql.auth.username={{.GITEA_POSTGRES_USERNAME}}
