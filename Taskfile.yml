@@ -6,6 +6,7 @@ vars:
 
 dotenv:
   - ./gitea/.env
+  - ./homepage/.env
 
 tasks:
   setup-k8s:
@@ -79,3 +80,15 @@ tasks:
         --set postgresql.auth.database={{.GITEA_POSTGRES_DATABASE}}
         --set postgresql.auth.password={{.GITEA_POSTGRES_PASSWORD}}
         --set postgresql.auth.username={{.GITEA_POSTGRES_USERNAME}}
+
+  setup-homepage:
+    desc: Setup Homepage
+    dir: homepage
+    cmds:
+      - kubectl apply -f namespace.yaml
+      - >
+        helm upgrade --install homepage jameswynn/homepage
+        --namespace homepage
+        --values values.yaml
+        --set config.services[0].Media[0].Jellyfin.widget.key={{.HOMEPAGE_JELLYFIN_KEY}}
+        --set config.services[0].Media[0].Jellyseerr.widget.key={{.HOMEPAGE_JELLYSEERR_KEY}}
