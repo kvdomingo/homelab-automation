@@ -4,8 +4,8 @@
 
   tasks:
     - name: Install K3s
-      shell: |
-        curl -sfL https://get.k3s.io | sh -
+      shell:
+        curl -sfL https://get.k3s.io | sh -s - server --cluster-init --write-kubeconfig-mode 644 --disable traefik
 
     - name: Get kubeconfig
       fetch:

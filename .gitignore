@@ -1,6 +1,8 @@
 ### Ansible template
 *.retry
 
-ansible/outputs/
+.env
 .envrc
+
+ansible/outputs/
 secrets.yaml

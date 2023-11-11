@@ -1,0 +1,72 @@
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: secure-headers
+  labels:
+    app: traefik
+  namespace: traefik
+spec:
+  headers:
+    browserXssFilter: true
+    contentTypeNosniff: true
+    forceSTSHeader: true
+    frameDeny: true
+    stsIncludeSubdomains: true
+    stsPreload: true
+    stsSeconds: 15552000
+    customFrameOptionsValue: SAMEORIGIN
+    customRequestHeaders:
+      X-Forwarded-Proto: https
+      X-Robots-Tag: "none,noarchive,nosnippet,notranslate,noimageindex"
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: ip-whitelist
+  labels:
+    app: traefik
+  namespace: traefik
+spec:
+  ipWhiteList:
+    sourceRange:
+      - 127.0.0.1/32
+      - 10.0.0.0/8
+      - 172.16.0.0/12
+      - 100.64.0.0/10
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: compress
+  labels:
+    app: traefik
+  namespace: traefik
+spec:
+  compress: { }
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: retry
+  labels:
+    app: traefik
+  namespace: traefik
+spec:
+  retry:
+    attempts: 3
+    initialInterval: 5s
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: secured
+  labels:
+    app: traefik
+  namespace: traefik
+spec:
+  chain:
+    middlewares:
+      - name: secure-headers
+      - name: ip-whitelist
+      - name: compress
+      - name: retry

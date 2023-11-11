@@ -6,4 +6,5 @@
     - name: Install K3s
       shell: |
         curl -sfL https://get.k3s.io | \
-        K3S_URL=https://srv-prod-01.lab:6443 K3S_TOKEN={{ lookup('ansible.builtin.env', 'K3S_NODE_TOKEN') }} sh -
+        K3S_TOKEN={{ lookup('ansible.builtin.env', 'K3S_NODE_TOKEN') }} \
+        sh -s - server --server https://srv-prod-01.lab:6443 --disable traefik
