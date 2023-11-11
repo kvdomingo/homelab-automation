@@ -1,0 +1,11 @@
+- name: Setup K3s master node
+  hosts:
+    - k8s_master
+    - k8s_workers
+  become: true
+
+  tasks:
+    - name: Uninstall K3s
+      shell:
+        /usr/local/bin/k3s-uninstall.sh
+

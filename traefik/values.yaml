@@ -10,8 +10,7 @@ image:
   pullPolicy: IfNotPresent
 
 # -- Add additional label to all resources
-commonLabels:
-  app: traefik
+commonLabels: { }
 
 #
 # Configure the deployment
@@ -64,14 +63,14 @@ deployment:
     # Related issue: https://github.com/traefik/traefik-helm-chart/issues/396
     - name: volume-permissions
       image: busybox:latest
-      command: [ "sh", "-c", "touch /ssl-certs/acme.json; chmod -v 600 /ssl-certs/acme.json" ]
+      command: [ "sh", "-c", "touch /data/acme.json; chmod -v 600 /data/acme.json" ]
       securityContext:
         runAsNonRoot: true
         runAsGroup: 65532
         runAsUser: 65532
       volumeMounts:
-        - name: ssl-certs
-          mountPath: /ssl-certs
+        - name: data
+          mountPath: /data
   # -- Use process namespace sharing
   shareProcessNamespace: false
   # -- Custom pod DNS policy. Apply if `hostNetwork: true`
@@ -117,8 +116,8 @@ ingressClass:
 
 # Traefik experimental features
 experimental:
-  #This value is no longer used, set the image.tag to a semver higher than 3.0, e.g. "v3.0.0-beta3"
-  #v3:
+  # This value is no longer used, set the image.tag to a semver higher than 3.0, e.g. "v3.0.0-beta3"
+  # v3:
   # -- Enable traefik version 3
   #  enabled: false
   plugins:
@@ -127,9 +126,9 @@ experimental:
   kubernetesGateway:
     # -- Enable traefik experimental GatewayClass CRD
     enabled: false
-    gateway:
-      # -- Enable traefik regular kubernetes gateway
-      enabled: true
+    ## Routes are restricted to namespace of the gateway by default.
+    ## https://gateway-api.sigs.k8s.io/references/spec/#gateway.networking.k8s.io/v1beta1.FromNamespaces
+    # namespacePolicy: All
     # certificate:
     #   group: "core"
     #   kind: "Secret"
@@ -163,13 +162,29 @@ ingressRoute:
     middlewares: [ ]
     # -- TLS options (e.g. secret containing certificate)
     tls: { }
+  healthcheck:
+    # -- Create an IngressRoute for the healthcheck probe
+    enabled: false
+    # -- Additional ingressRoute annotations (e.g. for kubernetes.io/ingress.class)
+    annotations: { }
+    # -- Additional ingressRoute labels (e.g. for filtering IngressRoute by custom labels)
+    labels: { }
+    # -- The router match rule used for the healthcheck ingressRoute
+    matchRule: PathPrefix(`/ping`)
+    # -- Specify the allowed entrypoints to use for the healthcheck ingress route, (e.g. traefik, web, websecure).
+    # By default, it's using traefik entrypoint, which is not exposed.
+    entryPoints: [ "traefik" ]
+    # -- Additional ingressRoute middlewares (e.g. for authentication)
+    middlewares: [ ]
+    # -- TLS options (e.g. secret containing certificate)
+    tls: { }
 
 updateStrategy:
   # -- Customize updateStrategy: RollingUpdate or OnDelete
   type: RollingUpdate
   rollingUpdate:
     maxUnavailable: 0
-    maxSurge: 1
+    maxSurge: 3
 
 readinessProbe:
   # -- The number of consecutive failures allowed before considering the probe as failed.
@@ -261,7 +276,7 @@ logs:
     level: ERROR
   access:
     # -- To enable access logs
-    enabled: true
+    enabled: false
     ## By default, logs are written using the Common Log Format (CLF) on stdout.
     ## To write logs in JSON, use json in the format option.
     ## If the given format is unsupported, the default (CLF) is used instead.
@@ -299,8 +314,8 @@ metrics:
   ## -- Prometheus is enabled by default.
   ## -- It can be disabled by setting "prometheus: null"
   prometheus: null
-  # -- Entry point used to expose metrics.
-  #    entryPoint: metrics
+    # -- Entry point used to expose metrics.
+    # entryPoint: metrics
   ## Enable metrics on entry points. Default=true
   # addEntryPointsLabels: false
   ## Enable metrics on routers. Default=false
@@ -474,13 +489,13 @@ metrics:
 ## Tracing
 # -- https://doc.traefik.io/traefik/observability/tracing/overview/
 tracing: { }
-  #  openTelemetry: # traefik v3+ only
-  #    grpc: {}
-  #    insecure: true
-  #    address: localhost:4317
-  # instana:
-  #   localAgentHost: 127.0.0.1
-  #   localAgentPort: 42699
+#  openTelemetry: # traefik v3+ only
+#    grpc: {}
+#    insecure: true
+#    address: localhost:4317
+# instana:
+#   localAgentHost: 127.0.0.1
+#   localAgentPort: 42699
 #   logLevel: info
 #   enableAutoProfile: true
 # datadog:
@@ -522,6 +537,7 @@ tracing: { }
 # -- Global command arguments to be passed to all traefik's pods
 globalArguments:
   - "--global.checknewversion"
+# - "--global.sendanonymoususage"
 
 #
 # Configure Traefik static configuration
@@ -542,28 +558,23 @@ env:
     valueFrom:
       fieldRef:
         fieldPath: metadata.namespace
-  - name: CF_DNS_API_TOKEN
+  # - name: SOME_VAR
+  #   value: some-var-value
+  # - name: SOME_VAR_FROM_CONFIG_MAP
+  #   valueFrom:
+  #     configMapRef:
+  #       name: configmap-name
+  #       key: config-key
+  - name: CLOUDFLARE_EMAIL
     valueFrom:
       secretKeyRef:
-        name: traefik
-        key: CF_DNS_API_TOKEN
-  - name: CF_ZONE_API_TOKEN
+        name: traefik-secrets
+        key: CLOUDFLARE_EMAIL
+  - name: CLOUDFLARE_API_KEY
     valueFrom:
       secretKeyRef:
-        name: traefik
-        key: CF_ZONE_API_TOKEN
-# - name: SOME_VAR
-#   value: some-var-value
-# - name: SOME_VAR_FROM_CONFIG_MAP
-#   valueFrom:
-#     configMapRef:
-#       name: configmap-name
-#       key: config-key
-# - name: SOME_SECRET
-#   valueFrom:
-#     secretKeyRef:
-#       name: secret-name
-#       key: secret-key
+        name: traefik-secrets
+        key: CLOUDFLARE_API_KEY
 
 # -- Environment variables to be passed to Traefik's binary from configMaps or secrets
 envFrom: [ ]
@@ -590,7 +601,7 @@ ports:
     # -- You SHOULD NOT expose the traefik port on production deployments.
     # If you want to access it from outside your cluster,
     # use `kubectl port-forward` or create a secure ingress
-    expose: true
+    expose: false
     # -- The exposed port for this service
     exposedPort: 9000
     # -- The port protocol (TCP/UDP)
@@ -613,7 +624,10 @@ ports:
     # Port Redirections
     # Added in 2.2, you can make permanent redirects via entrypoints.
     # https://docs.traefik.io/routing/entrypoints/#redirection
-    # redirectTo: websecure
+    redirectTo:
+      port: websecure
+    #   (Optional)
+    #   priority: 10
     #
     # Trust forwarded  headers information (X-Forwarded-*).
     # forwardedHeaders:
@@ -651,14 +665,14 @@ ports:
     # advertisedPort: 4443
     #
     ## -- Trust forwarded  headers information (X-Forwarded-*).
-    #forwardedHeaders:
-    #  trustedIPs: []
-    #  insecure: false
+    # forwardedHeaders:
+    #   trustedIPs: []
+    #   insecure: false
     #
     ## -- Enable the Proxy Protocol header parsing for the entry point
-    #proxyProtocol:
-    #  trustedIPs: []
-    #  insecure: false
+    # proxyProtocol:
+    #   trustedIPs: []
+    #   insecure: false
     #
     ## Set TLS at the entrypoint
     ## https://doc.traefik.io/traefik/routing/entrypoints/#tls
@@ -666,10 +680,11 @@ ports:
       enabled: true
       # this is the name of a TLSOption definition
       options: ""
-      certResolver: cloudflare
+      certResolver: letsencrypt
       domains:
         - main: lab.kvd.studio
-          sans: [ "*.lab.kvd.studio" ]
+          sans:
+            - "*.lab.kvd.studio"
     #
     # -- One can apply Middlewares on an entrypoint
     # https://doc.traefik.io/traefik/middlewares/overview/
@@ -740,7 +755,7 @@ service:
   # -- Cannot contain type, selector or ports entries.
   spec: { }
   # externalTrafficPolicy: Cluster
-  # loadBalancerIP: "1.2.3.4"
+  # loadBalancerIP: "10.20.10.106"
   # clusterIP: "2.3.4.5"
   loadBalancerSourceRanges: [ ]
   # - 192.168.0.1/32
@@ -799,13 +814,13 @@ persistence:
   # ref: http://kubernetes.io/docs/user-guide/persistent-volumes/
   # It can be used to store TLS certificates, see `storage` in certResolvers
   enabled: true
-  name: ssl-certs
-  existingClaim: traefik
-  # accessMode: ReadWriteOnce
-  size: 32Mi
-  # storageClass: ""
+  name: data
+  #  existingClaim: ""
+  accessMode: ReadWriteOnce
+  size: 128Mi
+  storageClass: nfs-client
   # volumeName: ""
-  path: /ssl-certs
+  path: /data
   annotations: { }
   # -- Only mount a subpath of the Volume into the pod
   # subPath: ""
@@ -813,24 +828,24 @@ persistence:
 # -- Certificates resolvers configuration
 certResolvers:
   letsencrypt:
-    # for challenge options cf. https://doc.traefik.io/traefik/https/acme/
+    #     # for challenge options cf. https://doc.traefik.io/traefik/https/acme/
     email: kennethd353@gmail.com
     dnsChallenge:
-      # also add the provider's required configuration under env
-      # or expand then from secrets/configmaps with envfrom
-      # cf. https://doc.traefik.io/traefik/https/acme/#providers
+      #       # also add the provider's required configuration under env
+      #       # or expand then from secrets/configmaps with envfrom
+      #       # cf. https://doc.traefik.io/traefik/https/acme/#providers
       provider: cloudflare
-      # add futher options for the dns challenge as needed
-      # cf. https://doc.traefik.io/traefik/https/acme/#dnschallenge
-      # delayBeforeCheck: 30
+      #       # add futher options for the dns challenge as needed
+      #       # cf. https://doc.traefik.io/traefik/https/acme/#dnschallenge
+      #       delayBeforeCheck: 30
       resolvers:
-        - 1.1.1.1
-        - 1.0.0.1
-    # tlsChallenge: true
-    # httpChallenge:
-    #   entryPoint: "web"
-    # It has to match the path with a persistent volume
-    storage: /ssl-certs/acme.json
+        - "1.1.1.1:53"
+        - "1.0.0.1:53"
+    #     tlsChallenge: true
+    #     httpChallenge:
+    #       entryPoint: "web"
+    #     # It has to match the path with a persistent volume
+    storage: /data/acme.json
 
 # -- If hostNetwork is true, runs traefik in the host network namespace
 # To prevent unschedulabel pods due to port collisions, if hostNetwork=true
@@ -883,7 +898,8 @@ affinity: { }
 #        topologyKey: kubernetes.io/hostname
 
 # -- nodeSelector is the simplest recommended form of node selection constraint.
-nodeSelector: { }
+nodeSelector:
+  kubernetes.io/hostname: srv-prod-01.lab
 # -- Tolerations allow the scheduler to schedule pods with matching taints.
 tolerations: [ ]
 # -- You can use topology spread constraints to control

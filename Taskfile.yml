@@ -1,0 +1,62 @@
+version: 3
+
+vars:
+  SHORT_SHA:
+    shell: git rev-parse --short HEAD
+
+tasks:
+  setup-k8s:
+    desc: Run first-time K8s setup
+    dir: ansible
+    cmds:
+      - task: bootstrap-vms
+      - task: setup-k8s-master
+      - task: setup-k8s-workers
+      - task: setup-k8s-nfs-provisioner
+
+  bootstrap-vms:
+    internal: true
+    desc: Install pre-requisites in VMs
+    dir: ansible
+    cmds:
+      - ansible-playbook -i inventory/hosts playbooks/setup.yml
+
+  setup-k8s-master:
+    internal: true
+    desc: Setup K8s master node
+    dir: ansible
+    cmds:
+      - ansible-playbook -i inventory/hosts playbooks/setup-k8s-master.yml
+
+  setup-k8s-workers:
+    internal: true
+    desc: Setup K8s worker nodes
+    dir: ansible
+    cmds:
+      - ansible-playbook -i inventory/hosts playbooks/setup-k8s-workers.yml
+
+  setup-k8s-nfs-provisioner:
+    internal: true
+    desc: Setup K8s NFS storage provisioner
+    dir: global
+    cmds:
+      - kubectl apply -f nfs-namespace.yaml
+      - >
+        helm upgrade --install
+        nfs-subdir-external-provisioner
+        nfs-subdir-external-provisioner/nfs-subdir-external-provisioner
+        --namespace nfs-provisioner
+        --values nfs-values.yaml
+
+  setup-traefik:
+    desc: Setup Traefik
+    dir: traefik
+    ignore_error: true
+    cmds:
+      - kubectl apply -f namespace.yaml
+      - kubectl apply -f secrets.yaml
+      - kubectl apply -f middlewares.yaml
+      - >
+        helm upgrade --install traefik traefik/traefik
+        --namespace traefik
+        --values values.yaml
