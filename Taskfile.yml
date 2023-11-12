@@ -88,11 +88,13 @@ tasks:
         helm upgrade --install homepage jameswynn/homepage
         --namespace homepage
         --values values.yaml
-        --set config.services[0].Media[0].Jellyfin.widget.key={{.HOMEPAGE_JELLYFIN_KEY}}
-        --set config.services[0].Media[0].Jellyseerr.widget.key={{.HOMEPAGE_JELLYSEERR_KEY}}
+        --set config.services[0].Networking[0].Cloudflare.widget.accountid={{.CLOUDFLARE_ACCOUNT_ID}}
+        --set config.services[0].Networking[0].Cloudflare.widget.tunnelid={{.CLOUDFLARE_TUNNEL_ID}}
+        --set config.services[0].Networking[0].Cloudflare.widget.key={{.CLOUDFLARE_KEY}}
 
   reload-homepage:
     desc: Reload Homepage with new configuration
     dir: homepage
     cmds:
+      - task: setup-homepage
       - kubectl rollout restart deployment homepage --namespace homepage

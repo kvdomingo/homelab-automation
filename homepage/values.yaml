@@ -58,25 +58,15 @@ config:
   #        - Github:
   #            - abbr: GH
   #              href: https://github.com/
-  services: [ ]
-  #    - Media:
-  #        - Jellyfin:
-  #            icon: jellyfin.png
-  #            href: https://jellyfin.local.kvdomingo.dev
-  #            widget:
-  #              type: jellyfin
-  #              url: https://jellyfin.local.kvdomingo.dev
-  #              key: ""
-  #              enableBlocks: true
-  #              enableNowPlaying: true
-  #        - Jellyseerr:
-  #            icon: jellyseerr.png
-  #            href: https://jellyseerr.local.kvdomingo.dev
-  #            ping: https://jellyseerr.local.kvdomingo.dev
-  #            widget:
-  #              type: jellyseerr
-  #              url: https://jellyseerr.local.kvdomingo.dev
-  #              key: ""
+  services:
+    - Networking:
+        - Cloudflare:
+            icon: cloudflare.png
+            widget:
+              type: cloudflared
+              accountid: ""
+              tunnelid: ""
+              key: ""
   widgets:
     - logo:
         icon: https://res.cloudinary.com/kdphotography-assets/image/upload/v1597254769/logo/logo-white.png
@@ -125,6 +115,8 @@ config:
       Admin:
         <<: *three-columns
       Media:
+        <<: *three-columns
+      Networking:
         <<: *three-columns
       CI/CD:
         <<: *three-columns
