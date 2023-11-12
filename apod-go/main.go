@@ -27,13 +27,11 @@ type ApodResponse struct {
 
 func main() {
 	app := fiber.New(fiber.Config{
-		AppName:                 "APOD",
-		ReadTimeout:             5 * time.Second,
-		WriteTimeout:            5 * time.Second,
-		StreamRequestBody:       true,
-		EnableTrustedProxyCheck: true,
-		TrustedProxies:          []string{"127.0.0.1/32", "10.0.0.0/8", "172.16.0.0/12", "100.64.0.0/10"},
-		EnablePrintRoutes:       true,
+		AppName:           "APOD",
+		ReadTimeout:       5 * time.Second,
+		WriteTimeout:      5 * time.Second,
+		StreamRequestBody: true,
+		EnablePrintRoutes: true,
 	})
 
 	app.Use(logger.New())
