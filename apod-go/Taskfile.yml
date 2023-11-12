@@ -1,0 +1,52 @@
+version: 3
+
+dotenv:
+  - ./gitea/.env
+  - ./homepage/.env
+
+vars:
+  SHORT_SHA:
+    sh: git rev-parse --short HEAD
+
+tasks:
+  default:
+    cmds:
+      - task: dev
+
+  dev:
+    desc: Run development server
+    cmds:
+      - air -c .air.toml
+
+  build:
+    desc: Build Docker image
+    cmds:
+      - docker build -t git.lab.kvd.studio/r/apod:{{.SHORT_SHA}} .
+
+  push:
+    desc: Push Docker image
+    cmds:
+      - docker push git.lab.kvd.studio/r/apod:{{.SHORT_SHA}}
+
+  build-and-push:
+    desc: Build and push Docker image
+    cmds:
+      - task: build
+      - task: push
+
+  deploy:
+    desc: Deploy to prod K8s cluster
+    cmds:
+      - kubectl apply -f ./k8s/namespace.yaml
+      - kubectl apply -f ./k8s/secrets.yaml
+      - >
+        helm upgrade --install apod ./helm/apod
+        --namespace apod
+        --set image.tag={{.SHORT_SHA}}
+
+  destroy:
+    desc: Destroy prod K8s deployment
+    cmds:
+      - helm uninstall apod --namespace apod
+      - kubectl delete -f ./k8s/secrets.yaml
+      - kubectl delete -f ./k8s/namespace.yaml
