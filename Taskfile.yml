@@ -16,7 +16,7 @@ tasks:
       - task: bootstrap-vms
       - task: setup-k8s-master
       - task: setup-k8s-workers
-      - task: setup-k8s-nfs-provisioner
+      - task: setup-nfs-provisioner
 
   bootstrap-vms:
     internal: true
@@ -39,18 +39,16 @@ tasks:
     cmds:
       - ansible-playbook -i inventory/hosts playbooks/setup-k8s-workers.yml
 
-  setup-k8s-nfs-provisioner:
-    internal: true
+  setup-nfs-provisioner:
     desc: Setup K8s NFS storage provisioner
-    dir: global
+    dir: nfs-provisioner
     cmds:
-      - kubectl apply -f nfs-namespace.yaml
+      - kubectl apply -f namespace.yaml
       - >
-        helm upgrade --install
-        nfs-subdir-external-provisioner
+        helm upgrade --install nfs-provisioner
         nfs-subdir-external-provisioner/nfs-subdir-external-provisioner
         --namespace nfs-provisioner
-        --values nfs-values.yaml
+        --values values.yaml
 
   setup-traefik:
     desc: Setup Traefik
@@ -92,3 +90,9 @@ tasks:
         --values values.yaml
         --set config.services[0].Media[0].Jellyfin.widget.key={{.HOMEPAGE_JELLYFIN_KEY}}
         --set config.services[0].Media[0].Jellyseerr.widget.key={{.HOMEPAGE_JELLYSEERR_KEY}}
+
+  reload-homepage:
+    desc: Reload Homepage with new configuration
+    dir: homepage
+    cmds:
+      - kubectl rollout restart deployment homepage --namespace homepage

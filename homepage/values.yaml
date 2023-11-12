@@ -58,25 +58,25 @@ config:
   #        - Github:
   #            - abbr: GH
   #              href: https://github.com/
-  services:
-    - Media:
-        - Jellyfin:
-            icon: jellyfin.png
-            href: https://jellyfin.local.kvdomingo.dev
-            widget:
-              type: jellyfin
-              url: https://jellyfin.local.kvdomingo.dev
-              key: ""
-              enableBlocks: true
-              enableNowPlaying: true
-        - Jellyseerr:
-            icon: jellyseerr.png
-            href: https://jellyseerr.local.kvdomingo.dev
-            ping: https://jellyseerr.local.kvdomingo.dev
-            widget:
-              type: jellyseerr
-              url: https://jellyseerr.local.kvdomingo.dev
-              key: ""
+  services: [ ]
+  #    - Media:
+  #        - Jellyfin:
+  #            icon: jellyfin.png
+  #            href: https://jellyfin.local.kvdomingo.dev
+  #            widget:
+  #              type: jellyfin
+  #              url: https://jellyfin.local.kvdomingo.dev
+  #              key: ""
+  #              enableBlocks: true
+  #              enableNowPlaying: true
+  #        - Jellyseerr:
+  #            icon: jellyseerr.png
+  #            href: https://jellyseerr.local.kvdomingo.dev
+  #            ping: https://jellyseerr.local.kvdomingo.dev
+  #            widget:
+  #              type: jellyseerr
+  #              url: https://jellyseerr.local.kvdomingo.dev
+  #              key: ""
   widgets:
     - logo:
         icon: https://res.cloudinary.com/kdphotography-assets/image/upload/v1597254769/logo/logo-white.png
@@ -123,6 +123,10 @@ config:
   settings:
     layout:
       Admin:
+        <<: *three-columns
+      Media:
+        <<: *three-columns
+      CI/CD:
         <<: *three-columns
     headerStyle: underlined
     quickLaunch:
