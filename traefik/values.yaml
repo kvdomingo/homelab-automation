@@ -315,7 +315,7 @@ metrics:
   ## -- It can be disabled by setting "prometheus: null"
   prometheus: null
     # -- Entry point used to expose metrics.
-    # entryPoint: metrics
+  # entryPoint: metrics
   ## Enable metrics on entry points. Default=true
   # addEntryPointsLabels: false
   ## Enable metrics on routers. Default=false
@@ -694,7 +694,8 @@ ports:
     # middlewares:
     #   - namespace-name1@kubernetescrd
     #   - namespace-name2@kubernetescrd
-    middlewares: [ ]
+    middlewares:
+      - traefik-secured@kubernetescrd
   metrics:
     # -- When using hostNetwork, use another port to avoid conflict with node exporter:
     # https://github.com/prometheus/prometheus/wiki/Default-port-allocations

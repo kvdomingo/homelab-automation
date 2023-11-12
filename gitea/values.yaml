@@ -30,7 +30,7 @@ replicaCount: 1
 strategy:
   type: "RollingUpdate"
   rollingUpdate:
-    maxSurge: "100%"
+    maxSurge: 1
     maxUnavailable: 0
 
 ## @param clusterDomain cluster domain
@@ -156,7 +156,12 @@ ingress:
   # className: nginx
   className: traefik
   annotations:
-    { }
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/name: "Gitea"
+    gethomepage.dev/description: "Git with a cup of tea."
+    gethomepage.dev/group: "CI/CD"
+    gethomepage.dev/icon: "gitea.png"
+    gethomepage.dev/ping: "git.lab.kvd.studio"
   # kubernetes.io/ingress.class: nginx
   # kubernetes.io/tls-acme: "true"
   hosts:
@@ -393,8 +398,8 @@ gitea:
 
   ## @param gitea.additionalConfigSources Additional configuration from secret or configmap
   additionalConfigSources:
-    - secret:
-        secretName: gitea-app-ini-secret
+    #    - secret:
+    #        secretName: gitea-app-ini-secret
     - configMap:
         name: gitea-app-ini-configmap
 

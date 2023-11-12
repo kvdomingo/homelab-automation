@@ -5,13 +5,12 @@ image:
   repository: registry.k8s.io/sig-storage/nfs-subdir-external-provisioner
   tag: v4.0.2
   pullPolicy: IfNotPresent
-imagePullSecrets: []
+imagePullSecrets: [ ]
 
 nfs:
   server: 10.10.10.100
-  path: /mnt/big-chonk/srv-prod-01
-  mountOptions:
-    - nfsvers=3
+  path: /mnt/big-chonk/k8s-nfs-prod
+  mountOptions: [ ]
   volumeName: nfs-subdir-external-provisioner-root
   # Reclaim policy for the main nfs volume
   reclaimPolicy: Retain
@@ -56,7 +55,7 @@ storageClass:
   volumeBindingMode: Immediate
 
   # Storage class annotations
-  annotations: {}
+  annotations: { }
 
 leaderElection:
   # When set to false leader election will be disabled
@@ -73,45 +72,44 @@ podSecurityPolicy:
   enabled: false
 
 # Deployment pod annotations
-podAnnotations: {}
+podAnnotations: { }
 
 ## Set pod priorityClassName
 # priorityClassName: ""
 
-podSecurityContext: {}
+podSecurityContext: { }
 
-securityContext: {}
+securityContext: { }
 
 serviceAccount:
   # Specifies whether a ServiceAccount should be created
   create: true
 
   # Annotations to add to the service account
-  annotations: {}
+  annotations: { }
 
   # The name of the ServiceAccount to use.
   # If not set and create is true, a name is generated using the fullname template
   name:
 
-resources: {}
-  # limits:
-  #  cpu: 100m
-  #  memory: 128Mi
-  # requests:
-  #  cpu: 100m
-  #  memory: 128Mi
+resources: { }
+# limits:
+#  cpu: 100m
+#  memory: 128Mi
+# requests:
+#  cpu: 100m
+#  memory: 128Mi
 
-nodeSelector: {}
+nodeSelector: { }
 
-tolerations: []
+tolerations: [ ]
 
-affinity: {}
+affinity: { }
 
 # Additional labels for any resource created
-labels: {}
+labels: { }
 
 podDisruptionBudget:
   enabled: true
   maxUnavailable: 0
   maxSurge: 1
-

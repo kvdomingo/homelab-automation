@@ -4,6 +4,7 @@ metadata:
   name: gitea-app-ini-configmap
   labels:
     app: gitea
+  namespace: gitea
 data:
   server: |
     SSH_PORT=22
