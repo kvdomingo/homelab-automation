@@ -126,7 +126,7 @@ config:
       hideInternetSearch: false
       hideVisitURL: false
     showStats: false
-    background: https://apod.local.kvdomingo.dev
+    background: https://apod.lab.kvd.studio
     backgroundOpacity: 0.33
 
 persistence:

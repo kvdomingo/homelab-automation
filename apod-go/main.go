@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/tls"
 	"encoding/json"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/log"
@@ -54,7 +55,12 @@ func main() {
 	})
 
 	app.Get("/", func(ctx *fiber.Ctx) error {
-		res, err := http.Get("https://api.nasa.gov/planetary/apod?api_key=" + apodKey)
+		transport := &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		}
+		client := &http.Client{Transport: transport}
+
+		res, err := client.Get("https://api.nasa.gov/planetary/apod?api_key=" + apodKey)
 		if err != nil {
 			return err
 		}
