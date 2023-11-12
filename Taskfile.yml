@@ -98,3 +98,13 @@ tasks:
     cmds:
       - task: setup-homepage
       - kubectl rollout restart deployment homepage --namespace homepage
+
+  setup-portainer:
+    desc: Setup Portainer
+    dir: portainer
+    cmds:
+      - kubectl apply -f namespace.yaml
+      - >
+        helm upgrade --install portainer portainer/portainer
+        --namespace portainer
+        --values values.yaml
