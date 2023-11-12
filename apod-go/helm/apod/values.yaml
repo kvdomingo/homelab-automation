@@ -43,8 +43,6 @@ service:
   type: ClusterIP
   port: 5000
 
-x-host: &host "apod.lab.kvd.studio"
-
 ingress:
   enabled: true
   className: traefik
@@ -53,11 +51,11 @@ ingress:
     gethomepage.dev/name: "APOD"
     gethomepage.dev/group: "Background Services"
     gethomepage.dev/icon: "https://nasa.gov/favicon.ico"
-    gethomepage.dev/ping: *host
+    gethomepage.dev/ping: "apod.lab.kvd.studio/health"
   # kubernetes.io/ingress.class: nginx
   # kubernetes.io/tls-acme: "true"
   hosts:
-    - host: *host
+    - host: apod.lab.kvd.studio
       paths:
         - path: /
           pathType: ImplementationSpecific
