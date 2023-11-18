@@ -2,6 +2,7 @@
 *.retry
 
 .env
+*.env
 .envrc
 
 ansible/outputs/
