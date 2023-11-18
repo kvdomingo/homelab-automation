@@ -1,0 +1,18 @@
+- name: Setup Gitea act runner
+  hosts: k8s_master
+  become: true
+
+  tasks:
+    - name: Create directory
+      shell: mkdir -p /home/kvdomingo/gitea-act-runner
+
+    - name: Copy Gitea act runner docker compose
+      copy:
+        src: ../files/act-runner
+        dest: /home/kvdomingo
+        mode: 0644
+        owner: kvdomingo
+        group: kvdomingo
+
+    - name: Launch act runner
+      shell: docker compose --file /home/kvdomingo/act-runner/docker-compose.yml up --detach

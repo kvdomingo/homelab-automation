@@ -79,6 +79,12 @@ tasks:
         --set postgresql.auth.password={{.GITEA_POSTGRES_PASSWORD}}
         --set postgresql.auth.username={{.GITEA_POSTGRES_USERNAME}}
 
+  setup-gitea-act-runner:
+    desc: Setup Gitea act runner
+    dir: ansible
+    cmds:
+      - ansible-playbook -i inventory/hosts playbooks/setup-gitea-act-runner.yml
+
   setup-homepage:
     desc: Setup Homepage
     dir: homepage
