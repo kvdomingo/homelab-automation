@@ -114,3 +114,21 @@ tasks:
         helm upgrade --install portainer portainer/portainer
         --namespace portainer
         --values values.yaml
+
+  setup-vaultwarden:
+    desc: Setup Vaultwarden
+    dir: vaultwarden
+    ignore_error: true
+    cmds:
+      - kubectl apply -f namespace.yaml
+      - kubectl apply -f secrets.yaml
+      - >
+        helm upgrade --install postgres bitnami/postgresql
+        --create-namespace
+        --namespace vaultwarden
+        --values pg-values.yaml
+      - >
+        helm upgrade --install vaultwarden vaultwarden/vaultwarden
+        --create-namespace
+        --namespace vaultwarden
+        --values values.yaml

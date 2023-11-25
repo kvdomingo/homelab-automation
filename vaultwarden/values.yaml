@@ -1,0 +1,381 @@
+## @section Vaultwarden settings
+##
+image:
+  ## @param image.registry Vaultwarden image registry
+  ##
+  registry: docker.io
+  ## @param image.repository Vaultwarden image repository
+  ##
+  repository: vaultwarden/server
+  ##
+  ## @param image.tag Vaultwarden image tag
+  ## Ref: https://hub.docker.com/r/vaultwarden/server/tags
+  ##
+  tag: "1.29.2-alpine"
+  ## @param image.pullPolicy Vaultwarden image pull policy
+  ## ref: https://kubernetes.io/docs/user-guide/images/#pre-pulling-images
+  ##
+  pullPolicy: IfNotPresent
+  ## @param image.pullSecrets Specify docker-registry secret names
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+  ## Example:
+  ## pullSecrets:
+  ##   - myRegistryKeySecretName
+  ##
+  pullSecrets: [ ]
+## @param domain Domain name where the application is accessed
+## Example: https://warden.contoso.com:8443
+##
+domain: "https://vaultwarden.lab.kvd.studio"
+## @param websocket.enabled Enable websocket notifications
+## @param websocket.address Websocket listen address
+## @param websocket.port Websocket listen port
+##
+websocket:
+  enabled: true
+  address: "0.0.0.0"
+  port: 3012
+## @param rocket.port Rocket port
+## @param rocket.workers Rocket number of workers
+##
+rocket:
+  port: "8080"
+  workers: "10"
+## @param webVaultEnabled Enable Web Vault
+##
+webVaultEnabled: "true"
+
+## @section Pod configuration
+##
+## @param podAnnotations Add extra annotations to the pod
+##
+podAnnotations: { }
+## @param podLabels Add extra labels to the pod
+##
+podLabels: { }
+
+## @section Security settings
+##
+
+adminToken:
+  ## @param adminToken.existingSecret Specify an existing Kubernetes secret containing the admin token. Also set adminToken.existingSecretKey.
+  ## Example: admincreds_secret
+  ##
+  existingSecret: vaultwarden-secrets
+  ## @param adminToken.existingSecretKey When using adminToken.existingSecret, specify the key containing the token.
+  ## Example: ADMIN_TOKEN
+  ##
+  existingSecretKey: ADMIN_TOKEN
+  ## @param adminToken.value Plain or argon2 string containing the admin token.
+  ## This example is the argon2 has of "R@ndomTokenString" (no quotes).
+  ##
+  value: ""
+
+## @param signupsAllowed By default, anyone who can access your instance can register for a new account.
+## To disable this, set this parameter to false. Even when signupsAllowed=false, an existing user who is
+## an organization owner or admin can still invite new users. If you want to disable this as well, set
+## invitationsAllowed to false. The vaultwarden admin can invite anyone via the admin page, regardless
+## of any of the restrictions above
+##
+## If signupDomains is set, then the value of signupsAllowed is ignored
+signupsAllowed: true
+## @param invitationsAllowed Even when registration is disabled, organization administrators or owners can
+## invite users to join organization. After they are invited, they can register with the invited email even
+## if signupsAllowed is actually set to false. You can disable this functionality completely by setting
+## invitationsAllowed env variable to false
+invitationsAllowed: true
+## @param signupDomains List of domain names for users allowed to register. For example:
+## example.com,example.net,example.org.
+##
+signupDomains: ""
+## @param signupsVerify Whether to require account verification for newly-registered users.
+##
+signupsVerify: "true"
+## @param showPassHint Whether a password hint should be shown in the page.
+##
+showPassHint: "false"
+## @param fullnameOverride String to override the application name.
+##
+fullnameOverride: ""
+
+## @param invitationOrgName String Name shown in the invitation emails that don't come from a specific organization
+##
+invitationOrgName: "Vaultwarden"
+
+## @param iconBlacklistNonGlobalIps Whether block non-global IPs.
+## Useful to secure your internal environment: See https://en.wikipedia.org/wiki/Reserved_IP_addresses for a list of IPs which it will block
+iconBlacklistNonGlobalIps: "true"
+
+## @param ipHeader Client IP Header, used to identify the IP of the client
+##
+ipHeader: "X-Real-IP"
+
+## @param serviceAccount.create Create a service account
+## @param serviceAccount.name Name of the service account to create
+##
+serviceAccount:
+  create: true
+  name: "vaultwarden-svc"
+
+
+## @section Exposure Parameters
+##
+
+## Ingress configuration
+## Refer to the README for some examples
+##
+ingress:
+  ## @param ingress.enabled Deploy an ingress resource.
+  ##
+  enabled: true
+  ## @param ingress.class Ingress resource class
+  ## The Ingress class to use, e. g. "nginx" for a nginx ingress controller or "alb" for a AWS LB controller.
+  #
+  class: traefik
+  ## @param ingress.nginxIngressAnnotations Add nginx specific ingress annotations
+  ## This annotations are only makes sense for the kubernetes nginx ingress controller (https://kubernetes.github.io/ingress-nginx/)
+  ##
+  nginxIngressAnnotations: false
+  ## @param ingress.additionalAnnotations Additional annotations for the ingress resource.
+  ##
+  additionalAnnotations:
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/name: "Vaultwarden"
+    gethomepage.dev/group: "Security"
+    gethomepage.dev/icon: "bitwarden.png"
+    gethomepage.dev/ping: "vaultwarden.lab.kvd.studio"
+  ## @param ingress.labels Additional labels for the ingress resource.
+  ##
+  labels: { }
+  ## @param ingress.tls Enable TLS on the ingress resource.
+  ##
+  tls: false
+  ## @param ingress.hostname Hostname for the ingress.
+  ##
+  hostname: "vaultwarden.lab.kvd.studio"
+  ## @param ingress.path Default application path for the ingress
+  ##
+  path: "/"
+  ## @param ingress.pathWs Path for the websocket ingress
+  ##
+  pathWs: "/notifications/hub"
+  ## @param ingress.pathType Path type for the ingress
+  ## Ref: https://kubernetes.io/docs/concepts/services-networking/ingress/
+  ##
+  pathType: "Prefix"
+  ## @param ingress.pathTypeWs Path type for the ingress
+  ## Ref: https://kubernetes.io/docs/concepts/services-networking/ingress/
+  ##
+  pathTypeWs: "Exact"
+  ## @param ingress.tlsSecret Kubernetes secret containing the SSL certificate when using the "nginx" class.
+  ##
+  tlsSecret: ""
+  ## @param ingress.nginxAllowList Comma-separated list of IP addresses and subnets to allow.
+  ##
+  nginxAllowList: ""
+  ## TODO:
+  ##   - Add support for using cert-manager.
+  ##   - Support for multiple TLS hostnames.
+  ##
+
+## Service configuration
+service:
+  ## @param service.type Service type
+  ##
+  type: "ClusterIP"
+  ## @param service.annotations Additional annotations for the vaultwarden service
+  ##
+  annotations: { }
+  ## @param service.labels Additional labels for the service
+  ##
+  labels: { }
+
+## @section Database Configuration
+##
+database:
+  ## @param database.type Database type, either mysql or postgresql
+  ## Default is a sqlite database.
+  ##
+  type: postgresql
+  ## @param database.host Database hostname or IP address
+  ##
+  host: ""
+  ## @param database.port Database port
+  ## Default for MySQL is 3306, default for PostgreSQL is 5432
+  port: ""
+  ## @param database.username Database username
+  ##
+  username: ""
+  ## @param database.password Database password
+  ##
+  password: ""
+  ## @param database.dbName Database name
+  ##
+  dbName: ""
+  ## @param database.uriOverride Manually specify the DB connection string
+  ##
+  uriOverride: ""
+  ## @param database.existingSecret Name of an existing secret containing the database URI
+  ##
+  existingSecret: vaultwarden-secrets
+  ## @param database.existingSecretKey Key in the existing secret
+  ##
+  existingSecretKey: DATABASE_URL
+  ## @param database.connectionRetries Number of times to retry the database connection during startup, with 1 second delay between each retry, set to 0 to retry indefinitely.
+  ##
+  connectionRetries: 15
+  ## @param database.maxConnections Define the size of the connection pool used for connecting to the database.
+  ##
+  maxConnections: 10
+
+## @section SMTP Configuration
+##
+smtp:
+  ## @param smtp.existingSecret Name of an existing secret containing the SMTP username and password. Also set smtp.username.existingSecretKey and smtp.password.existingSecretKey.
+  ##
+  existingSecret: vaultwarden-secrets
+  ## @param smtp.host SMTP host
+  ##
+  host: smtp.gmail.com
+  ## @param smtp.security SMTP Encryption method
+  ## Possible values:
+  ##  - starttls: explicit TLS using ports 587 or 25
+  ##  - force_tls: implicit TLS using port 465
+  ##  - off: no encryption, using port 25, unless using STARTTLS
+  ##
+  security: "starttls"
+  ## @param smtp.port SMTP port
+  ##
+  port: 587
+  ## @param smtp.from SMTP sender email address
+  ## Example: juan.delacruz@gmail.com
+  ##
+  from: hello@kvd.studio
+  ## @param smtp.fromName SMTP sender FROM
+  ##
+  fromName: "Vaultwarden @ lab.kvd.studio"
+  ## Username for SMTP authentication.
+  ##
+  username:
+    ## @param smtp.username.value Username string for the SMTP authentication.
+    ## Example: juan
+    ##
+    value: ""
+    ## @param smtp.username.existingSecretKey When using an existing secret, specify the key which contains the username.
+    ## Example: SMTP_USERNAME
+    ##
+    existingSecretKey: SMTP_USERNAME
+  ## Password for SMTP authentication.
+  ##
+  password:
+    ## @param smtp.password.value Password string for the SMTP authentication.
+    ## Example: Sup3rsecurepa$$word
+    ##
+    value: ""
+    ## @param smtp.password.existingSecretKey When using an existing secret, specify the key which contains the password.
+    ## Example: SMTP_PASSWORD
+    ##
+    existingSecretKey: SMTP_PASSWORD
+  ## @param smtp.authMechanism SMTP authentication mechanism
+  ## Possible values: "Plain", "Login", "Xoauth2"
+  ## Multiple options need to be separated by a comma. (not tested)
+  ##
+  authMechanism: "Plain"
+  ## @param smtp.acceptInvalidHostnames Accept Invalid Hostnames
+  ##
+  acceptInvalidHostnames: "false"
+  ## @param smtp.acceptInvalidCerts Accept Invalid Certificates
+  ##
+  acceptInvalidCerts: "false"
+  ## @param smtp.debug SMTP debugging
+  ##
+  debug: false
+
+## @section Persistent data configuration
+##
+
+## @param data Data directory configuration, refer to values.yaml for parameters.
+##
+data: { }
+# name: "vaultwarden-data"
+# size: "15Gi"
+# class: ""
+# path: "/data"
+
+## @param attachments Attachments directory configuration, refer to values.yaml for parameters.
+## By default, attachments/ is located inside the data directory.
+##
+attachments: { }
+# name: "vaultwarden-files"
+# size: "100Gi"
+# class: ""
+# path: /files
+
+## @section Logging Configuration
+##
+logging:
+  ## @param logging.logLevel Specify the log level
+  ##
+  logLevel: ""
+  ## @param logging.logFile Log to a file
+  ##
+  logFile: ""
+
+## @section Extra containers Configuration
+##
+
+## @param initContainers extra init containers for initializing the vaultwarden instance
+##
+initContainers: [ ]
+
+## @param sidecars extra containers running alongside the vaultwarden instance
+##
+sidecars: [ ]
+
+## @section Extra Configuration
+##
+
+## @param nodeSelector Node labels for pod assignment
+## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
+##
+nodeSelector: { }
+
+## @param affinity Affinity for pod assignment
+## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
+##
+affinity: { }
+
+## @param tolerations Tolerations for pod assignment
+## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+##
+tolerations: [ ]
+
+## @param statefulsetlabels Additional labels for the statefulset
+##
+statefulsetlabels: { }
+
+## @param statefulsetAnnotations Annotations for the statefulset
+##
+statefulsetAnnotations: { }
+
+## @param pushNotifications Enable mobile push notifications
+## Supported since 1.29.0.
+## Refer to https://github.com/dani-garcia/vaultwarden/wiki/Enabling-Mobile-Client-push-notification for details
+##
+pushNotifications: { }
+# installationId: ""
+# installationKey: ""
+
+## @param resources Resource configurations
+##
+resources: { }
+# We usually recommend not to specify default resources and to leave this as a conscious
+# choice for the user. This also increases chances charts run on environments with little
+# resources, such as Minikube. If you do want to specify resources, uncomment the following
+# lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+# limits:
+#   cpu: 300m
+#   memory: 1Gi
+# requests:
+#   cpu: 50m
+#   memory: 256Mi
