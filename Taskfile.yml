@@ -7,6 +7,7 @@ vars:
 dotenv:
   - ./gitea/.env
   - ./homepage/.env
+  - ./zitadel/.env
 
 tasks:
   setup-k8s:
@@ -43,34 +44,34 @@ tasks:
     desc: Setup K8s NFS storage provisioner
     dir: nfs-provisioner
     cmds:
-      - kubectl apply -f namespace.yaml
       - >
         helm upgrade --install nfs-provisioner
         nfs-subdir-external-provisioner/nfs-subdir-external-provisioner
         --namespace nfs-provisioner
+        --create-namespace
         --values values.yaml
 
   setup-traefik:
     desc: Setup Traefik
     dir: traefik
     cmds:
-      - kubectl apply -f namespace.yaml
       - kubectl apply -f secrets.yaml
       - kubectl apply -f middlewares.yaml
       - >
         helm upgrade --install traefik traefik/traefik
         --namespace traefik
+        --create-namespace
         --values values.yaml
 
   setup-gitea:
     desc: Setup Gitea
     dir: gitea
     cmds:
-      - kubectl apply -f namespace.yaml
       - kubectl apply -f configmap.yaml
       - >
         helm upgrade --install gitea gitea/gitea
         --namespace gitea
+        --create-namespace
         --values values.yaml
         --set gitea.admin.username={{.GITEA_ADMIN_USERNAME}}
         --set gitea.admin.password={{.GITEA_ADMIN_PASSWORD}}
@@ -89,10 +90,10 @@ tasks:
     desc: Setup Homepage
     dir: homepage
     cmds:
-      - kubectl apply -f namespace.yaml
       - >
         helm upgrade --install homepage jameswynn/homepage
         --namespace homepage
+        --create-namespace
         --values values.yaml
         --set config.services[0].Networking[0].Cloudflare.widget.accountid={{.CLOUDFLARE_ACCOUNT_ID}}
         --set config.services[0].Networking[0].Cloudflare.widget.tunnelid={{.CLOUDFLARE_TUNNEL_ID}}
@@ -109,10 +110,10 @@ tasks:
     desc: Setup Portainer
     dir: portainer
     cmds:
-      - kubectl apply -f namespace.yaml
       - >
         helm upgrade --install portainer portainer/portainer
         --namespace portainer
+        --create-namespace
         --values values.yaml
 
   setup-vaultwarden:
@@ -120,7 +121,6 @@ tasks:
     dir: vaultwarden
     ignore_error: true
     cmds:
-      - kubectl apply -f namespace.yaml
       - kubectl apply -f secrets.yaml
       - >
         helm upgrade --install postgres bitnami/postgresql
@@ -131,4 +131,28 @@ tasks:
         helm upgrade --install vaultwarden vaultwarden/vaultwarden
         --create-namespace
         --namespace vaultwarden
+        --values values.yaml
+
+  setup-argocd:
+    desc: Setup ArgoCD
+    dir: argocd
+    cmds:
+      - kubectl apply -f namespace.yaml
+      - kubectl apply -f install.yaml
+      - kubectl apply -f ingress.yaml
+
+  setup-zitadel:
+    desc: Setup Zitadel
+    dir: zitadel
+    cmds:
+      - kubectl apply -f secrets.yaml
+      - >
+        helm upgrade --install crdb cockroachdb/cockroachdb
+        --create-namespace
+        --namespace zitadel
+        --values crdb-values.yaml
+      - >
+        helm upgrade --install zitadel zitadel/zitadel
+        --create-namespace
+        --namespace zitadel
         --values values.yaml

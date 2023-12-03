@@ -4,11 +4,13 @@ repos:
     hooks:
       - id: check-added-large-files
         args: [ '--maxkb=500' ]
+        exclude: argocd/install.yaml
       - id: end-of-file-fixer
       - id: mixed-line-ending
         args: [ '--fix=lf' ]
       - id: check-merge-conflict
       - id: check-yaml
+        args: [ '--allow-multiple-documents' ]
   - repo: https://github.com/zricethezav/gitleaks
     rev: v8.16.2
     hooks:
