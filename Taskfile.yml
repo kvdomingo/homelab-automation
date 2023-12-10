@@ -156,3 +156,13 @@ tasks:
         --create-namespace
         --namespace zitadel
         --values values.yaml
+
+  setup-prometheus:
+    desc: Setup Prometheus
+    dir: prometheus
+    cmds:
+      - >
+        helm upgrade --install prometheus prometheus/prometheus
+        --create-namespace
+        --namespace promstack
+        --values values.yaml
