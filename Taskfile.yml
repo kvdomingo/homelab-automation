@@ -166,3 +166,15 @@ tasks:
         --create-namespace
         --namespace promstack
         --values values.yaml
+
+  setup-minio:
+    desc: Setup MinIO
+    dir: minio
+    cmds:
+      - kubectl apply -f namespace.yaml
+      - kubectl apply -f secrets.yaml
+      - >
+        helm upgrade --install minio bitnami/minio
+        --create-namespace
+        --namespace minio
+        --values values.yaml
