@@ -158,23 +158,23 @@ tasks:
         --namespace zitadel
         --values values.yaml
 
-  setup-prometheus:
-    desc: Setup Prometheus
+  setup-promstack:
+    desc: Setup Promstack
     dir: promstack
     cmds:
+      - kubectl apply -f namespace.yaml
+      - kubectl apply -f secrets.yaml
       - >
         helm upgrade --install prometheus prometheus/prometheus
-        --create-namespace
         --namespace promstack
         --values prometheus-values.yaml
-
-  setup-loki:
-    desc: Setup Loki
-    dir: promstack
-    cmds:
+      - >
+        helm upgrade --install grafana grafana/grafana
+        --namespace promstack
+        --values grafana-values.yaml
+        --set-string ingress.annotations."gethomepage\.dev/widget\.password"={{.GRAFANA_PASSWORD}}
       - >
         helm upgrade --install loki grafana/loki
-        --create-namespace
         --namespace promstack
         --values loki-values.yaml
         --set loki.storage.s3.accessKeyId={{.MINIO_ACCESS_KEY_ID}}
