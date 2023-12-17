@@ -131,7 +131,7 @@ service:
   ssh:
     type: ClusterIP
     port: 22
-    clusterIP: None
+    clusterIP:
     loadBalancerIP:
     nodePort:
     externalTrafficPolicy:
@@ -158,7 +158,6 @@ ingress:
   annotations:
     gethomepage.dev/enabled: "true"
     gethomepage.dev/name: "Gitea"
-    gethomepage.dev/description: "Git with a cup of tea."
     gethomepage.dev/group: "CI/CD"
     gethomepage.dev/icon: "gitea.png"
     gethomepage.dev/ping: "git.lab.kvd.studio"

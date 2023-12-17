@@ -120,9 +120,7 @@ experimental:
   # v3:
   # -- Enable traefik version 3
   #  enabled: false
-  plugins:
-    # -- Enable traefik experimental plugins
-    enabled: false
+  plugins: {}
   kubernetesGateway:
     # -- Enable traefik experimental GatewayClass CRD
     enabled: false
@@ -146,7 +144,13 @@ ingressRoute:
     # -- Create an IngressRoute for the dashboard
     enabled: true
     # -- Additional ingressRoute annotations (e.g. for kubernetes.io/ingress.class)
-    annotations: { }
+    annotations:
+      gethomepage.dev/enabled: "true"
+      gethomepage.dev/name: "Traefik"
+      gethomepage.dev/group: "Admin"
+      gethomepage.dev/icon: "traefik.png"
+      gethomepage.dev/ping: "traefik.lab.kvd.studio"
+
     # -- Additional ingressRoute labels (e.g. for filtering IngressRoute by custom labels)
     labels: { }
     # -- The router match rule used for the dashboard ingressRoute
@@ -243,6 +247,24 @@ providers:
       # Published Kubernetes Service to copy status from. Format: namespace/servicename
       # By default this Traefik service
       # pathOverride: ""
+
+
+  file:
+    # -- Create a file provider
+    enabled: false
+    # -- Allows Traefik to automatically watch for file changes
+    watch: true
+    # -- File content (YAML format, go template supported) (see https://doc.traefik.io/traefik/providers/file/)
+    content: ""
+      # http:
+      #   routers:
+      #     router0:
+      #       entryPoints:
+      #       - web
+      #       middlewares:
+      #       - my-basic-auth
+      #       service: service-foo
+      #       rule: Path(`/foo`)
 
 #
 # -- Add volumes to the traefik pod. The volume name will be passed to tpl.
@@ -682,9 +704,13 @@ ports:
       options: ""
       certResolver: letsencrypt
       domains:
+        - main: dev.kvd.studio
+          sans:
+            - "*.dev.kvd.studio"
         - main: lab.kvd.studio
           sans:
             - "*.lab.kvd.studio"
+            - "*.zitadel.lab.kvd.studio"
     #
     # -- One can apply Middlewares on an entrypoint
     # https://doc.traefik.io/traefik/middlewares/overview/
@@ -711,6 +737,11 @@ ports:
     # -- The exposed port for this service
     exposedPort: 9100
     # -- The port protocol (TCP/UDP)
+    protocol: TCP
+  ssh:
+    port: 22
+    expose: true
+    exposedPort: 22
     protocol: TCP
 
 # -- TLS Options are created as TLSOption CRDs
@@ -900,7 +931,7 @@ affinity: { }
 
 # -- nodeSelector is the simplest recommended form of node selection constraint.
 nodeSelector:
-  kubernetes.io/hostname: srv-prod-01.lab
+  kubernetes.io/hostname: srv-k8s-01
 # -- Tolerations allow the scheduler to schedule pods with matching taints.
 tolerations: [ ]
 # -- You can use topology spread constraints to control
