@@ -56,18 +56,20 @@ tasks:
     desc: Setup Traefik
     dir: traefik
     cmds:
+      - kubectl apply -f namespace.yaml
       - kubectl apply -f secrets.yaml
-      - kubectl apply -f middlewares.yaml
       - >
         helm upgrade --install traefik traefik/traefik
         --namespace traefik
         --create-namespace
         --values values.yaml
+      - kubectl apply -f middlewares.yaml
 
   setup-gitea:
     desc: Setup Gitea
     dir: gitea
     cmds:
+      - kubectl apply -f namespace.yaml
       - kubectl apply -f configmap.yaml
       - >
         helm upgrade --install gitea gitea/gitea
@@ -99,6 +101,7 @@ tasks:
         --set config.services[0].Networking[0].Cloudflare.widget.accountid={{.CLOUDFLARE_ACCOUNT_ID}}
         --set config.services[0].Networking[0].Cloudflare.widget.tunnelid={{.CLOUDFLARE_TUNNEL_ID}}
         --set config.services[0].Networking[0].Cloudflare.widget.key={{.CLOUDFLARE_KEY}}
+        --set-string config.services[0].Networking[1].pfSense.widget.password={{.HOMEPAGE_PFSENSE_PASSWORD}}
 
   reload-homepage:
     desc: Reload Homepage with new configuration
@@ -122,6 +125,7 @@ tasks:
     dir: vaultwarden
     ignore_error: true
     cmds:
+      - kubectl apply -f namespace.yaml
       - kubectl apply -f secrets.yaml
       - >
         helm upgrade --install postgres bitnami/postgresql
@@ -146,6 +150,7 @@ tasks:
     desc: Setup Zitadel
     dir: zitadel
     cmds:
+      - kubectl apply -f namespace.yaml
       - kubectl apply -f secrets.yaml
       - >
         helm upgrade --install crdb cockroachdb/cockroachdb

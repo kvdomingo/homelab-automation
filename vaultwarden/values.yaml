@@ -296,11 +296,11 @@ smtp:
 
 ## @param data Data directory configuration, refer to values.yaml for parameters.
 ##
-data: { }
-# name: "vaultwarden-data"
-# size: "15Gi"
-# class: ""
-# path: "/data"
+data:
+  name: "vaultwarden-data"
+  size: "15Gi"
+  class: ""
+  path: "/data"
 
 ## @param attachments Attachments directory configuration, refer to values.yaml for parameters.
 ## By default, attachments/ is located inside the data directory.
@@ -326,7 +326,20 @@ logging:
 
 ## @param initContainers extra init containers for initializing the vaultwarden instance
 ##
-initContainers: [ ]
+initContainers:
+  - name: init-wait-db
+    image: bitnami/postgresql:16.1.0-debian-11-r9
+    command:
+      - /bin/sh
+      - -c
+      - >
+        until pg_isready
+        --host postgres-postgresql
+        --port 5432
+        --username vaultwarden;
+        do echo waiting for database;
+        sleep 2;
+        done;
 
 ## @param sidecars extra containers running alongside the vaultwarden instance
 ##

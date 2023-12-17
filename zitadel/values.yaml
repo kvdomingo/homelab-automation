@@ -107,6 +107,10 @@ ingress:
       paths:
         - path: /
           pathType: Prefix
+    - host: kvdstudio.zitadel.lab.kvd.studio
+      paths:
+        - path: /
+          pathType: Prefix
   tls: [ ]
 
 resources: { }

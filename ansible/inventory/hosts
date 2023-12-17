@@ -1,6 +1,6 @@
 [k8s_master]
-srv-prod-01.lab
+srv-k8s-01.lab
 
 [k8s_workers]
-srv-prod-02.lab
-srv-prod-03.lab
+srv-k8s-02.lab
+srv-k8s-03.lab

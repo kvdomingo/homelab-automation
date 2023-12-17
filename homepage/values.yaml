@@ -31,7 +31,6 @@ ingress:
       # These annotations will configure how this deployment is shown in Homepage
       gethomepage.dev/enabled: "true"
       gethomepage.dev/name: "Homepage"
-      gethomepage.dev/description: "A modern, secure, highly customizable application dashboard."
       gethomepage.dev/group: "Admin"
       gethomepage.dev/icon: "homepage.png"
       gethomepage.dev/ping: "home.lab.kvd.studio"
@@ -67,6 +66,32 @@ config:
               accountid: ""
               tunnelid: ""
               key: ""
+        - pfSense:
+            icon: pfsense.png
+            href: https://pfsense.local.kvdomingo.dev
+            ping: https://pfsense.local.kvdomingo.dev
+            widget:
+              type: pfsense
+              url: https://pfsense.local.kvdomingo.dev
+              username: admin
+              password: ""
+              load: true
+              wan: em0
+              wanStatus: true
+              memory: true
+              temp: true
+    - Admin:
+        - Traefik:
+            icon: traefik.png
+            href: https://traefik.lab.kvd.studio
+            ping: https://traefik.lab.kvd.studio
+            widget:
+              type: traefik
+              url: https://traefik.lab.kvd.studio
+              routers: true
+              services: true
+              middleware: true
+                
   widgets:
     - logo:
         icon: https://res.cloudinary.com/kdphotography-assets/image/upload/v1597254769/logo/logo-white.png
