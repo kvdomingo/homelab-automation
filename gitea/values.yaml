@@ -350,9 +350,9 @@ gitea:
   ## @param gitea.metrics.enabled Enable Gitea metrics
   ## @param gitea.metrics.serviceMonitor.enabled Enable Gitea metrics service monitor
   metrics:
-    enabled: false
+    enabled: true
     serviceMonitor:
-      enabled: false
+      enabled: true
       #  additionalLabels:
       #    prometheus-release: prom1
 
@@ -530,6 +530,8 @@ postgresql:
       service:
         ports:
           postgresql: 5432
+  image:
+    tag: 15.5.0-debian-11-r16
   primary:
     persistence:
       size: 10Gi
