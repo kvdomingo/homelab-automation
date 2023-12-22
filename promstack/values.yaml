@@ -200,7 +200,7 @@ global:
     createAggregateClusterRoles: false
     pspEnabled: false
     pspAnnotations: { }
-      ## Specify pod annotations
+    ## Specify pod annotations
     ## Ref: https://kubernetes.io/docs/concepts/policy/pod-security-policy/#apparmor
     ## Ref: https://kubernetes.io/docs/concepts/policy/pod-security-policy/#seccomp
     ## Ref: https://kubernetes.io/docs/concepts/policy/pod-security-policy/#sysctl
@@ -979,6 +979,9 @@ grafana:
       gethomepage.dev/group: "Monitoring"
       gethomepage.dev/icon: "grafana.png"
       gethomepage.dev/ping: "grafana.lab.kvd.studio"
+      gethomepage.dev/widget.type: "grafana"
+      gethomepage.dev/widget.url: "https://grafana.lab.kvd.studio"
+      gethomepage.dev/widget.username: "kvdomingo"
 
     ## Labels to be added to the Ingress
     ##
@@ -2270,7 +2273,7 @@ prometheusOperator:
       ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/
       ##
       affinity: { }
-        # nodeAffinity:
+      # nodeAffinity:
       #   requiredDuringSchedulingIgnoredDuringExecution:
       #     nodeSelectorTerms:
       #     - matchExpressions:
@@ -2280,8 +2283,8 @@ prometheusOperator:
       #         - e2e-az1
       #         - e2e-az2
       dnsConfig: { }
-        # nameservers:
-        #   - 1.2.3.4
+      # nameservers:
+      #   - 1.2.3.4
       # searches:
       #   - ns1.svc.cluster-domain.example
       #   - my.dns.search.suffix
@@ -2581,8 +2584,8 @@ prometheusOperator:
   ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/
   ##
   affinity: { }
-    # nodeAffinity:
-    #   requiredDuringSchedulingIgnoredDuringExecution:
+  # nodeAffinity:
+  #   requiredDuringSchedulingIgnoredDuringExecution:
   #     nodeSelectorTerms:
   #     - matchExpressions:
   #       - key: kubernetes.io/e2e-az-name
@@ -2591,7 +2594,7 @@ prometheusOperator:
   #         - e2e-az1
   #         - e2e-az2
   dnsConfig: { }
-    # nameservers:
+  # nameservers:
   #   - 1.2.3.4
   # searches:
   #   - ns1.svc.cluster-domain.example
@@ -3028,6 +3031,8 @@ prometheus:
       gethomepage.dev/group: "Monitoring"
       gethomepage.dev/icon: "prometheus.png"
       gethomepage.dev/ping: "prometheus.lab.kvd.studio"
+      gethomepage.dev/widget.type: "prometheus"
+      gethomepage.dev/widget.url: "https://prometheus.lab.kvd.studio"
     labels: { }
 
     ## Redirect ingress to an additional defined port on the service
@@ -3725,8 +3730,8 @@ prometheus:
       #     # key: ""
       #   # will render objectStorageConfig secret data and configure it to be used by Thanos custom resource,
       #   # ignored when prometheusspec.thanos.objectStorageConfig.existingSecret is set
-      #   # https://thanos.io/tip/thanos/storage.md/#s3
-      #   secret: {}
+    #   # https://thanos.io/tip/thanos/storage.md/#s3
+    #   secret: {}
     #     # type: S3
     #     # config:
     #     #   bucket: ""
@@ -3965,8 +3970,8 @@ prometheus:
     #   sourceLabels: [__name__]
 
     ## RelabelConfigs to apply to samples before scraping
-    ## ref: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api.md#relabelconfig
-    ##
+  ## ref: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api.md#relabelconfig
+  ##
   # relabelings: []
   # - sourceLabels: [__meta_kubernetes_pod_node_name]
   #   separator: ;
@@ -4006,8 +4011,8 @@ prometheus:
     ##
     # namespaceSelector:
     ## Match any namespace
-    ##
-    # any: false
+  ##
+  # any: false
 
   ## Explicit list of namespace names to select
   ##
@@ -4281,8 +4286,8 @@ thanosRuler:
       # https://thanos.io/tip/components/rule.md/#alertmanager
       secret: { }
         # alertmanagers:
-        # - api_version: v2
-        #   http_config:
+      # - api_version: v2
+      #   http_config:
       #     basic_auth:
       #       username: some_user
       #       password: some_pass
@@ -4335,7 +4340,7 @@ thanosRuler:
       # render queryConfig secret data and configure it to be used by Thanos Ruler custom resource, ignored when queryConfig.existingSecret is set
       # https://thanos.io/tip/components/rule.md/#query-api
       secret: { }
-        # - http_config:
+      # - http_config:
       #     basic_auth:
       #       username: some_user
       #       password: some_pass
