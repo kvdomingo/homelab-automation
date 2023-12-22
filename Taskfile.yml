@@ -142,6 +142,7 @@ tasks:
     dir: argocd
     cmds:
       - kubectl apply -f namespace.yaml
+      - kubectl ns argocd
       - kubectl apply -f install.yaml
       - kubectl apply -f ingress.yaml
 
@@ -173,6 +174,7 @@ tasks:
         --namespace promstack
         --values values.yaml
         --set-string grafana.adminPassword={{.GRAFANA_PASSWORD}}
+        --set-string grafana.ingress.annotations."gethomepage\.dev/widget\.password"={{.GRAFANA_PASSWORD}}
 
   setup-minio:
     desc: Setup MinIO
@@ -184,4 +186,15 @@ tasks:
         helm upgrade --install minio bitnami/minio
         --create-namespace
         --namespace minio
+        --values values.yaml
+
+  setup-nextcloud:
+    desc: Setup Nextcloud
+    dir: nextcloud
+    cmds:
+      - kubectl apply -f namespace.yaml
+      - kubectl apply -f secrets.yaml
+      - >
+        helm upgrade --install nextcloud nextcloud/nextcloud
+        --namespace nextcloud
         --values values.yaml
