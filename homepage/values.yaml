@@ -70,16 +70,6 @@ config:
             icon: pfsense.png
             href: https://pfsense.local.kvdomingo.dev
             ping: https://pfsense.local.kvdomingo.dev
-            widget:
-              type: pfsense
-              url: https://pfsense.local.kvdomingo.dev
-              username: admin
-              password: ""
-              load: true
-              wan: em0
-              wanStatus: true
-              memory: true
-              temp: true
     - Admin:
         - Traefik:
             icon: traefik.png
@@ -91,7 +81,7 @@ config:
               routers: true
               services: true
               middleware: true
-                
+
   widgets:
     - logo:
         icon: https://res.cloudinary.com/kdphotography-assets/image/upload/v1597254769/logo/logo-white.png

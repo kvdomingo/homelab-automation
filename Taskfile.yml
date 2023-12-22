@@ -101,7 +101,6 @@ tasks:
         --set config.services[0].Networking[0].Cloudflare.widget.accountid={{.CLOUDFLARE_ACCOUNT_ID}}
         --set config.services[0].Networking[0].Cloudflare.widget.tunnelid={{.CLOUDFLARE_TUNNEL_ID}}
         --set config.services[0].Networking[0].Cloudflare.widget.key={{.CLOUDFLARE_KEY}}
-        --set-string config.services[0].Networking[1].pfSense.widget.password={{.HOMEPAGE_PFSENSE_PASSWORD}}
 
   reload-homepage:
     desc: Reload Homepage with new configuration
@@ -170,20 +169,10 @@ tasks:
       - kubectl apply -f namespace.yaml
       - kubectl apply -f secrets.yaml
       - >
-        helm upgrade --install prometheus prometheus/prometheus
+        helm upgrade --install prometheus prometheus/kube-prometheus-stack
         --namespace promstack
-        --values prometheus-values.yaml
-      - >
-        helm upgrade --install grafana grafana/grafana
-        --namespace promstack
-        --values grafana-values.yaml
-        --set-string ingress.annotations."gethomepage\.dev/widget\.password"={{.GRAFANA_PASSWORD}}
-      - >
-        helm upgrade --install loki grafana/loki
-        --namespace promstack
-        --values loki-values.yaml
-        --set loki.storage.s3.accessKeyId={{.MINIO_ACCESS_KEY_ID}}
-        --set loki.storage.s3.secretAccessKey={{.MINIO_SECRET_ACCESS_KEY}}
+        --values values.yaml
+        --set-string grafana.adminPassword={{.GRAFANA_PASSWORD}}
 
   setup-minio:
     desc: Setup MinIO
