@@ -1,0 +1,43 @@
+version: '3'
+
+vars:
+  NAME: go-tracker-prod
+
+dotenv:
+  - .env.prod
+
+tasks:
+  default:
+    desc: Build and start prod Docker containers
+    cmds:
+      - docker compose --project-name {{.NAME}} --file docker-compose.prod.yml up --detach --build --remove-orphans {{.CLI_ARGS}}
+
+  logs:
+    desc: Attach to prod Docker logs
+    cmds:
+      - docker compose --project-name {{.NAME}} --file docker-compose.prod.yml logs --follow {{.CLI_ARGS}}
+
+  stop:
+    desc: Stop prod containers
+    cmds:
+      - docker compose --project-name {{.NAME}} --file docker-compose.prod.yml stop {{.CLI_ARGS}}
+
+  restart:
+    desc: Restart prod containers
+    cmds:
+      - docker compose --project-name {{.NAME}} --file docker-compose.prod.yml restart {{.CLI_ARGS}}
+
+  exec:
+    desc: Run a command in the specified container
+    cmds:
+      - docker compose --project-name {{.NAME}} exec -- {{.CLI_ARGS}}
+
+  reload-proxy:
+    desc: Reload nginx configuration
+    cmds:
+      - task exec -- proxy nginx -s reload
+
+  clean:
+    desc: Remove prod containers
+    cmds:
+      - docker compose --project-name {{.NAME}} --file docker-compose.prod.yml down --remove-orphans {{.CLI_ARGS}}

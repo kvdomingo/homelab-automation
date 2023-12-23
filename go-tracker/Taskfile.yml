@@ -1,0 +1,57 @@
+version: '3'
+
+vars:
+  NAME: go-tracker-dev
+
+env:
+  SHORT_SHA:
+    sh: git rev-parse --short HEAD
+
+dotenv:
+  - ./api/.env
+
+tasks:
+  default:
+    desc: Build and start Docker containers
+    cmds:
+      - docker compose --project-name {{.NAME}} up -d --build --remove-orphans {{.CLI_ARGS}}
+
+  logs:
+    desc: Attach to Docker logs
+    cmds:
+      - docker compose --project-name {{.NAME}} logs --follow {{.CLI_ARGS}}
+
+  stop:
+    desc: Stop containers
+    cmds:
+      - docker compose --project-name {{.NAME}} stop {{.CLI_ARGS}}
+
+  restart:
+    desc: Restart containers
+    cmds:
+      - docker compose --project-name {{.NAME}} restart {{.CLI_ARGS}}
+
+  exec:
+    desc: Run a command in the specified container
+    cmds:
+      - docker compose --project-name {{.NAME}} exec {{.CLI_ARGS}}
+
+  reload-proxy:
+    desc: Reload nginx configuration
+    cmds:
+      - task exec -- proxy nginx -s reload
+
+  clean:
+    desc: Remove containers
+    cmds:
+      - docker compose --project-name {{.NAME}} down -v --remove-orphans {{.CLI_ARGS}}
+
+  psql:
+    desc: Run psql inside the container
+    cmds:
+      - task exec -- -it db psql -U {{.POSTGRESQL_USERNAME}} -d {{.POSTGRESQL_DATABASE}}
+
+  ps:
+    desc: Show status of running containers
+    cmds:
+      - docker compose --project-name {{.NAME}} ps
