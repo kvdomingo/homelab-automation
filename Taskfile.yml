@@ -198,3 +198,11 @@ tasks:
         helm upgrade --install nextcloud nextcloud/nextcloud
         --namespace nextcloud
         --values values.yaml
+
+  setup-uptime:
+    desc: Setup Uptime Kuma
+    dir: uptime-kuma
+    cmds:
+      - kubectl apply -f namespace.yaml
+      - kubectl apply -f secrets.yaml
+      - helm upgrade --install uptime k3/uptime-kuma --values values.yaml
