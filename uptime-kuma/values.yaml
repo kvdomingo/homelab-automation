@@ -1,0 +1,121 @@
+# Default values for uptime-kuma.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+image:
+  registry: "quay.io"
+  repository: "k3rnel-pan1c/uptime-kuma"
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the Chart's appVersion.
+  tag: ""
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+commonlabels: {}
+
+statefulSet:
+  labels: {}
+  annotations: {}
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+livenessProbe:
+  exec:
+    command:
+      - extra/healthcheck
+
+readinessProbe:
+  httpGet:
+    path: /
+    port: http
+    scheme: HTTP
+
+service:
+  type: ClusterIP
+  port: 80
+
+route:
+  enabled: false
+  annotations: {}
+  host: ""
+  labels: {}
+
+ingress:
+  enabled: true
+  className: ""
+  annotations:
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/name: "Uptime Kuma"
+    gethomepage.dev/group: "Monitoring"
+    gethomepage.dev/icon: "uptime-kuma.png"
+    gethomepage.dev/ping: "uptime.lab.kvd.studio"
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: uptime.lab.kvd.studio
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 200m
+  #   memory: 256Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+persistence:
+  enabled: true
+  claimNameOverwrite: ""
+  sizeLimit: 4Gi
+  storageClass: ""
+  annotations: {}
+  labels: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+serviceMonitor:
+  enabled: true
+
+testPod:
+  image: docker.io/busybox@sha256:3fbc632167424a6d997e74f52b878d7cc478225cffac6bc977eedfe51c7f4e79
+  annotations: {}
+
+extraCertificates:
+  enabled: false
+  cacerts: ""
