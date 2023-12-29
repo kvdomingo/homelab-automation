@@ -1,0 +1,35 @@
+annotations:
+  artifacthub.io/alternativeName: tandoor-recipes
+  artifacthub.io/changes: |-
+    - kind: changed
+      description: Update vabene1111/recipes docker tag to v1.5.10
+  artifacthub.io/links: |-
+    - name: App Source
+      url: https://github.com/TandoorRecipes/recipes
+    - name: Chart Source
+      url: https://github.com/gabe565/charts/tree/main/charts/tandoor
+apiVersion: v2
+appVersion: 1.5.10
+dependencies:
+  - name: common
+    repository: https://bjw-s.github.io/helm-charts
+    version: 1.5.1
+  - name: postgresql
+    version: 13.2.26
+    repository: https://charts.bitnami.com/bitnami
+    condition: postgresql.enabled
+description: Application for managing recipes, planning meals, building shopping lists
+  and much much more!
+home: https://charts.gabe565.com/charts/tandoor/
+icon: https://raw.githubusercontent.com/vabene1111/recipes/master/docs/logo_color.svg
+keywords:
+  - recipes
+  - cookbook
+  - cooking
+  - meal-planner
+kubeVersion: '>=1.22.0-0'
+name: tandoor
+sources:
+  - https://github.com/TandoorRecipes/recipes
+type: application
+version: 0.8.11

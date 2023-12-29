@@ -205,4 +205,15 @@ tasks:
     cmds:
       - kubectl apply -f namespace.yaml
       - kubectl apply -f secrets.yaml
-      - helm upgrade --install uptime k3/uptime-kuma --values values.yaml
+      - >
+        helm upgrade --install uptime k3/uptime-kuma
+        --namespace uptime
+        --values values.yaml
+
+  setup-tandoor:
+    desc: Setup Tandoor
+    dir: tandoor
+    cmds:
+      - kubectl apply -f namespace.yaml
+      - kubectl apply -f secrets.yaml
+      - helm upgrade --install tandoor ./tandoor --namespace tandoor
