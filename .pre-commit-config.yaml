@@ -11,6 +11,7 @@ repos:
       - id: check-merge-conflict
       - id: check-yaml
         args: [ '--allow-multiple-documents' ]
+        exclude: templates/.+\.ya?ml$
   - repo: https://github.com/zricethezav/gitleaks
     rev: v8.16.2
     hooks:
