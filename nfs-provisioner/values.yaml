@@ -1,4 +1,4 @@
-replicaCount: 1
+replicaCount: 3
 strategyType: Recreate
 
 image:
@@ -37,7 +37,7 @@ storageClass:
   reclaimPolicy: Delete
 
   # When set to false your PVs will not be archived by the provisioner upon deletion of the PVC.
-  archiveOnDelete: true
+  archiveOnDelete: false
 
   # If it exists and has 'delete' value, delete the directory. If it exists and has 'retain' value, save the directory.
   # Overrides archiveOnDelete.
@@ -104,12 +104,22 @@ nodeSelector: { }
 
 tolerations: [ ]
 
-affinity: { }
+affinity:
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 100
+        podAffinityTerm:
+          topologyKey: kubernetes.io/hostname
+          labelSelector:
+            matchExpressions:
+              - key: app
+                operator: In
+                values:
+                  - nfs-subdir-external-provisioner
 
 # Additional labels for any resource created
 labels: { }
 
 podDisruptionBudget:
   enabled: true
-  maxUnavailable: 0
-  maxSurge: 1
+  minAvailable: 1

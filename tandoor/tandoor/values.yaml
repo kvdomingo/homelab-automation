@@ -1,120 +1,104 @@
-#
-# IMPORTANT NOTE
-#
-# This chart inherits from our common library chart. You can check the default values/options here:
-# https://github.com/bjw-s/helm-charts/blob/a081de5/charts/library/common/values.yaml
-#
+# Default values for tandoor.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
 
 image:
-  # -- image repository
   repository: vabene1111/recipes
-  # -- image tag
-  tag: 1.5.10
-  # -- image pull policy
   pullPolicy: IfNotPresent
-  # -- image tag
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "1.5.10"
 
-# -- environment variables. [[ref]](https://github.com/TandoorRecipes/recipes/blob/master/.env.template).
-# @default -- See [values.yaml](./values.yaml)
-env:
-  # -- default timezone
-  TIMEZONE: Asia/Manila
+imagePullSecrets: [ ]
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Automatically mount a ServiceAccount's API credentials?
+  automount: true
+  # Annotations to add to the service account
+  annotations: { }
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: { }
+podLabels: { }
+
+podSecurityContext: { }
+# fsGroup: 2000
+
+securityContext: { }
+# capabilities:
+#   drop:
+#   - ALL
+# readOnlyRootFilesystem: true
+# runAsNonRoot: true
+# runAsUser: 1000
 
 service:
-  # -- Configures service settings for the chart.
-  # @default -- See [values.yaml](./values.yaml)
-  main:
-    ports:
-      http:
-        port: 8080
-      static:
-        port: 80
+  type: ClusterIP
+  port: 8080
 
 ingress:
-  # -- Enable and configure ingress settings for the chart under this key.
-  # @default -- See [values.yaml](./values.yaml)
-  main:
-    enabled: true
-    annotations:
-      gethomepage.dev/enabled: "true"
-      gethomepage.dev/name: "Tandoor"
-      gethomepage.dev/group: "Documents"
-      gethomepage.dev/icon: "tandoor.png"
-      gethomepage.dev/ping: "tandoor.lab.kvd.studio"
-    hosts:
-      - host: tandoor.lab.kvd.studio
-        paths:
-          - path: /
-          - path: /static
-            service:
-              port: 80
-          - path: /media
-            service:
-              port: 80
-
-# -- Configure persistence settings for the chart under this key.
-# @default -- See [values.yaml](./values.yaml)
-persistence:
-  config:
-    enabled: true
-    retain: true
-    # storageClass: ""
-    accessMode: ReadWriteOnce
-    size: 1Gi
-  media:
-    enabled: true
-    mountPath: /opt/recipes/mediafiles
-    retain: true
-    # storageClass: ""
-    accessMode: ReadWriteOnce
-    size: 1Gi
-  static:
-    enabled: true
-    type: emptyDir
-    mountPath: /opt/recipes/staticfiles
-  django-js-reverse:
-    enabled: true
-    type: emptyDir
-    mountPath: /opt/recipes/cookbook/static/django_js_reverse
-
-# -- Enable and configure postgresql database subchart under this key. [[ref]](https://github.com/bitnami/charts/tree/master/bitnami/mariadb)
-# @default -- See [values.yaml](./values.yaml)
-postgresql:
   enabled: true
-  auth:
-    username: tandoor
-    database: tandoor
-    existingSecret: tandoor-secrets
-    secretKeys:
-      adminPasswordKey: POSTGRESQL_PASSWORD
-      userPasswordKey: POSTGRESQL_PASSWORD
-      replicationPasswordKey: POSTGRESQL_PASSWORD
-  primary:
-    persistence:
-      enabled: true
-      size: 8Gi
-    livenessProbe:
-      enabled: true
-      initialDelaySeconds: 300
-      timeoutSeconds: 15
-      periodSeconds: 20
-      successThreshold: 1
-      failureThreshold: 3
-  volumePermissions:
-    enabled: true
-  serviceAccount:
-    create: true
-  rbac:
-    create: true
-  metrics:
-    enabled: true
-    serviceMonitor:
-      enabled: true
+  className: ""
+  annotations:
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/name: "Tandoor"
+    gethomepage.dev/group: "Documents"
+    gethomepage.dev/icon: "tandoor.png"
+    gethomepage.dev/ping: "tandoor.lab.kvd.studio"
+  hosts:
+    - host: tandoor.lab.kvd.studio
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: [ ]
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
 
-podSecurityContext:
-  # -- Run as `nobody` user
-  runAsUser: 65534
-  # -- Run as `nobody` group
-  runAsGroup: 65534
-  # -- Volume binds will be granted to `nobody` group
-  fsGroup: 65534
+resources: { }
+  # We usually recommend not to specify default resources and to leave this as a conscious
+# choice for the user. This also increases chances charts run on environments with little
+# resources, such as Minikube. If you do want to specify resources, uncomment the following
+# lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+# limits:
+#   cpu: 100m
+#   memory: 128Mi
+# requests:
+#   cpu: 100m
+#   memory: 128Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+# Additional volumes on the output Deployment definition.
+volumes:
+  - name: tandoor-media
+    persistentVolumeClaim:
+      claimName: tandoor-media
+  - name: tandoor-static
+    persistentVolumeClaim:
+      claimName: tandoor-static
+
+# Additional volumeMounts on the output Deployment definition.
+volumeMounts:
+  - name: tandoor-media
+    mountPath: /opt/recipes/mediafiles
+  - name: tandoor-static
+    mountPath: /opt/recipes/staticfiles
+
+nodeSelector: { }
+
+tolerations: [ ]
+
+affinity: { }

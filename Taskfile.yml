@@ -48,8 +48,7 @@ tasks:
       - >
         helm upgrade --install nfs-provisioner
         nfs-subdir-external-provisioner/nfs-subdir-external-provisioner
-        --namespace nfs-provisioner
-        --create-namespace
+        --namespace kube-system
         --values values.yaml
 
   setup-traefik:
@@ -216,4 +215,8 @@ tasks:
     cmds:
       - kubectl apply -f namespace.yaml
       - kubectl apply -f secrets.yaml
+      - >
+        helm upgrade --install postgres bitnami/postgresql
+        --namespace tandoor
+        --values pg-values.yaml
       - helm upgrade --install tandoor ./tandoor --namespace tandoor
