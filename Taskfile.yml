@@ -19,9 +19,13 @@ tasks:
       - task: setup-k8s-master
       - task: setup-k8s-workers
       - task: setup-nfs-provisioner
+      - task: setup-traefik
+      - task: setup-promstack
+      - task: setup-longhorn
 
   bootstrap-vms:
     desc: Install pre-requisites in VMs
+    internal: true
     dir: ansible
     cmds:
       - ansible-playbook -i inventory/hosts playbooks/setup.yml
@@ -232,13 +236,20 @@ tasks:
         --create-namespace
         --values values.yaml
 
+  setup-jellyfin:
+    desc: Setup Jellyfin
+    dir: arrstack
+    cmds:
+      - kubectl apply -f namespace.yaml
+      - helm upgrade --install jellyfin ./jellyfin --namespace arrstack
+
   setup-arrstack:
     desc: Setup Arrstack
     dir: arrstack
     cmds:
       - kubectl apply -f namespace.yaml
-      - kubectl apply -f pvc.yaml
-      - helm upgrade --install jellyfin ./jellyfin --namespace arrstack
       - helm upgrade --install flaresolverr ./flaresolverr --namespace arrstack
       - helm upgrade --install qbittorrent ./qbittorrent --namespace arrstack
       - helm upgrade --install prowlarr ./prowlarr --namespace arrstack
+      - helm upgrade --install sonarr ./sonarr --namespace arrstack
+      - helm upgrade --install radarr ./radarr --namespace arrstack

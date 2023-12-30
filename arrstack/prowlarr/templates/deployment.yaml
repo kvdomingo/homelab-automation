@@ -44,6 +44,7 @@ spec:
             httpGet:
               path: /
               port: http
+            initialDelaySeconds: 300
           readinessProbe:
             httpGet:
               path: /
@@ -55,12 +56,12 @@ spec:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           env:
+            - name: TZ
+              value: Asia/Manila
             - name: PUID
               value: "1000"
             - name: PGID
               value: "1000"
-            - name: TZ
-              value: Asia/Manila
       {{- with .Values.volumes }}
       volumes:
         {{- toYaml . | nindent 8 }}
