@@ -1,0 +1,6 @@
+apiVersion: v2
+appVersion: "1.0"
+description: Jellyfin Media Server
+name: jellyfin
+version: 0.3.0
+type: application
