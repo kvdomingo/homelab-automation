@@ -7,8 +7,7 @@ metadata:
     app.kubernetes.io/name: qbittorrent
     app.kubernetes.io/part-of: arrstack
   annotations:
-    helm.sh/hook: pre-install,pre-upgrade
-    helm.sh/hook-weight: "-5"
+    helm.sh/resource-policy: keep
 spec:
   resources:
     requests:
@@ -25,11 +24,11 @@ metadata:
     app.kubernetes.io/name: qbittorrent
     app.kubernetes.io/part-of: arrstack
   annotations:
-    helm.sh/hook: pre-install,pre-upgrade
-    helm.sh/hook-weight: "-4"
+    helm.sh/resource-policy: keep
 spec:
   resources:
     requests:
       storage: 512Gi
   accessModes:
     - ReadWriteOnce
+    - ReadWriteMany

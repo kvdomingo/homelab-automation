@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "jellyfin.fullname" . }}
+  name: {{ include "radarr.fullname" . }}
   labels:
-    {{- include "jellyfin.labels" . | nindent 4 }}
+    {{- include "radarr.labels" . | nindent 4 }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
-      {{- include "jellyfin.selectorLabels" . | nindent 6 }}
+      {{- include "radarr.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -18,7 +18,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "jellyfin.labels" . | nindent 8 }}
+        {{- include "radarr.labels" . | nindent 8 }}
  {{- with .Values.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
@@ -27,7 +27,7 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "jellyfin.serviceAccountName" . }}
+      serviceAccountName: {{ include "radarr.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
@@ -44,6 +44,7 @@ spec:
             httpGet:
               path: /
               port: http
+            initialDelaySeconds: 300
           readinessProbe:
             httpGet:
               path: /
@@ -61,8 +62,6 @@ spec:
               value: "1000"
             - name: PGID
               value: "1000"
-            - name: JELLYFIN_PublishedServerUrl
-              value: "jellyfin.lab.kvd.studio"
       {{- with .Values.volumes }}
       volumes:
         {{- toYaml . | nindent 8 }}

@@ -19,7 +19,7 @@ spec:
       {{- end }}
       labels:
         {{- include "flaresolverr.labels" . | nindent 8 }}
-	{{- with .Values.podLabels }}
+ {{- with .Values.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
     spec:
@@ -54,6 +54,13 @@ spec:
           volumeMounts:
             {{- toYaml . | nindent 12 }}
           {{- end }}
+          env:
+            - name: TZ
+              value: Asia/Manila
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
       {{- with .Values.volumes }}
       volumes:
         {{- toYaml . | nindent 8 }}

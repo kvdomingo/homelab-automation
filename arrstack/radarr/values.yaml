@@ -1,14 +1,14 @@
-# Default values for flaresolverr.
+# Default values for sonarr.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
 replicaCount: 1
 
 image:
-  repository: ghcr.io/flaresolverr/flaresolverr
+  repository: lscr.io/linuxserver/radarr
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "v3.3.12"
+  tag: "5.2.6"
 
 imagePullSecrets: [ ]
 nameOverride: ""
@@ -42,19 +42,19 @@ securityContext:
 
 service:
   type: ClusterIP
-  port: 8191
+  port: 7878
 
 ingress:
   enabled: true
   className: ""
   annotations:
     gethomepage.dev/enabled: "true"
-    gethomepage.dev/name: "Flaresolverr"
+    gethomepage.dev/name: "Radarr"
     gethomepage.dev/group: "Media"
-    gethomepage.dev/icon: "cloudflare.png"
-    gethomepage.dev/ping: "flaresolverr.lab.kvd.studio"
+    gethomepage.dev/icon: "radarr.png"
+    gethomepage.dev/ping: "radarr.lab.kvd.studio"
   hosts:
-    - host: flaresolverr.lab.kvd.studio
+    - host: radarr.lab.kvd.studio
       paths:
         - path: /
           pathType: Prefix
@@ -64,8 +64,8 @@ ingress:
   #      - chart-example.local
 
 resources: { }
-  # We usually recommend not to specify default resources and to leave this as a conscious
-  # choice for the user. This also increases chances charts run on environments with little
+# We usually recommend not to specify default resources and to leave this as a conscious
+# choice for the user. This also increases chances charts run on environments with little
 # resources, such as Minikube. If you do want to specify resources, uncomment the following
 # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
 # limits:
@@ -83,17 +83,25 @@ autoscaling:
   # targetMemoryUtilizationPercentage: 80
 
 # Additional volumes on the output Deployment definition.
-volumes: [ ]
-# - name: foo
-#   secret:
-#     secretName: mysecret
-#     optional: false
+volumes:
+  - name: config
+    persistentVolumeClaim:
+      claimName: radarr-config
+  - name: downloads
+    persistentVolumeClaim:
+      claimName: qbittorrent-downloads
+  - name: movies
+    persistentVolumeClaim:
+      claimName: jellyfin-movies
 
 # Additional volumeMounts on the output Deployment definition.
-volumeMounts: [ ]
-# - name: foo
-#   mountPath: "/etc/foo"
-#   readOnly: true
+volumeMounts:
+  - name: config
+    mountPath: /config
+  - name: downloads
+    mountPath: /downloads
+  - name: movies
+    mountPath: /movies
 
 nodeSelector: { }
 
