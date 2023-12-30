@@ -261,3 +261,4 @@ tasks:
       - helm upgrade --install sonarr ./sonarr --namespace arrstack
       - helm upgrade --install radarr ./radarr --namespace arrstack
       - helm upgrade --install readarr ./readarr --namespace arrstack
+      - helm upgrade --install jellyseerr ./jellyseerr --namespace arrstack
