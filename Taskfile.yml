@@ -240,4 +240,5 @@ tasks:
       - kubectl apply -f pvc.yaml
       - helm upgrade --install jellyfin ./jellyfin --namespace arrstack
       - helm upgrade --install flaresolverr ./flaresolverr --namespace arrstack
+      - helm upgrade --install qbittorrent ./qbittorrent --namespace arrstack
       - helm upgrade --install prowlarr ./prowlarr --namespace arrstack

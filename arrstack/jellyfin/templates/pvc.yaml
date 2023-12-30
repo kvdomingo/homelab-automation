@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: jellyfin-media
+  namespace: arrstack
+  labels:
+    app.kubernetes.io/name: jellyfin
+    app.kubernetes.io/part-of: arrstack
+  annotations:
+    helm.sh/hook: pre-install,pre-upgrade
+    helm.sh/hook-weight: "-5"
+spec:
+  resources:
+    requests:
+      storage: 512Gi
+  accessModes:
+    - ReadWriteOnce

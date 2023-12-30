@@ -1,29 +1,35 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: jellyfin-media
+  name: qbittorrent-config
   namespace: arrstack
   labels:
-    app.kubernetes.io/name: jellyfin
+    app.kubernetes.io/name: qbittorrent
     app.kubernetes.io/part-of: arrstack
+  annotations:
+    helm.sh/hook: pre-install,pre-upgrade
+    helm.sh/hook-weight: "-5"
 spec:
   resources:
     requests:
-      storage: 512Gi
+      storage: 1Gi
   accessModes:
     - ReadWriteOnce
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: prowlarr-config
+  name: qbittorrent-downloads
   namespace: arrstack
   labels:
-    app.kubernetes.io/name: prowlarr
+    app.kubernetes.io/name: qbittorrent
     app.kubernetes.io/part-of: arrstack
+  annotations:
+    helm.sh/hook: pre-install,pre-upgrade
+    helm.sh/hook-weight: "-4"
 spec:
   resources:
     requests:
-      storage: 1Gi
+      storage: 512Gi
   accessModes:
     - ReadWriteOnce
