@@ -238,6 +238,5 @@ tasks:
     cmds:
       - kubectl apply -f namespace.yaml
       - kubectl apply -f pvc.yaml
-      - >
-        helm upgrade --install jellyfin ./jellyfin
-        --namespace arrstack
+      - helm upgrade --install jellyfin ./jellyfin --namespace arrstack
+      - helm upgrade --install prowlarr ./prowlarr --namespace arrstack
