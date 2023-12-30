@@ -243,6 +243,13 @@ tasks:
       - kubectl apply -f namespace.yaml
       - helm upgrade --install jellyfin ./jellyfin --namespace arrstack
 
+  setup-calibre:
+    desc: Setup Calibre
+    dir: arrstack
+    cmds:
+      - kubectl apply -f namespace.yaml
+      - helm upgrade --install calibre ./calibre --namespace arrstack
+
   setup-arrstack:
     desc: Setup Arrstack
     dir: arrstack
