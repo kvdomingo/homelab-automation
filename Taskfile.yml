@@ -260,3 +260,4 @@ tasks:
       - helm upgrade --install prowlarr ./prowlarr --namespace arrstack
       - helm upgrade --install sonarr ./sonarr --namespace arrstack
       - helm upgrade --install radarr ./radarr --namespace arrstack
+      - helm upgrade --install readarr ./readarr --namespace arrstack
