@@ -21,7 +21,6 @@ tasks:
       - task: setup-nfs-provisioner
 
   bootstrap-vms:
-    internal: true
     desc: Install pre-requisites in VMs
     dir: ansible
     cmds:
@@ -220,3 +219,15 @@ tasks:
         --namespace tandoor
         --values pg-values.yaml
       - helm upgrade --install tandoor ./tandoor --namespace tandoor
+
+  setup-longhorn:
+    desc: Setup Longhorn
+    dir: longhorn
+    cmds:
+      - kubectl apply -f namespace.yaml
+      - kubectl apply -f longhorn-iscsi-installation.yaml
+      - >
+        helm upgrade --install longhorn longhorn/longhorn
+        --namespace longhorn-system
+        --create-namespace
+        --values values.yaml

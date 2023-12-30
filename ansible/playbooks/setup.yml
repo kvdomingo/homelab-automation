@@ -19,6 +19,7 @@
           - neovim
           - nfs-common
           - policycoreutils
+          - open-iscsi
         state: latest
 
     - name: Remove conflicting Docker packages
