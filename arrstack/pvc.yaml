@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: jellyfin-media
+  namespace: arrstack
+  labels:
+    app.kubernetes.io/name: jellyfin
+    app.kubernetes.io/part-of: arrstack
+spec:
+  resources:
+    requests:
+      storage: 512Gi
+  accessModes:
+    - ReadWriteOnce

@@ -231,3 +231,13 @@ tasks:
         --namespace longhorn-system
         --create-namespace
         --values values.yaml
+
+  setup-arrstack:
+    desc: Setup Arrstack
+    dir: arrstack
+    cmds:
+      - kubectl apply -f namespace.yaml
+      - kubectl apply -f pvc.yaml
+      - >
+        helm upgrade --install jellyfin ./jellyfin
+        --namespace arrstack
