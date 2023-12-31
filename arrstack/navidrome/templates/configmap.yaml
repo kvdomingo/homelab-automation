@@ -10,5 +10,5 @@ metadata:
 data:
   ND_SCANSCHEDULE: "1h"
   ND_LOGLEVEL: "info"
-  ND_SESSIONTIMEOUT: "7d"
+  ND_SESSIONTIMEOUT: "168h"
   ND_BASEURL: "https://navidrome.lab.kvd.studio"
