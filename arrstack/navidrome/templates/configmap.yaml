@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: navidrome-configmap
+  labels:
+    {{- include "navidrome.labels" . | nindent 4 }}
+  annotations:
+    helm.sh/hook: pre-install,pre-upgrade
+    helm.sh/hook-weight: "-5"
+data:
+  ND_SCANSCHEDULE: "1h"
+  ND_LOGLEVEL: "info"
+  ND_SESSIONTIMEOUT: "7d"
+  ND_BASEURL: "https://navidrome.lab.kvd.studio"
