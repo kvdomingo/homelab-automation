@@ -1,6 +1,6 @@
 image:
   repository: ghcr.io/gethomepage/homepage
-  tag: v0.8.3
+  tag: v0.8.4
 
 # Enable RBAC. RBAC is necessary to use Kubernetes integration
 enableRbac: true
@@ -81,6 +81,24 @@ config:
               routers: true
               services: true
               middleware: true
+    - Media:
+        - Calendar:
+            widget:
+              type: calendar
+              firstDayInWeek: monday
+              view: monthly
+              maxEvents: 10
+              showTime: true
+              integrations:
+                - type: sonarr
+                  service_group: Media
+                  service_name: Sonarr
+                - type: radarr
+                  service_group: Media
+                  service_name: Radarr
+                - type: readarr
+                  service_group: Media
+                  service_name: Readarr
 
   widgets:
     - logo:
