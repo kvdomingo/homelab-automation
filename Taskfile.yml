@@ -250,6 +250,13 @@ tasks:
       - kubectl apply -f namespace.yaml
       - helm upgrade --install calibre ./calibre --namespace arrstack
 
+  setup-navidrome:
+    desc: Setup Navidrome
+    dir: arrstack
+    cmds:
+      - kubectl apply -f namespace.yaml
+      - helm upgrade --install navidrome ./navidrome --namespace arrstack
+
   setup-arrstack:
     desc: Setup Arrstack
     dir: arrstack
@@ -261,4 +268,5 @@ tasks:
       - helm upgrade --install sonarr ./sonarr --namespace arrstack
       - helm upgrade --install radarr ./radarr --namespace arrstack
       - helm upgrade --install readarr ./readarr --namespace arrstack
+      - helm upgrade --install lidarr ./lidarr --namespace arrstack
       - helm upgrade --install jellyseerr ./jellyseerr --namespace arrstack
