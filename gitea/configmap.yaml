@@ -17,8 +17,6 @@ data:
   repository.pull-request: |
     DEFAULT_MERGE_STYLE=squash
     POPULATE_SQUASH_COMMENT_WITH_COMMIT_MESSAGES=true
-  service.explore: |
-    REQUIRE_SIGNIN_VIEW=true
   webhook: |
     ALLOWED_HOST_LIST=loopback,private,*.dev.kvd.studio,*.lab.kvd.studio
   markup: |
