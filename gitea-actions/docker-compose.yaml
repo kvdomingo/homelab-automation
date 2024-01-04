@@ -1,0 +1,12 @@
+services:
+  act:
+    image: gitea/act_runner:0.2.6-dind-rootless
+    restart: unless-stopped
+    init: true
+    env_file: .env
+    command:
+      - /bin/sh
+      - -c
+      - >
+        act_runner register --no-interactive --instance $$INSTANCE --token $$TOKEN;
+        act_runner daemon;
