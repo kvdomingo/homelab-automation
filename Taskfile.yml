@@ -28,7 +28,7 @@ tasks:
     internal: true
     dir: ansible
     cmds:
-      - ansible-playbook -i inventory/hosts playbooks/setup.yml
+      - ansible-playbook -i inventory/hosts playbooks/setup-vm.yml
 
   setup-k8s-master:
     internal: true
@@ -53,6 +53,15 @@ tasks:
         nfs-subdir-external-provisioner/nfs-subdir-external-provisioner
         --namespace kube-system
         --values values.yaml
+
+  setup-helm-repos:
+    desc: Setup Helm repositories
+    cmds:
+      - helm repo add bitnami https://charts.bitnami.com/bitnami
+      - helm repo add gitlab  https://charts.gitlab.io/
+      - helm repo add traefik https://traefik.github.io/charts
+      - helm repo add gitea https://dl.gitea.com/charts/
+      - helm repo update
 
   setup-traefik:
     desc: Setup Traefik
@@ -84,6 +93,7 @@ tasks:
         --set postgresql.auth.database={{.GITEA_POSTGRES_DATABASE}}
         --set postgresql.auth.password={{.GITEA_POSTGRES_PASSWORD}}
         --set postgresql.auth.username={{.GITEA_POSTGRES_USERNAME}}
+      - kubectl apply -f ingress.yaml
 
   setup-gitea-act-runner:
     desc: Setup Gitea act runner
@@ -144,9 +154,8 @@ tasks:
     dir: argocd
     cmds:
       - kubectl apply -f namespace.yaml
-      - kubectl ns argocd
-      - kubectl apply -f install.yaml
-      - kubectl apply -f ingress.yaml
+      - kubectl apply -f install.yaml -n argocd
+      - kubectl apply -f ingress.yaml -n argocd
 
   setup-zitadel:
     desc: Setup Zitadel

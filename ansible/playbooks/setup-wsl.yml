@@ -1,0 +1,28 @@
+- name: Initial WSL setup
+  hosts: local
+  become: true
+
+  tasks:
+    - name: Update apt
+      apt:
+        update_cache: true
+        upgrade: yes
+
+    - name: Install basics
+      package:
+        name:
+          - curl
+          - wget
+          - gnupg
+          - git
+          - ca-certificates
+          - apt-transport-https
+          - libfuse2
+          - gedit
+        state: latest
+
+    - name: Clone dotrepo
+      git:
+        repo: https://github.com/kvdomingo/dotrepo.git
+        dest: ~/dotrepo
+        clone: true
