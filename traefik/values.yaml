@@ -741,7 +741,7 @@ ports:
   ssh:
     port: 22
     expose: true
-    exposedPort: 22
+    exposedPort: 3322
     protocol: TCP
 
 # -- TLS Options are created as TLSOption CRDs

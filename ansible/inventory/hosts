@@ -1,3 +1,6 @@
+[local]
+localhost
+
 [k8s_master]
 srv-k8s-01.lab
 
