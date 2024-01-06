@@ -15,6 +15,7 @@ redis:
     enabled: true
     existingSecret: firefly-secrets
     existingSecretPasswordKey: REDIS_PASSWORD
+  architecture: standalone
   volumePermissions:
     enabled: true
 
@@ -29,7 +30,7 @@ firefly-iii:
       gethomepage.dev/enabled: "true"
       gethomepage.dev/name: "Firefly"
       gethomepage.dev/group: "Finances"
-      gethomepage.dev/icon: "fireflyiii.png"
+      gethomepage.dev/icon: "firefly.png"
       gethomepage.dev/ping: "firefly.lab.kvd.studio"
     hosts:
       - firefly.lab.kvd.studio
