@@ -1,0 +1,12 @@
+apiVersion: v2
+description: Deploys the importer chart for Firefly III
+home: https://www.firefly-iii.org/
+icon: https://raw.githubusercontent.com/firefly-iii/firefly-iii/main/.github/assets/img/logo-small.png
+maintainers:
+- email: firefly-iii@mor.re
+  name: morremeyer
+name: importer
+sources:
+- https://github.com/firefly-iii/data-importer
+type: application
+version: 1.3.1

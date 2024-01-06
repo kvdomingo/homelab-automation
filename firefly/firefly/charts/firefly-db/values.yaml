@@ -1,0 +1,28 @@
+image:
+  repository: postgres
+  tag: 10-alpine
+  pullPolicy: IfNotPresent
+
+storage:
+  class: ~
+  accessModes: ReadWriteOnce
+  dataSize: 1Gi
+  # -- Use an existing PersistentVolumeClaim, overrides values above
+  existingClaim: ""
+
+configs:
+  RESTORE_URL: ""
+  BACKUP_URL: ""
+  PGPASSWORD: ""
+  DBHOST: firefly-firefly-db
+  DBPORT: "5432"
+  DBNAME: firefly
+  DBUSER: firefly
+  TZ: Asia/Manila
+  POSTGRES_HOST_AUTH_METHOD: trust
+  POSTGRES_USER: firefly
+  POSTGRES_PASSWORD: ""
+    # -- Set this to the name of a secret to load environment variables from. If defined, values in the secret will override values in configs
+  existingSecret: ""
+
+backupSchedule: "0 3 * * *"
