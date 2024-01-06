@@ -9,8 +9,6 @@ spec:
     repoURL: https://git.lab.kvd.studio/r/homelab.git
     targetRevision: main
     path: firefly/firefly
-    helm:
-      releaseName: firefly
     plugin:
       name: argocd-vault-plugin-helm
   destination:

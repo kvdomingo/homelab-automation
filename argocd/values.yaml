@@ -385,11 +385,11 @@ configs:
     #   annotations: {}
     #   config:
     #     bearerToken: "<authentication token>"
-    #     tlsClientConfig:
-    #       insecure: false
-    #       caData: "<base64 encoded certificate>"
-    # - name: mycluster2
-    #   server: https://mycluster2.example.com
+  #     tlsClientConfig:
+  #       insecure: false
+  #       caData: "<base64 encoded certificate>"
+  # - name: mycluster2
+  #   server: https://mycluster2.example.com
   #   labels: {}
   #   annotations: {}
   #   namespaces: namespace1,namespace2
@@ -504,11 +504,11 @@ configs:
 ## Note: Supports use of custom Helm templates
 extraObjects: [ ]
   # - apiVersion: secrets-store.csi.x-k8s.io/v1
-  #   kind: SecretProviderClass
-  #   metadata:
-  #     name: argocd-secrets-store
-  #   spec:
-  #     provider: aws
+#   kind: SecretProviderClass
+#   metadata:
+#     name: argocd-secrets-store
+#   spec:
+#     provider: aws
 #     parameters:
 #       objects: |
 #         - objectName: "argocd"
@@ -2172,7 +2172,7 @@ repoServer:
           value: 1.17.0
       command: [ sh, -c ]
       args:
-        - >-
+        - >
           curl -L https://github.com/argoproj-labs/argocd-vault-plugin/releases/download/v${AVP_VERSION}/argocd-vault-plugin_${AVP_VERSION}_linux_amd64 -o argocd-vault-plugin &&
           chmod +x argocd-vault-plugin &&
           mv argocd-vault-plugin /custom-tools/
@@ -3204,11 +3204,11 @@ notifications:
     #     attachments: |-
     #       [{
     #         "title": "{{ .app.metadata.name}}",
-    #         "title_link":"{{.context.argocdUrl}}/applications/{{.app.metadata.name}}",
-    #         "color": "#18be52",
-    #         "fields": [
-    #         {
-    #           "title": "Sync Status",
+  #         "title_link":"{{.context.argocdUrl}}/applications/{{.app.metadata.name}}",
+  #         "color": "#18be52",
+  #         "fields": [
+  #         {
+  #           "title": "Sync Status",
   #           "value": "{{.app.status.sync.status}}",
   #           "short": true
   #         },
@@ -3243,11 +3243,11 @@ notifications:
     #     send:
     #     - app-health-degraded
     #     when: app.status.health.status == 'Degraded'
-    # trigger.on-sync-failed: |
-    #   - description: Application syncing has failed
-    #     send:
-    #     - app-sync-failed
-    #     when: app.status.operationState.phase in ['Error', 'Failed']
+  # trigger.on-sync-failed: |
+  #   - description: Application syncing has failed
+  #     send:
+  #     - app-sync-failed
+  #     when: app.status.operationState.phase in ['Error', 'Failed']
   # trigger.on-sync-running: |
   #   - description: Application is being synced
   #     send:

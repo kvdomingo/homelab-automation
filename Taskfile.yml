@@ -12,7 +12,7 @@ dotenv:
 
 tasks:
   setup-k8s:
-    desc: Run first-time K8s setup
+    desc: Run first-time K8s & core infra setup
     dir: ansible
     cmds:
       - task: bootstrap-vms
@@ -22,6 +22,7 @@ tasks:
       - task: setup-traefik
       - task: setup-promstack
       - task: setup-longhorn
+      - task: setup-argocd
 
   bootstrap-vms:
     desc: Install pre-requisites in VMs
