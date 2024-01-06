@@ -54,9 +54,11 @@ tasks:
         --namespace kube-system
         --values values.yaml
 
-  setup-helm-repos:
-    desc: Setup Helm repositories
+  setup-init:
+    desc: Initial setup
     cmds:
+      - pre-commit install
+      - helm repo add argo https://argoproj.github.io/argo-helm
       - helm repo add bitnami https://charts.bitnami.com/bitnami
       - helm repo add gitlab  https://charts.gitlab.io/
       - helm repo add traefik https://traefik.github.io/charts
@@ -155,8 +157,8 @@ tasks:
     cmds:
       - kubectl apply -f namespace.yaml
       - kubectl apply -f secrets.yaml
-      - kubectl apply -f install.yaml -n argocd
-      - kubectl apply -f ingress.yaml
+      - kubectl apply -f cm.yaml
+      - helm upgrade --install argocd argo/argo-cd --values values.yaml --namespace argocd
 
   setup-zitadel:
     desc: Setup Zitadel
@@ -285,4 +287,8 @@ tasks:
     desc: Setup HashiCorp Vault
     dir: vault
     cmds:
-      - kubectl apply -f application.yaml
+      - >
+        helm upgrade --install vault hashicorp/vault 
+        --values values.yaml
+        --create-namespace
+        --namespace vault
