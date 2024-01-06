@@ -243,7 +243,7 @@ providers:
     # - "default"
     # IP used for Kubernetes Ingress endpoints
     publishedService:
-      enabled: false
+      enabled: true
       # Published Kubernetes Service to copy status from. Format: namespace/servicename
       # By default this Traefik service
       # pathOverride: ""
@@ -257,11 +257,11 @@ providers:
     # -- File content (YAML format, go template supported) (see https://doc.traefik.io/traefik/providers/file/)
     content: ""
       # http:
-      #   routers:
-      #     router0:
-      #       entryPoints:
-      #       - web
-      #       middlewares:
+    #   routers:
+    #     router0:
+    #       entryPoints:
+    #       - web
+    #       middlewares:
     #       - my-basic-auth
     #       service: service-foo
     #       rule: Path(`/foo`)
