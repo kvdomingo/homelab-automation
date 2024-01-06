@@ -390,9 +390,9 @@ configs:
     #       caData: "<base64 encoded certificate>"
     # - name: mycluster2
     #   server: https://mycluster2.example.com
-    #   labels: {}
-    #   annotations: {}
-    #   namespaces: namespace1,namespace2
+  #   labels: {}
+  #   annotations: {}
+  #   namespaces: namespace1,namespace2
   #   clusterResources: true
   #   config:
   #     bearerToken: "<authentication token>"
@@ -509,9 +509,9 @@ extraObjects: [ ]
   #     name: argocd-secrets-store
   #   spec:
   #     provider: aws
-  #     parameters:
-  #       objects: |
-  #         - objectName: "argocd"
+#     parameters:
+#       objects: |
+#         - objectName: "argocd"
 #           objectType: "secretsmanager"
 #           jmesPath:
 #               - path: "client_id"
@@ -2121,7 +2121,7 @@ repoServer:
     # argocd-vault-plugin with plain YAML
     - name: avp
       command: [ /var/run/argocd/argocd-cmp-server ]
-      image: quay.io/argoproj/argocd:v2.4.0
+      image: quay.io/argoproj/argocd:v2.9.3
       securityContext:
         runAsNonRoot: true
         runAsUser: 999
@@ -2145,7 +2145,7 @@ repoServer:
 
     - name: avp-helm
       command: [ /var/run/argocd/argocd-cmp-server ]
-      image: quay.io/argoproj/argocd:v2.5.3
+      image: quay.io/argoproj/argocd:v2.9.3
       securityContext:
         runAsNonRoot: true
         runAsUser: 999
@@ -2173,7 +2173,7 @@ repoServer:
       command: [ sh, -c ]
       args:
         - >-
-          curl -L https://github.com/argoproj-labs/argocd-vault-plugin/releases/download/v$(AVP_VERSION)/argocd-vault-plugin_$(AVP_VERSION)_linux_amd64 -o argocd-vault-plugin &&
+          curl -L https://github.com/argoproj-labs/argocd-vault-plugin/releases/download/v${AVP_VERSION}/argocd-vault-plugin_${AVP_VERSION}_linux_amd64 -o argocd-vault-plugin &&
           chmod +x argocd-vault-plugin &&
           mv argocd-vault-plugin /custom-tools/
       volumeMounts:
@@ -3209,9 +3209,9 @@ notifications:
     #         "fields": [
     #         {
     #           "title": "Sync Status",
-    #           "value": "{{.app.status.sync.status}}",
-    #           "short": true
-    #         },
+  #           "value": "{{.app.status.sync.status}}",
+  #           "short": true
+  #         },
   #         {
   #           "title": "Repository",
   #           "value": "{{.app.spec.source.repoURL}}",
@@ -3248,9 +3248,9 @@ notifications:
     #     send:
     #     - app-sync-failed
     #     when: app.status.operationState.phase in ['Error', 'Failed']
-    # trigger.on-sync-running: |
-    #   - description: Application is being synced
-    #     send:
+  # trigger.on-sync-running: |
+  #   - description: Application is being synced
+  #     send:
   #     - app-sync-running
   #     when: app.status.operationState.phase in ['Running']
   # trigger.on-sync-status-unknown: |

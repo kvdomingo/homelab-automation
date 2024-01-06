@@ -29,60 +29,60 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       containers:
-      - name: {{ .Chart.Name }}
+        - name: {{ .Chart.Name }}
         {{- with .Values.securityContext }}
-        securityContext:
+          securityContext:
           {{- toYaml . | nindent 12 }}
         {{- end }}
-        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-        imagePullPolicy: {{ .Values.image.pullPolicy }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
         {{- if or .Values.config.envValueFrom }}
-        env:
+          env:
         {{- range $key, $value := .Values.config.envValueFrom }}
-          - name: {{ $key }}
-            valueFrom: {{- $value | toYaml | nindent 16 }}
+            - name: {{ $key }}
+              valueFrom: {{- $value | toYaml | nindent 16 }}
         {{- end }}
         {{- end }}
         {{- if or (.Values.config.env) (.Values.config.existingSecret) }}
-        envFrom:
+          envFrom:
           {{- if .Values.config.env }}
-          - configMapRef:
-              name: {{ template "firefly-iii.fullname" . }}
+            - configMapRef:
+                name: {{ template "firefly-iii.fullname" . }}
           {{- end }}
           {{- if .Values.config.existingSecret }}
-          - secretRef:
-              name: {{ .Values.config.existingSecret }}
+            - secretRef:
+                name: {{ .Values.config.existingSecret }}
           {{- else if .Values.secrets.env }}
-          - secretRef:
-              name: {{ template  "firefly-iii.fullname" . }}
+            - secretRef:
+                name: {{ template  "firefly-iii.fullname" . }}
           {{- end }}
         {{- end }}
         {{- if .Values.persistence.enabled }}
-        volumeMounts:
-          - name: upload
-            mountPath: "/var/www/html/storage/upload"
+          volumeMounts:
+            - name: upload
+              mountPath: "/var/www/html/storage/upload"
         {{- end }}
-        ports:
-          - name: http
-            containerPort: 8080
-            protocol: TCP
-        livenessProbe:
-          httpGet:
-            path: /health
-            port: http
-        readinessProbe:
-          httpGet:
-            path: /health
-            port: http
-        startupProbe:
-          httpGet:
-            path: /health
-            port: http
-          # Give the app 30 x 10 = 300s to startup
-          failureThreshold: 30
-          periodSeconds: 10
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+          startupProbe:
+            httpGet:
+              path: /health
+              port: http
+            # Give the app 30 x 10 = 300s to startup
+            failureThreshold: 30
+            periodSeconds: 10
         {{- with .Values.resources }}
-        resources:
+          resources:
           {{- toYaml . | nindent 12 }}
         {{- end }}
       {{- if .Values.persistence.enabled }}
