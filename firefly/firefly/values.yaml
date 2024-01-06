@@ -24,6 +24,7 @@ firefly-iii:
   enabled: true
   config:
     existingSecret: firefly-secrets
+    existingConfigMap: firefly-cm
   ingress:
     enabled: true
     annotations:
