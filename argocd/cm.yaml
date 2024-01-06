@@ -19,10 +19,10 @@ data:
             - "find . -name 'Chart.yaml' && find . -name 'values.yaml'"
       generate:
         command:
-          - sh
+          - bash
           - "-c"
           - |
-            helm template $ARGOCD_APP_NAME --include-crds -n $ARGOCD_APP_NAMESPACE . |
+            helm template $ARGOCD_APP_NAME --include-crds -n $ARGOCD_APP_NAMESPACE -f <(echo "$ARGOCD_ENV_HELM_VALUES") . |
             argocd-vault-plugin generate -s vault-configuration -
       lockRepo: false
   avp.yaml: |

@@ -64,6 +64,9 @@ tasks:
       - helm repo add gitlab  https://charts.gitlab.io/
       - helm repo add traefik https://traefik.github.io/charts
       - helm repo add gitea https://dl.gitea.com/charts/
+      - helm repo add nextcloud https://nextcloud.github.io/helm/
+      - helm repo add hashicorp https://helm.releases.hashicorp.com
+      - helm repo add firefly https://firefly-iii.github.io/kubernetes/
       - helm repo update
 
   setup-traefik:
