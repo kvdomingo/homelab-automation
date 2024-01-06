@@ -1,7 +1,0 @@
-services:
-  runner:
-    image: gitea/act_runner:0.2.6
-    restart: unless-stopped
-    env_file: .env
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock

@@ -154,8 +154,9 @@ tasks:
     dir: argocd
     cmds:
       - kubectl apply -f namespace.yaml
+      - kubectl apply -f secrets.yaml
       - kubectl apply -f install.yaml -n argocd
-      - kubectl apply -f ingress.yaml -n argocd
+      - kubectl apply -f ingress.yaml
 
   setup-zitadel:
     desc: Setup Zitadel
@@ -279,3 +280,9 @@ tasks:
       - helm upgrade --install readarr ./readarr --namespace arrstack
       - helm upgrade --install lidarr ./lidarr --namespace arrstack
       - helm upgrade --install jellyseerr ./jellyseerr --namespace arrstack
+
+  setup-vault:
+    desc: Setup HashiCorp Vault
+    dir: vault
+    cmds:
+      - kubectl apply -f application.yaml

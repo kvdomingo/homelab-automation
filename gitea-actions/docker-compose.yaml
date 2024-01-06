@@ -1,12 +1,11 @@
 services:
   act:
-    image: gitea/act_runner:0.2.6-dind-rootless
+    image: gitea/act_runner:0.2.6
     restart: unless-stopped
-    init: true
+    user: "0:0"
     env_file: .env
-    command:
-      - /bin/sh
-      - -c
-      - >
-        act_runner register --no-interactive --instance $$INSTANCE --token $$TOKEN;
-        act_runner daemon;
+    environment:
+      TZ: Asia/Manila
+    volumes:
+      - ./data:/data
+      - /var/run/docker.sock:/var/run/docker.sock

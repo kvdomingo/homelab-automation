@@ -7,3 +7,6 @@ srv-k8s-01.lab
 [k8s_workers]
 srv-k8s-02.lab
 srv-k8s-03.lab
+
+[gitea_runners]
+10.10.10.103
