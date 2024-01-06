@@ -28,7 +28,7 @@ config:
   # -- Directly defined environment variables. Use this for non-secret configuration values.
   env:
     IGNORE_DUPLICATE_ERRORS: "false"
-    TZ: "Asia/Manila"
+    TZ: "Europe/Amsterdam"
 
   # -- A list of files with a mountPath, a file name and the file's content. Files are stored as a secret.
   files:

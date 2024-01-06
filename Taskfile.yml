@@ -292,3 +292,9 @@ tasks:
         --values values.yaml
         --create-namespace
         --namespace vault
+
+  setup-firefly:
+    desc: Setup FireflyIII
+    dir: firefly
+    cmds:
+      - kubectl apply -f application.yaml

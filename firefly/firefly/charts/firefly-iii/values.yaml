@@ -5,7 +5,7 @@ image:
   pullPolicy: IfNotPresent
   tag: version-5.6.14
 
-imagePullSecrets: []
+imagePullSecrets: [ ]
 nameOverride: ""
 fullnameOverride: ""
 
@@ -24,7 +24,7 @@ config:
   existingSecret: ""
 
   # -- Set environment variables from configMaps or Secrets
-  envValueFrom: {}
+  envValueFrom: { }
 
   # -- Directly defined environment variables. Use this for non-secret configuration values.
   env:
@@ -34,33 +34,33 @@ config:
     DB_USERNAME: firefly
     DEFAULT_LANGUAGE: "en_US"
     DEFAULT_LOCALE: "equal"
-    TZ: "Asia/Manila"
+    TZ: "Europe/Amsterdam"
     TRUSTED_PROXIES: "**"
 
 # -- Create a new Secret from values file to store sensitive environment variables. Make sure to keep your secrets encrypted in the repository! For example, you can use the 'helm secrets' plugin (https://github.com/jkroepke/helm-secrets) to encrypt and manage secrets. If the 'config.existingSecret' value is set, a new Secret will not be created.
-#secrets:
-#  env:
-#    APP_PASSWORD: "CHANGE_ENCRYPT_ME"
-#    DB_PASSWORD: "CHANGE_ENCRYPT_ME"
+secrets:
+  env:
+    APP_PASSWORD: ""
+    DB_PASSWORD: ""
 
 # -- A cronjob for [recurring Firefly III tasks](https://docs.firefly-iii.org/firefly-iii/advanced-installation/cron/).
 cronjob:
   # -- Set to true to enable the CronJob. Note that you need to specify either cronjob.auth.existingSecret or cronjob.auth.token for it to actually be deployed.
-  enabled: true
+  enabled: false
 
   # -- Authorization for the CronJob. See https://docs.firefly-iii.org/firefly-iii/advanced-installation/cron/#request-a-page-over-the-web
   auth:
     # -- The name of a secret containing a data.token field with the cronjob token
-    existingSecret: firefly-secrets
+    existingSecret: ""
 
     # -- The name of the key in the existing secret to get the cronjob token from
-    secretKey: STATIC_CRON_TOKEN
+    secretKey: "token"
 
     # -- The token in plain text
     token: ""
 
   # -- Annotations for the CronJob
-  annotations: {}
+  annotations: { }
 
   # -- When to run the CronJob. Defaults to 03:00 as this is when Firefly III executes regular tasks.
   schedule: "0 3 * * *"
@@ -79,56 +79,53 @@ cronjob:
     pullPolicy: IfNotPresent
     tag: 7.81.0
 
-  imagePullSecrets: []
+  imagePullSecrets: [ ]
 
-  podAnnotations: {}
+  podAnnotations: { }
 
-  securityContext: {}
+  securityContext: { }
 
-  podSecurityContext: {}
+  podSecurityContext: { }
 
-  resources: {}
+  resources: { }
 
-  nodeSelector: {}
+  nodeSelector: { }
 
-  tolerations: []
+  tolerations: [ ]
 
-  affinity: {}
+  affinity: { }
 
-podAnnotations: {}
+podAnnotations: { }
 
-podSecurityContext: {}
-  # fsGroup: 2000
+podSecurityContext: { }
+# fsGroup: 2000
 
-securityContext: {}
+securityContext: { }
   # capabilities:
   #   drop:
   #   - ALL
   # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
+# runAsNonRoot: true
+# runAsUser: 1000
 
 service:
   type: ClusterIP
   port: 80
 
 ingress:
-  enabled: true
+  enabled: false
   className: ""
-  annotations:
-    gethomepage.dev/enabled: "true"
-    gethomepage.dev/name: "Firefly"
-    gethomepage.dev/group: "Finances"
-    gethomepage.dev/icon: "fireflyiii.png"
-    gethomepage.dev/ping: "firefly.lab.kvd.studio"
+  annotations: { }
+  # kubernetes.io/ingress.class: nginx
+  # kubernetes.io/tls-acme: "true"
   hosts:
-    - firefly.lab.kvd.studio
-  tls: []
+    - chart-example.local
+  tls: [ ]
   #  - secretName: chart-example-tls
   #    hosts:
   #      - chart-example.local
 
-resources: {}
+resources: { }
   # We usually recommend not to specify default resources and to leave this as a conscious
   # choice for the user. This also increases chances charts run on environments with little
   # resources, such as Minikube. If you do want to specify resources, uncomment the following
@@ -137,8 +134,8 @@ resources: {}
   #   cpu: 100m
   #   memory: 128Mi
   # requests:
-  #   cpu: 100m
-  #   memory: 128Mi
+#   cpu: 100m
+#   memory: 128Mi
 
 autoscaling:
   enabled: false
@@ -147,8 +144,8 @@ autoscaling:
   targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80
 
-nodeSelector: {}
+nodeSelector: { }
 
-tolerations: []
+tolerations: [ ]
 
-affinity: {}
+affinity: { }

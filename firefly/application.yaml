@@ -8,7 +8,9 @@ spec:
   source:
     repoURL: https://git.lab.kvd.studio/r/homelab.git
     targetRevision: main
-    chart: firefly/firefly
+    path: firefly/firefly
+    helm:
+      releaseName: firefly
   destination:
     server: https://kubernetes.default.svc
     namespace: firefly
