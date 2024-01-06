@@ -22,6 +22,7 @@ persistence:
 config:
   # -- Set this to the name of a secret to load environment variables from. If defined, values in the secret will override values in config.env
   existingSecret: ""
+  existingConfigMap: ""
 
   # -- Set environment variables from configMaps or Secrets
   envValueFrom: { }
@@ -104,7 +105,7 @@ securityContext: { }
   # capabilities:
   #   drop:
   #   - ALL
-  # readOnlyRootFilesystem: true
+# readOnlyRootFilesystem: true
 # runAsNonRoot: true
 # runAsUser: 1000
 
@@ -133,7 +134,7 @@ resources: { }
   # limits:
   #   cpu: 100m
   #   memory: 128Mi
-  # requests:
+# requests:
 #   cpu: 100m
 #   memory: 128Mi
 
