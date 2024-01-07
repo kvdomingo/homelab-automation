@@ -1,6 +1,8 @@
 - name: Initial WSL setup
   hosts: local
   become: true
+  vars:
+    JETBRAINS_TOOLBOX_VERSION: jetbrains-toolbox-2.1.3.18901
 
   tasks:
     - name: Update apt
@@ -14,11 +16,15 @@
           - curl
           - wget
           - gnupg
+          - gpg
           - git
           - ca-certificates
           - apt-transport-https
           - libfuse2
           - gedit
+          - python3
+          - zsh
+          - tmux
         state: latest
 
     - name: Clone dotrepo
@@ -26,3 +32,137 @@
         repo: https://github.com/kvdomingo/dotrepo.git
         dest: ~/dotrepo
         clone: true
+
+    - name: Install dotrepo
+      shell:
+        chdir: ~/dotrepo
+        cmd: ./install
+
+    - name: Download & install neovim
+      shell:
+        cmd: wget https://github.com/neovim/neovim/releases/latest/download/nvim.appimage -O ~/.local/bin/nvim && chmod +x ~/.local/bin/nvim
+
+    - name: Install tmux plugin manager
+      git:
+        repo: https://github.com/tmux-plugins/tpm
+        dest: ~/.tmux/plugins/tpm
+        clone: true
+
+    - name: Install shell utilities
+      shell:
+        cmd: |
+          sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+          curl -sS https://starship.rs/install.sh | sh
+          chsh -s "$(which zsh)"
+
+    - name: Install essential utilities
+      shell:
+        cmd: |
+          wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O ~/.local/bin/yq && chmod +x ~/.local/bin/yq
+          wget https://github.com/jqlang/jq/releases/latest/download/jq-linux-amd64 -O ~/.local/bin/jq && chmod +x ~/.local/bin/jq
+          sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d -b ~/.local/bin && chmod +x ~/.local/bin/task
+
+    - name: Clone asdf-vm
+      git:
+        repo: https://github.com/asdf-vm/asdf.git
+        dest: ~/.asdf
+        clone: true
+        version: v0.13.1
+
+    - name: Install asdf-vm plugins
+      shell:
+        cmd: |
+          asdf plugin add adr-tools
+          asdf plugin add golang
+          asdf plugin add java https://github.com/halcyon/asdf-java.git
+          asdf plugin add nodejs
+          asdf plugin add poetry
+          asdf plugin add python
+
+    - name: Install asdf tools
+      shell:
+        cmd: asdf install
+
+    - name: Install/update global Python packages
+      shell:
+        cmd: pip install -U pip pre-commit ansible
+
+    - name: Install/update global Node.js packages
+      shell:
+        cmd: npm i -g npm yarn pnpm
+
+    - name: Install Bun
+      shell:
+        cmd: curl -fsSL https://bun.sh/install | bash
+
+    - name: Setup k8s development environment
+      shell:
+        cmd: |
+          chmod 600 ~/.kube/config && cp ~/.kube/config ~/.kube/config.yaml
+          curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+          (
+            set -x; cd "$(mktemp -d)" &&
+            OS="$(uname | tr '[:upper:]' '[:lower:]')" &&
+            ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')" &&
+            KREW="krew-${OS}_${ARCH}" &&
+            curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/latest/download/${KREW}.tar.gz" &&
+            tar zxvf "${KREW}.tar.gz" &&
+            ./"${KREW}" install krew
+          )
+          kubectl krew install ctx ns
+
+    - name: Download & install JetBrains Toolbox
+      shell:
+        chdir: ~/Downloads
+        cmd: |
+          wget https://download.jetbrains.com/toolbox/{{ JETBRAINS_TOOLBOX_VERSION }}.tar.gz
+          tar -xzvf {{ JETBRAINS_TOOLBOX_VERSION }}.tar.gz
+          ./{{ JETBRAINS_TOOLBOX_VERSION }}/jetbrains-toolbox
+
+    - name: Add HashiCorp keyring & repository
+      shell:
+        cmd: |
+          wget -O- https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
+          gpg --no-default-keyring --keyring /usr/share/keyrings/hashicorp-archive-keyring.gpg --fingerprint
+          echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+
+    - name: Update apt
+      apt:
+        update_cache: true
+        upgrade: yes
+
+    - name: Install HashiCorp Vault & Terraform
+      package:
+        name:
+          - vault
+          - terraform
+        state: latest
+
+    - name: Install AWS CLI
+      shell:
+        chdir: ~/Downloads
+        cmd: |
+          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+          unzip awscliv2.zip
+          sudo ./aws/install
+
+    - name: Install Azure CLI
+      shell:
+        cmd: curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+
+    - name: Add Google Cloud keyring & repository
+      shell:
+        cmd: |
+          curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo gpg --dearmor -o /usr/share/keyrings/cloud.google.gpg
+          echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
+
+    - name: Update apt
+      apt:
+        update_cache: true
+        upgrade: yes
+
+    - name: Install gcloud CLI
+      package:
+        name:
+          - google-cloud-cli
+        state: latest
