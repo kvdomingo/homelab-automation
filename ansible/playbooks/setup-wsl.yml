@@ -90,9 +90,11 @@
         clone: true
         version: v0.13.1
 
-    - name: Reload shell
+    - name: Load asdf
+      environment:
+        ASDF_DIR: /root/.asdf
       shell:
-        cmd: omz reload
+        cmd: . ~/.asdf/asdf.sh
 
     - name: Install asdf-vm plugins
       shell:
