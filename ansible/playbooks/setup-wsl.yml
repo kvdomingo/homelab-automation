@@ -13,34 +13,35 @@
     - name: Install basics
       package:
         name:
+          - apt-transport-https
+          - build-essential
+          - ca-certificates
           - curl
-          - wget
+          - direnv
+          - gedit
+          - git
           - gnupg
           - gpg
-          - git
-          - ca-certificates
-          - apt-transport-https
-          - libfuse2
-          - gedit
-          - python3
-          - zsh
-          - zsh-syntax-highlighting
-          - unzip
-          - tmux
-          - lsb-release
-          - build-essential
-          - libssl-dev
-          - zlib1g-dev
           - libbz2-dev
+          - libffi-dev
+          - libfuse2
+          - liblzma-dev
+          - libncursesw5-dev
           - libreadline-dev
           - libsqlite3-dev
-          - libncursesw5-dev
-          - xz-utils
-          - tk-dev
-          - libxml2-dev
+          - libssl-dev
           - libxmlsec1-dev
-          - libffi-dev
-          - liblzma-dev
+          - libxml2-dev
+          - lsb-release
+          - python3
+          - tk-dev
+          - tmux
+          - unzip
+          - wget
+          - xz-utils
+          - zlib1g-dev
+          - zsh
+          - zsh-syntax-highlighting
         state: latest
 
     - name: Setup dotfiles
@@ -173,6 +174,7 @@
           - pip
           - pre-commit
           - ansible
+          - thefuck
         state: latest
 
     - name: Install/update global Node.js package managers
@@ -207,6 +209,11 @@
 
     - name: Setup k8s development environment
       block:
+        - name: Ensure kubeconfig is not world-readable
+          file:
+            path: ~/.kube/config
+            state: file
+            mode: "0600"
         - name: Copy kubeconfig
           copy:
             src: ~/.kube/config
