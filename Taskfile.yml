@@ -23,6 +23,7 @@ tasks:
       - task: setup-promstack
       - task: setup-longhorn
       - task: setup-argocd
+      - task: setup-argo-rollouts
 
   bootstrap-vms:
     desc: Install pre-requisites in VMs
@@ -163,6 +164,16 @@ tasks:
       - kubectl apply -f secrets.yaml
       - kubectl apply -f cm.yaml
       - helm upgrade --install argocd argo/argo-cd --values values.yaml --namespace argocd
+
+  setup-argo-rollouts:
+    desc: Setup Argo Rollouts
+    dir: argo-rollouts
+    cmds:
+      - >
+        helm upgrade --install argo-rollouts argo/argo-rollouts
+        --values values.yaml
+        --namespace argo-rollouts
+        --create-namespace
 
   setup-zitadel:
     desc: Setup Zitadel
