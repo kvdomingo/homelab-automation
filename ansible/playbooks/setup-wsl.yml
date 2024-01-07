@@ -49,6 +49,7 @@
             repo: https://github.com/kvdomingo/dotrepo.git
             dest: ~/dotrepo
             clone: true
+            force: true
         - name: Delete existing .zshrc
           file:
             path: ~/.zshrc
@@ -254,7 +255,7 @@
         - name: Untar JetBrains Toolbox
           unarchive:
             src: ~/Downloads/{{ JETBRAINS_TOOLBOX_VERSION }}.tar.gz
-            dest: ~/Downloads/{{ JETBRAINS_TOOLBOX_VERSION }}
+            dest: ~/Downloads
         - name: Install JetBrains Toolbox
           shell:
             chdir: ~/Downloads/{{ JETBRAINS_TOOLBOX_VERSION }}
