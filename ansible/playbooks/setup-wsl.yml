@@ -65,9 +65,10 @@
     - name: Install shell utilities
       shell:
         cmd: |
-          sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-          curl -sS https://starship.rs/install.sh | sh
+          sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" --unattended --keep-zshrc
+          curl -sS https://starship.rs/install.sh | sh - -y
           chsh -s "$(which zsh)"
+          omz reload
 
     - name: Install essential utilities
       shell:
