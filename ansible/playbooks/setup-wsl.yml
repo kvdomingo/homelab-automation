@@ -189,14 +189,14 @@
             state: latest
             global: true
 
-    - name: Install Bun
+    - name: Setup Bun
       block:
-        - name: Download
+        - name: Download Bun
           get_url:
             url: https://bun.sh/install
             dest: ~/Downloads/install-bun.sh
             mode: "0755"
-        - name: Install
+        - name: Install Bun
           shell:
             chdir: ~/Downloads
             cmd: ./install-bun.sh
@@ -233,38 +233,40 @@
           shell:
             cmd: kubectl krew install ctx ns
 
-    - name: Install wakatime
+    - name: Setup wakatime
       block:
-        - name: Download
+        - name: Download wakatime
           get_url:
             url: https://raw.githubusercontent.com/wakatime/vim-wakatime/master/scripts/install_cli.py
             dest: ~/Downloads/install_wakatime.py
             mode: "0755"
-        - name: Install
+        - name: Install wakatime
           script: ~/Downloads/install_wakatime.py
+          args:
+            executable: python
 
     - name: Setup JetBrains Toolbox
       block:
-        - name: Download
+        - name: Download JetBrains Toolbox
           get_url:
             url: https://download.jetbrains.com/toolbox/{{ JETBRAINS_TOOLBOX_VERSION }}.tar.gz
             dest: ~/Downloads/{{ JETBRAINS_TOOLBOX_VERSION }}.tar.gz
-        - name: Untar
+        - name: Untar JetBrains Toolbox
           unarchive:
             src: ~/Downloads/{{ JETBRAINS_TOOLBOX_VERSION }}.tar.gz
             dest: ~/Downloads/{{ JETBRAINS_TOOLBOX_VERSION }}
-        - name: Install
+        - name: Install JetBrains Toolbox
           shell:
             chdir: ~/Downloads/{{ JETBRAINS_TOOLBOX_VERSION }}
             cmd: ./jetbrains-toolbox
 
     - name: Install HashiCorp software
       block:
-        - name: Download gpg key
+        - name: Download HashiCorp gpg key
           get_url:
             url: https://apt.releases.hashicorp.com/gpg
             dest: ~/Downloads/hashicorp.gpg
-        - name: Add gpg key
+        - name: Add HashiCorp gpg key
           apt_key:
             file: ~/Downloads/hashicorp.gpg
             state: present
@@ -292,29 +294,29 @@
               - terraform
             state: latest
 
-    - name: Install AWS CLI
+    - name: Setup AWS CLI
       block:
-        - name: Download
+        - name: Download AWS CLI
           get_url:
             url: https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip
             dest: ~/Downloads/awscliv2.zip
-        - name: Unzip
+        - name: Unzip AWS CLI
           unarchive:
             src: ~/Downloads/awscliv2.zip
             dest: ~/Downloads/aws
-        - name: Install
+        - name: Install AWS CLI
           shell:
             chdir: ~/Downloads/aws
             cmd: ./install
 
-    - name: Install Azure CLI
+    - name: Setup Azure CLI
       block:
-        - name: Download
+        - name: Download Azure CLI
           get_url:
             url: https://aka.ms/InstallAzureCLIDeb
             dest: ~/Downloads/InstallAzureCLIDeb
             mode: "0755"
-        - name: Install
+        - name: Install Azure CLI
           shell:
             chdir: ~/Downloads
             cmd: ./InstallAzureCLIDeb
