@@ -50,6 +50,7 @@
       shell:
         chdir: ~/dotrepo
         cmd: ./install
+      ignore_errors: true
 
     - name: Download & install neovim
       shell:
