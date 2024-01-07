@@ -68,7 +68,6 @@
           sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" --unattended --keep-zshrc
           curl -sS https://starship.rs/install.sh | sh - -y
           chsh -s "$(which zsh)"
-          omz reload
 
     - name: Install essential utilities
       shell:
@@ -83,6 +82,10 @@
         dest: ~/.asdf
         clone: true
         version: v0.13.1
+
+    - name: Load asdf
+      shell:
+        cmd: . ~/.asdf/asdf.sh
 
     - name: Install asdf-vm plugins
       shell:
