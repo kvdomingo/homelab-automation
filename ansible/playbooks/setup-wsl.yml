@@ -27,6 +27,7 @@
           - zsh-syntax-highlighting
           - unzip
           - tmux
+          - lsb-release
           - build-essential
           - libssl-dev
           - zlib1g-dev
@@ -273,7 +274,7 @@
             mode: "0440"
         - name: Add HashiCorp gpg key
           shell:
-            cmd: gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg ~/Downloads/hashicorp.gpg
+            cmd: gpg --dearmor --yes -o /usr/share/keyrings/hashicorp-archive-keyring.gpg ~/Downloads/hashicorp.gpg
         - name: Get architecture
           command:
             cmd: dpkg --print-architecture
@@ -311,7 +312,7 @@
         - name: Install AWS CLI
           shell:
             chdir: ~/Downloads/aws
-            cmd: ./install
+            cmd: ./install --update
 
     - name: Setup Azure CLI
       block:
@@ -334,7 +335,7 @@
             mode: "0440"
         - name: Add gcloud gpg key
           shell:
-            cmd: gpg --dearmor -o /usr/share/keyrings/cloud.google.gpg ~/Downloads/gcloud-apt-key.gpg
+            cmd: gpg --dearmor --yes -o /usr/share/keyrings/cloud.google.gpg ~/Downloads/gcloud-apt-key.gpg
         - name: Add gcloud repository to sources
           lineinfile:
             path: /etc/apt/sources.list.d/google-cloud-sdk.list
