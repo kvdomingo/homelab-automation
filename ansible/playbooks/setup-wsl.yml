@@ -171,14 +171,23 @@
           - ansible
         state: latest
 
-    - name: Install/update global Node.js packages
-      npm:
-        name:
-          - npm
-          - yarn
-          - pnpm
-        state: latest
-        global: true
+    - name: Install/update global Node.js package managers
+      block:
+        - name: Install npm
+          npm:
+            name: npm
+            state: latest
+            global: true
+        - name: Install yarn
+          npm:
+            name: yarn
+            state: latest
+            global: true
+        - name: Install pnpm
+          npm:
+            name: pnpm
+            state: latest
+            global: true
 
     - name: Install Bun
       block:
