@@ -94,6 +94,7 @@
           shell:
             chdir: ~/Downloads
             cmd: sh install-oh-my-zsh.sh --unattended --keep-zshrc
+            creates: ~/.oh-my-zsh
         - name: Install oh-my-zsh plugins
           block:
             - name: Install wakatime plugin
@@ -137,6 +138,7 @@
           shell:
             chdir: ~/Downloads
             cmd: ./install-task.sh -d -b ~/.local/bin
+            creates: ~/.local/bin/task
 
     - name: Install asdf
       block:
@@ -260,6 +262,7 @@
           shell:
             chdir: ~/Downloads/{{ JETBRAINS_TOOLBOX_VERSION }}
             cmd: ./jetbrains-toolbox
+            creates: ~/.local/share/JetBrains/Toolbox/bin/jetbrains-toolbox
 
     - name: Install HashiCorp software
       block:
@@ -267,10 +270,10 @@
           get_url:
             url: https://apt.releases.hashicorp.com/gpg
             dest: ~/Downloads/hashicorp.gpg
+            mode: "0440"
         - name: Add HashiCorp gpg key
-          apt_key:
-            file: ~/Downloads/hashicorp.gpg
-            state: present
+          shell:
+            cmd: gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg ~/Downloads/hashicorp.gpg
         - name: Get architecture
           command:
             cmd: dpkg --print-architecture
@@ -304,7 +307,7 @@
         - name: Unzip AWS CLI
           unarchive:
             src: ~/Downloads/awscliv2.zip
-            dest: ~/Downloads/aws
+            dest: ~/Downloads
         - name: Install AWS CLI
           shell:
             chdir: ~/Downloads/aws
@@ -328,10 +331,10 @@
           get_url:
             url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
             dest: ~/Downloads/gcloud-apt-key.gpg
+            mode: "0440"
         - name: Add gcloud gpg key
-          apt_key:
-            file: ~/Downloads/gcloud-apt-key.gpg
-            state: present
+          shell:
+            cmd: gpg --dearmor -o /usr/share/keyrings/cloud.google.gpg ~/Downloads/gcloud-apt-key.gpg
         - name: Add gcloud repository to sources
           lineinfile:
             path: /etc/apt/sources.list.d/google-cloud-sdk.list
