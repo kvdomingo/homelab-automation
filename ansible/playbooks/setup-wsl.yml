@@ -79,6 +79,11 @@
 
     - name: Install shell utilities
       block:
+        - name: Delete existing oh-my-zsh directory
+          file:
+            path: ~/.oh-my-zsh
+            state: absent
+            force: true
         - name: Download oh-my-zsh
           get_url:
             url: https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh
@@ -88,6 +93,18 @@
           shell:
             chdir: ~/Downloads
             cmd: sh install-oh-my-zsh.sh --unattended --keep-zshrc
+        - name: Install oh-my-zsh plugins
+          block:
+            - name: Install wakatime plugin
+              git:
+                repo: https://github.com/sobolevn/wakatime-zsh-plugin.git
+                dest: ~/.oh-my-zsh/custom/plugins/wakatime
+                clone: true
+            - name: Install zsh-history-substring-search plugin
+              git:
+                repo: https://github.com/zsh-users/zsh-history-substring-search
+                dest: ~/.oh-my-zsh/custom/plugins/zsh-history-substring-search
+                clone: true
         - name: Download starship.rs
           get_url:
             url: https://starship.rs/install.sh
@@ -112,13 +129,13 @@
             mode: "0755"
         - name: Download Taskfile
           get_url:
-            url: curl --location https://taskfile.dev/install.sh
+            url: https://taskfile.dev/install.sh
             dest: ~/Downloads/install-task.sh
             mode: "0755"
         - name: Install Taskfile
           shell:
             chdir: ~/Downloads
-            cmd: ./install-taskfile.sh -d -b ~/.local/bin
+            cmd: ./install-task.sh -d -b ~/.local/bin
 
     - name: Install asdf
       block:
@@ -216,11 +233,6 @@
             mode: "0755"
         - name: Install
           script: ~/Downloads/install_wakatime.py
-        - name: Install zsh plugin
-          git:
-            repo: https://github.com/sobolevn/wakatime-zsh-plugin.git
-            dest: ~/.oh-my-zsh/custom/plugins/wakatime
-            clone: true
 
     - name: Setup JetBrains Toolbox
       block:
