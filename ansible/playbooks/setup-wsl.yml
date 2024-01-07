@@ -24,6 +24,7 @@
           - gedit
           - python3
           - zsh
+          - zsh-syntax-highlighting
           - tmux
           - build-essential
           - libssl-dev
