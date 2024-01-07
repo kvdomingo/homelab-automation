@@ -25,6 +25,7 @@
           - python3
           - zsh
           - zsh-syntax-highlighting
+          - unzip
           - tmux
           - build-essential
           - libssl-dev
@@ -41,27 +42,34 @@
           - liblzma-dev
         state: latest
 
-    - name: Clone dotrepo
-      git:
-        repo: https://github.com/kvdomingo/dotrepo.git
-        dest: ~/dotrepo
-        clone: true
-
-    - name: Delete existing shell config
-      shell:
-        cmd: |
-          rm -f ~/.zshrc
-          rm -f ~/.bashrc
-
-    - name: Install dotrepo
-      shell:
-        chdir: ~/dotrepo
-        cmd: ./install
-      ignore_errors: true
+    - name: Setup dotfiles
+      block:
+        - name: Clone dotrepo
+          git:
+            repo: https://github.com/kvdomingo/dotrepo.git
+            dest: ~/dotrepo
+            clone: true
+        - name: Delete existing .zshrc
+          file:
+            path: ~/.zshrc
+            state: absent
+            force: true
+        - name: Delete existing .bashrc
+          file:
+            path: ~/.bashrc
+            state: absent
+            force: true
+        - name: Install dotrepo
+          shell:
+            chdir: ~/dotrepo
+            cmd: ./install
+          ignore_errors: true
 
     - name: Download & install neovim
-      shell:
-        cmd: wget https://github.com/neovim/neovim/releases/latest/download/nvim.appimage -O ~/.local/bin/nvim && chmod +x ~/.local/bin/nvim
+      get_url:
+        url: https://github.com/neovim/neovim/releases/latest/download/nvim.appimage
+        dest: ~/.local/bin/nvim
+        mode: "0755"
 
     - name: Install tmux plugin manager
       git:
@@ -70,137 +78,246 @@
         clone: true
 
     - name: Install shell utilities
-      shell:
-        cmd: |
-          sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" --unattended --keep-zshrc
-          curl -sS https://starship.rs/install.sh | sh - -y
-          chsh -s "$(which zsh)"
+      block:
+        - name: Download oh-my-zsh
+          get_url:
+            url: https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh
+            dest: ~/Downloads/install-oh-my-zsh.sh
+            mode: "0755"
+        - name: Install oh-my-zsh
+          shell:
+            chdir: ~/Downloads
+            cmd: sh install-oh-my-zsh.sh --unattended --keep-zshrc
+        - name: Download starship.rs
+          get_url:
+            url: https://starship.rs/install.sh
+            dest: ~/Downloads/install-starship.sh
+            mode: "0755"
+        - name: Install starship.rs
+          shell:
+            chdir: ~/Downloads
+            cmd: ./install-starship.sh -y
 
     - name: Install essential utilities
-      shell:
-        cmd: |
-          wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O ~/.local/bin/yq && chmod +x ~/.local/bin/yq
-          wget https://github.com/jqlang/jq/releases/latest/download/jq-linux-amd64 -O ~/.local/bin/jq && chmod +x ~/.local/bin/jq
-          sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d -b ~/.local/bin && chmod +x ~/.local/bin/task
+      block:
+        - name: Install yq
+          get_url:
+            url: https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+            dest: ~/.local/bin/yq
+            mode: "0755"
+        - name: Install jq
+          get_url:
+            url: https://github.com/jqlang/jq/releases/latest/download/jq-linux-amd64
+            dest: ~/.local/bin/jq
+            mode: "0755"
+        - name: Download Taskfile
+          get_url:
+            url: curl --location https://taskfile.dev/install.sh
+            dest: ~/Downloads/install-task.sh
+            mode: "0755"
+        - name: Install Taskfile
+          shell:
+            chdir: ~/Downloads
+            cmd: ./install-taskfile.sh -d -b ~/.local/bin
 
-    - name: Clone asdf-vm
-      git:
-        repo: https://github.com/asdf-vm/asdf.git
-        dest: ~/.asdf
-        clone: true
-        version: v0.13.1
-
-    - name: Load asdf
-      environment:
-        ASDF_DIR: /root/.asdf
-      shell:
-        cmd: . ~/.asdf/asdf.sh
-
-    - name: Install asdf-vm plugins
-      shell:
-        cmd: |
-          asdf plugin add adr-tools
-          asdf plugin add golang
-          asdf plugin add java https://github.com/halcyon/asdf-java.git
-          asdf plugin add nodejs
-          asdf plugin add poetry
-          asdf plugin add python
-
-    - name: Install asdf tools
-      shell:
-        cmd: asdf install
+    - name: Install asdf
+      block:
+        - name: Clone asdf-vm
+          git:
+            repo: https://github.com/asdf-vm/asdf.git
+            dest: ~/.asdf
+            clone: true
+            version: v0.13.1
+        - name: Load asdf
+          environment:
+            ASDF_DIR: /root/.asdf
+          shell:
+            cmd: . ~/.asdf/asdf.sh
+        - name: Install asdf-vm plugins
+          shell:
+            cmd: |
+              asdf plugin add adr-tools
+              asdf plugin add golang
+              asdf plugin add java https://github.com/halcyon/asdf-java.git
+              asdf plugin add nodejs
+              asdf plugin add poetry
+              asdf plugin add python
+        - name: Install asdf tools
+          shell:
+            cmd: asdf install
 
     - name: Install/update global Python packages
-      shell:
-        cmd: pip install -U pip pre-commit ansible
+      pip:
+        name:
+          - pip
+          - pre-commit
+          - ansible
+        state: latest
 
     - name: Install/update global Node.js packages
-      shell:
-        cmd: npm i -g npm yarn pnpm
+      npm:
+        name:
+          - npm
+          - yarn
+          - pnpm
+        state: latest
+        global: true
 
     - name: Install Bun
-      shell:
-        cmd: curl -fsSL https://bun.sh/install | bash
+      block:
+        - name: Download
+          get_url:
+            url: https://bun.sh/install
+            dest: ~/Downloads/install-bun.sh
+            mode: "0755"
+        - name: Install
+          shell:
+            chdir: ~/Downloads
+            cmd: ./install-bun.sh
 
     - name: Setup k8s development environment
-      shell:
-        cmd: |
-          chmod 600 ~/.kube/config && cp ~/.kube/config ~/.kube/config.yaml
-          curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
-          (
-            set -x; cd "$(mktemp -d)" &&
-            OS="$(uname | tr '[:upper:]' '[:lower:]')" &&
-            ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')" &&
-            KREW="krew-${OS}_${ARCH}" &&
-            curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/latest/download/${KREW}.tar.gz" &&
-            tar zxvf "${KREW}.tar.gz" &&
-            ./"${KREW}" install krew
-          )
-          kubectl krew install ctx ns
+      block:
+        - name: Copy kubeconfig
+          copy:
+            src: ~/.kube/config
+            dest: ~/.kube/config.yaml
+            mode: "0600"
+        - name: Download Helm
+          get_url:
+            url: https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+            dest: ~/Downloads/install-helm.sh
+            mode: "0755"
+        - name: Install Helm
+          shell:
+            chdir: ~/Downloads
+            cmd: ./install-helm.sh
+        - name: Install Krew
+          shell:
+            cmd: |
+              (
+                set -x; cd "$(mktemp -d)" &&
+                OS="$(uname | tr '[:upper:]' '[:lower:]')" &&
+                ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')" &&
+                KREW="krew-${OS}_${ARCH}" &&
+                curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/latest/download/${KREW}.tar.gz" &&
+                tar zxvf "${KREW}.tar.gz" &&
+                ./"${KREW}" install krew
+              )
+        - name: Install kubens/kubectx
+          shell:
+            cmd: kubectl krew install ctx ns
 
     - name: Install wakatime
-      shell:
-        cmd: |
-          python -c "$(wget -q -O - https://raw.githubusercontent.com/wakatime/vim-wakatime/master/scripts/install_cli.py)"
+      block:
+        - name: Download
+          get_url:
+            url: https://raw.githubusercontent.com/wakatime/vim-wakatime/master/scripts/install_cli.py
+            dest: ~/Downloads/install_wakatime.py
+            mode: "0755"
+        - name: Install
+          script: ~/Downloads/install_wakatime.py
+        - name: Install zsh plugin
+          git:
+            repo: https://github.com/sobolevn/wakatime-zsh-plugin.git
+            dest: ~/.oh-my-zsh/custom/plugins/wakatime
+            clone: true
 
-    - name: Install wakatime zsh plugin
-      git:
-        repo: https://github.com/sobolevn/wakatime-zsh-plugin.git
-        dest: ~/.oh-my-zsh/custom/plugins/wakatime
-        clone: true
+    - name: Setup JetBrains Toolbox
+      block:
+        - name: Download
+          get_url:
+            url: https://download.jetbrains.com/toolbox/{{ JETBRAINS_TOOLBOX_VERSION }}.tar.gz
+            dest: ~/Downloads/{{ JETBRAINS_TOOLBOX_VERSION }}.tar.gz
+        - name: Untar
+          unarchive:
+            src: ~/Downloads/{{ JETBRAINS_TOOLBOX_VERSION }}.tar.gz
+            dest: ~/Downloads/{{ JETBRAINS_TOOLBOX_VERSION }}
+        - name: Install
+          shell:
+            chdir: ~/Downloads/{{ JETBRAINS_TOOLBOX_VERSION }}
+            cmd: ./jetbrains-toolbox
 
-    - name: Download & install JetBrains Toolbox
-      shell:
-        chdir: ~/Downloads
-        cmd: |
-          wget https://download.jetbrains.com/toolbox/{{ JETBRAINS_TOOLBOX_VERSION }}.tar.gz
-          tar -xzvf {{ JETBRAINS_TOOLBOX_VERSION }}.tar.gz
-          ./{{ JETBRAINS_TOOLBOX_VERSION }}/jetbrains-toolbox
-
-    - name: Add HashiCorp keyring & repository
-      shell:
-        cmd: |
-          wget -O- https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
-          gpg --no-default-keyring --keyring /usr/share/keyrings/hashicorp-archive-keyring.gpg --fingerprint
-          echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
-
-    - name: Update apt
-      apt:
-        update_cache: true
-        upgrade: yes
-
-    - name: Install HashiCorp Vault & Terraform
-      package:
-        name:
-          - vault
-          - terraform
-        state: latest
+    - name: Install HashiCorp software
+      block:
+        - name: Download gpg key
+          get_url:
+            url: https://apt.releases.hashicorp.com/gpg
+            dest: ~/Downloads/hashicorp.gpg
+        - name: Add gpg key
+          apt_key:
+            file: ~/Downloads/hashicorp.gpg
+            state: present
+        - name: Get architecture
+          command:
+            cmd: dpkg --print-architecture
+          register: architecture
+        - name: Get distribution codename
+          command:
+            cmd: lsb_release -cs
+          register: codename
+        - name: Add HashiCorp repo to sources
+          lineinfile:
+            path: /etc/apt/sources.list.d/hashicorp.list
+            line: deb [arch={{ architecture.stdout }} signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com {{ codename.stdout }} main
+            create: true
+        - name: Update apt
+          apt:
+            update_cache: true
+            upgrade: yes
+        - name: Install HashiCorp Vault & Terraform
+          package:
+            name:
+              - vault
+              - terraform
+            state: latest
 
     - name: Install AWS CLI
-      shell:
-        chdir: ~/Downloads
-        cmd: |
-          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-          unzip awscliv2.zip
-          sudo ./aws/install
+      block:
+        - name: Download
+          get_url:
+            url: https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip
+            dest: ~/Downloads/awscliv2.zip
+        - name: Unzip
+          unarchive:
+            src: ~/Downloads/awscliv2.zip
+            dest: ~/Downloads/aws
+        - name: Install
+          shell:
+            chdir: ~/Downloads/aws
+            cmd: ./install
 
     - name: Install Azure CLI
-      shell:
-        cmd: curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
-
-    - name: Add Google Cloud keyring & repository
-      shell:
-        cmd: |
-          curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo gpg --dearmor -o /usr/share/keyrings/cloud.google.gpg
-          echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
-
-    - name: Update apt
-      apt:
-        update_cache: true
-        upgrade: yes
+      block:
+        - name: Download
+          get_url:
+            url: https://aka.ms/InstallAzureCLIDeb
+            dest: ~/Downloads/InstallAzureCLIDeb
+            mode: "0755"
+        - name: Install
+          shell:
+            chdir: ~/Downloads
+            cmd: ./InstallAzureCLIDeb
 
     - name: Install gcloud CLI
-      package:
-        name:
-          - google-cloud-cli
-        state: latest
+      block:
+        - name: Download gcloud gpg key
+          get_url:
+            url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+            dest: ~/Downloads/gcloud-apt-key.gpg
+        - name: Add gcloud gpg key
+          apt_key:
+            file: ~/Downloads/gcloud-apt-key.gpg
+            state: present
+        - name: Add gcloud repository to sources
+          lineinfile:
+            path: /etc/apt/sources.list.d/google-cloud-sdk.list
+            line: deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main
+            create: true
+        - name: Update apt
+          apt:
+            update_cache: true
+            upgrade: yes
+        - name: Install gcloud CLI
+          package:
+            name: google-cloud-cli
+            state: latest
