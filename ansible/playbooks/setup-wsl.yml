@@ -104,6 +104,11 @@
                 repo: https://github.com/sobolevn/wakatime-zsh-plugin.git
                 dest: ~/.oh-my-zsh/custom/plugins/wakatime
                 clone: true
+            - name: Install zsh-autosuggestions plugin
+              git:
+                repo: https://github.com/zsh-users/zsh-autosuggestions
+                dest: ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions
+                clone: true
             - name: Install zsh-history-substring-search plugin
               git:
                 repo: https://github.com/zsh-users/zsh-history-substring-search
