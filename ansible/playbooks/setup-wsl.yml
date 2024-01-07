@@ -126,6 +126,17 @@
           )
           kubectl krew install ctx ns
 
+    - name: Install wakatime
+      shell:
+        cmd: |
+          python -c "$(wget -q -O - https://raw.githubusercontent.com/wakatime/vim-wakatime/master/scripts/install_cli.py)"
+
+    - name: Install wakatime zsh plugin
+      git:
+        repo: https://github.com/sobolevn/wakatime-zsh-plugin.git
+        dest: ~/.oh-my-zsh/custom/plugins/wakatime
+        clone: true
+
     - name: Download & install JetBrains Toolbox
       shell:
         chdir: ~/Downloads
