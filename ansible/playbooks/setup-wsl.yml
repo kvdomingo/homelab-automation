@@ -46,6 +46,12 @@
         dest: ~/dotrepo
         clone: true
 
+    - name: Delete existing shell config
+      shell:
+        cmd: |
+          rm -f ~/.zshrc
+          rm -f ~/.bashrc
+
     - name: Install dotrepo
       shell:
         chdir: ~/dotrepo
@@ -83,9 +89,9 @@
         clone: true
         version: v0.13.1
 
-    - name: Load asdf
+    - name: Reload shell
       shell:
-        cmd: . ~/.asdf/asdf.sh
+        cmd: omz reload
 
     - name: Install asdf-vm plugins
       shell:
