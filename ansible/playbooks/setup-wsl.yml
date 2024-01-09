@@ -328,6 +328,7 @@
             cmd: ./install --update
 
     - name: Setup Azure CLI
+      become: true
       block:
         - name: Download Azure CLI
           get_url:
