@@ -199,6 +199,10 @@
             state: latest
             global: true
 
+    - name: Configure Poetry
+      shell:
+        cmd: poetry config virtualenvs.in-project true
+
     - name: Setup Bun
       block:
         - name: Download Bun
