@@ -312,6 +312,7 @@
             state: latest
 
     - name: Setup AWS CLI
+      become: true
       block:
         - name: Download AWS CLI
           get_url:
