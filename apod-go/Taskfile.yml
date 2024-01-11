@@ -36,17 +36,13 @@ tasks:
 
   deploy:
     desc: Deploy to prod K8s cluster
+    dir: k8s
     cmds:
-      - kubectl apply -f ./k8s/namespace.yaml
-      - kubectl apply -f ./k8s/secrets.yaml
-      - >
-        helm upgrade --install apod ./helm/apod
-        --namespace apod
-        --set image.tag={{.SHORT_SHA}}
+      - kubectl apply -f application.yaml
 
   destroy:
     desc: Destroy prod K8s deployment
+    dir: k8s
     cmds:
-      - helm uninstall apod --namespace apod
-      - kubectl delete -f ./k8s/secrets.yaml
-      - kubectl delete -f ./k8s/namespace.yaml
+      - kubectl delete -f application.yaml
+      - kubectl delete -f namespace.yaml
