@@ -27,6 +27,7 @@ spec:
                   paths:
                     - path: /
                       pathType: Prefix
+            automountServiceAccountToken: true
             env:
               DRONE_SERVER_HOST: drone.lab.kvd.studio
               DRONE_SERVER_PROTO: https
