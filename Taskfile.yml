@@ -24,6 +24,7 @@ tasks:
       - task: setup-longhorn
       - task: setup-argocd
       - task: setup-argo-rollouts
+      - task: setup-droneci
 
   bootstrap-vms:
     desc: Install pre-requisites in VMs
@@ -68,6 +69,7 @@ tasks:
       - helm repo add nextcloud https://nextcloud.github.io/helm/
       - helm repo add hashicorp https://helm.releases.hashicorp.com
       - helm repo add firefly https://firefly-iii.github.io/kubernetes/
+      - helm repo add drone https://charts.drone.io
       - helm repo update
 
   setup-traefik:
@@ -311,5 +313,11 @@ tasks:
   setup-firefly:
     desc: Setup FireflyIII
     dir: firefly
+    cmds:
+      - kubectl apply -f application.yaml
+
+  setup-droneci:
+    desc: Setup Drone CI
+    dir: droneci
     cmds:
       - kubectl apply -f application.yaml

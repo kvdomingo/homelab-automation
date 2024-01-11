@@ -1,11 +1,13 @@
 services:
   act:
-    image: gitea/act_runner:0.2.6
+    image: vegardit/gitea-act-runner:dind-rootless-0.2.6
     restart: unless-stopped
-    user: "0:0"
+    privileged: true
     env_file: .env
     environment:
       TZ: Asia/Manila
     volumes:
-      - ./data:/data
-      - /var/run/docker.sock:/var/run/docker.sock
+      - data:/data
+
+volumes:
+  data:
