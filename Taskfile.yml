@@ -220,17 +220,6 @@ tasks:
         --namespace minio
         --values values.yaml
 
-  setup-nextcloud:
-    desc: Setup Nextcloud
-    dir: nextcloud
-    cmds:
-      - kubectl apply -f namespace.yaml
-      - kubectl apply -f secrets.yaml
-      - >
-        helm upgrade --install nextcloud nextcloud/nextcloud
-        --namespace nextcloud
-        --values values.yaml
-
   setup-uptime:
     desc: Setup Uptime Kuma
     dir: uptime-kuma
