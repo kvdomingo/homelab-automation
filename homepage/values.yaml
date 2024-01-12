@@ -48,6 +48,10 @@ x-three-columns: &three-columns
   style: row
   columns: 3
 
+x-five-columns: &five-columns
+  style: row
+  columns: 5
+
 # All the config files for Homepage can be specified under their relevant config block.
 config:
   # To use an existing ConfigMap uncomment this line and specify the name
@@ -148,7 +152,7 @@ config:
       Admin:
         <<: *three-columns
       Media:
-        <<: *three-columns
+        <<: *five-columns
       Networking:
         <<: *three-columns
       CI/CD:
