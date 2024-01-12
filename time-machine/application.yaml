@@ -5,12 +5,12 @@ metadata:
   namespace: argocd
 spec:
   project: default
-  sources:
-    - repoURL: https://git.lab.kvd.studio/r/homelab.git
-      targetRevision: main
-      path: time-machine/time-machine
-      plugin:
-        name: argocd-vault-plugin-helm
+  source:
+    repoURL: https://git.lab.kvd.studio/r/homelab.git
+    targetRevision: main
+    path: time-machine/time-machine
+    plugin:
+      name: argocd-vault-plugin-helm
   destination:
     server: https://kubernetes.default.svc
     namespace: time-machine

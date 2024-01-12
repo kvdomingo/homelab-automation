@@ -50,15 +50,13 @@ ingress:
     gethomepage.dev/enabled: "true"
     gethomepage.dev/name: "APOD"
     gethomepage.dev/group: "Background Services"
-    gethomepage.dev/icon: "https://nasa.gov/favicon.ico"
+    gethomepage.dev/icon: "si-nasa"
     gethomepage.dev/ping: "apod.lab.kvd.studio/health"
-  # kubernetes.io/ingress.class: nginx
-  # kubernetes.io/tls-acme: "true"
   hosts:
     - host: apod.lab.kvd.studio
       paths:
         - path: /
-          pathType: ImplementationSpecific
+          pathType: Prefix
   tls: [ ]
   #  - secretName: chart-example-tls
   #    hosts:
