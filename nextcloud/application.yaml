@@ -1,0 +1,85 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: nextcloud
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://nextcloud.github.io/helm/
+    targetRevision: 4.5.10
+    chart: nextcloud
+    plugin:
+      name: argocd-vault-plugin-helm
+      env:
+        - name: HELM_VALUES
+          value: |
+            ingress:
+              enabled: true
+              annotations:
+                gethomepage.dev/enabled: "true"
+                gethomepage.dev/name: "Nextcloud"
+                gethomepage.dev/group: "Storage"
+                gethomepage.dev/icon: "nextcloud.png"
+                gethomepage.dev/ping: "nextcloud.lab.kvd.studio"
+            nextcloud:
+              host: nextcloud.lab.kvd.studio
+              username: kvdomingo
+              password: <path:kv/data/lab/nextcloud#ADMIN_PASSWORD>
+              mail:
+                enabled: true
+                fromAddress: hello@kvd.studio
+                domain: kvd.studio
+                smtp:
+                  host: smtp.gmail.com
+                  secure: ssl
+                  port: 587
+                  authtype: STARTTLS
+                  name: hello@kvd.studio
+                  password: <path:kv/data/lab/nextcloud#SMTP_PASSWORD>
+            externalDatabase:
+              enabled: true
+              type: postgresql
+              host: nextcloud-postgresql
+              user: nextcloud
+              password: <path:kv/data/lab/nextcloud#POSTGRESQL_PASSWORD>
+              database: nextcloud
+            postgresql:
+              enabled: true
+              global:
+                postgresql:
+                  auth:
+                    username: nextcloud
+                    password: <path:kv/data/lab/nextcloud#POSTGRESQL_PASSWORD>
+                    database: nextcloud
+              primary:
+                persistence:
+                  enabled: true
+            redis:
+              enabled: true
+              auth:
+                enabled: true
+                password: <path:kv/data/lab/nextcloud#REDIS_PASSWORD>
+            cronjob:
+              enabled: true
+            persistence:
+              enabled: true
+            metrics:
+              enabled: true
+              serviceMonitor:
+                enabled: true
+            rbac:
+              enabled: true
+            readinessProbe:
+              enabled: false
+            livenessProbe:
+              enabled: false
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: nextcloud
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+    automated:
+      selfHeal: true
+      prune: true
