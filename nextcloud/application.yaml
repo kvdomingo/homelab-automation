@@ -37,6 +37,8 @@ spec:
                   authtype: STARTTLS
                   name: hello@kvd.studio
                   password: <path:kv/data/lab/nextcloud#SMTP_PASSWORD>
+            internalDatabase:
+              enabled: false
             externalDatabase:
               enabled: true
               type: postgresql
