@@ -57,6 +57,10 @@ spec:
               primary:
                 persistence:
                   enabled: true
+                livenessProbe:
+                  enabled: false
+                readinessProbe:
+                  enabled: false
             redis:
               enabled: true
               auth:
