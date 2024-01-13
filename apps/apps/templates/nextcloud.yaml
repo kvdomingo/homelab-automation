@@ -2,9 +2,11 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: nextcloud
-  namespace: argocd
+  namespace: {{ include "apps.argocdNamespace" . | quote }}
+  finalizers:
+    {{- include "apps.finalizers" . | nindent 4 }}
 spec:
-  project: default
+  project: {{ .Values.project }}
   source:
     repoURL: https://nextcloud.github.io/helm/
     targetRevision: 4.5.10
@@ -21,9 +23,9 @@ spec:
                 gethomepage.dev/name: "Nextcloud"
                 gethomepage.dev/group: "Storage"
                 gethomepage.dev/icon: "nextcloud.png"
-                gethomepage.dev/ping: "nextcloud.lab.kvd.studio"
+                gethomepage.dev/ping: "nextcloud.{{ .Values.ingress.baseDomain }}"
             nextcloud:
-              host: nextcloud.lab.kvd.studio
+              host: "nextcloud.{{ .Values.ingress.baseDomain }}"
               username: kvdomingo
               password: <path:kv/data/lab/nextcloud#ADMIN_PASSWORD>
               mail:
@@ -81,7 +83,7 @@ spec:
             livenessProbe:
               enabled: false
   destination:
-    server: https://kubernetes.default.svc
+    server: {{ .Values.destination.server }}
     namespace: nextcloud
   syncPolicy:
     syncOptions:

@@ -1,0 +1,7 @@
+project: default
+
+destination:
+  server: https://kubernetes.default.svc
+
+ingress:
+  baseDomain: lab.kvd.studio
