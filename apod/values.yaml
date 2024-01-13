@@ -7,7 +7,7 @@ image:
   repository: git.lab.kvd.studio/r/apod
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "2b2d70766640ce1c3e4e0dfa8215b136ba0a4d5c"
+  tag: "f963deb31c4c30fbf6388120369be4d56637652f"
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
