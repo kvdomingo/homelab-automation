@@ -106,12 +106,6 @@ tasks:
         --set postgresql.auth.username={{.GITEA_POSTGRES_USERNAME}}
       - kubectl apply -f ingress.yaml
 
-  setup-gitea-act-runner:
-    desc: Setup Gitea act runner
-    dir: ansible
-    cmds:
-      - ansible-playbook -i inventory/hosts playbooks/setup-gitea-act-runner.yml
-
   setup-homepage:
     desc: Setup Homepage
     dir: homepage
@@ -131,16 +125,6 @@ tasks:
     cmds:
       - task: setup-homepage
       - kubectl rollout restart deployment homepage --namespace homepage
-
-  setup-portainer:
-    desc: Setup Portainer
-    dir: portainer
-    cmds:
-      - >
-        helm upgrade --install portainer portainer/portainer
-        --namespace portainer
-        --create-namespace
-        --values values.yaml
 
   setup-vaultwarden:
     desc: Setup Vaultwarden
@@ -168,16 +152,6 @@ tasks:
       - kubectl apply -f secrets.yaml
       - kubectl apply -f cm.yaml
       - helm upgrade --install argocd argo/argo-cd --values values.yaml --namespace argocd
-
-  setup-argo-rollouts:
-    desc: Setup Argo Rollouts
-    dir: argo-rollouts
-    cmds:
-      - >
-        helm upgrade --install argo-rollouts argo/argo-rollouts
-        --values values.yaml
-        --namespace argo-rollouts
-        --create-namespace
 
   setup-zitadel:
     desc: Setup Zitadel
@@ -300,15 +274,3 @@ tasks:
         --values values.yaml
         --create-namespace
         --namespace vault
-
-  setup-firefly:
-    desc: Setup FireflyIII
-    dir: firefly
-    cmds:
-      - kubectl apply -f application.yaml
-
-  setup-droneci:
-    desc: Setup Drone CI
-    dir: droneci
-    cmds:
-      - kubectl apply -f application.yaml
