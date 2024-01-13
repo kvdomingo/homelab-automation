@@ -60,9 +60,15 @@ spec:
             - /bin/sh
             - "-c"
             - >
-              until redis-cli -h go-tracker-redis-master ping; do
+              until redis-cli -h $REDIS_HOST -a $REDIS_PASSWORD ping; do
+              echo "waiting for redis instance...";
               sleep 2;
               done;
+          envFrom:
+            - configMapRef:
+                name: go-tracker-configmap
+            - secretRef:
+                name: go-tracker-secrets
       {{- with .Values.volumes }}
       volumes:
         {{- toYaml . | nindent 8 }}
