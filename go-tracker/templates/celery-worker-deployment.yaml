@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "go-tracker.fullname" . }}
+  name: {{ include "go-tracker.fullname" . }}-celery-worker
   labels:
     {{- include "go-tracker.labels" . | nindent 4 }}
 spec:
@@ -19,7 +19,7 @@ spec:
       {{- end }}
       labels:
         {{- include "go-tracker.labels" . | nindent 8 }}
-	{{- with .Values.podLabels }}
+ {{- with .Values.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
     spec:
@@ -31,29 +31,28 @@ spec:
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
-        - name: {{ .Chart.Name }}
+        - name: {{ .Chart.Name }}-celery-worker
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          ports:
-            - name: http
-              containerPort: {{ .Values.service.port }}
-              protocol: TCP
-          livenessProbe:
-            httpGet:
-              path: /
-              port: http
-          readinessProbe:
-            httpGet:
-              path: /
-              port: http
+          command:
+            - celery
+            - "-A"
+            - go_tracker.tasks
+            - worker
+            - "--loglevel=INFO"
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           {{- with .Values.volumeMounts }}
           volumeMounts:
             {{- toYaml . | nindent 12 }}
           {{- end }}
+          envFrom:
+            - configMapRef:
+                name: go-tracker-configmap
+            - secretRef:
+                name: go-tracker-secrets
       {{- with .Values.volumes }}
       volumes:
         {{- toYaml . | nindent 8 }}
