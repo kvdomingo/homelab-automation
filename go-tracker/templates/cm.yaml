@@ -8,6 +8,6 @@ metadata:
 data:
   REDIS_PORT: "6379"
   REDIS_HOST: "go-tracker-redis-master"
-  REDIS_OM_URL: "redis://go-tracker-redis:6379"
+  REDIS_OM_URL: "redis://go-tracker-redis-master:6379"
   MAIL_SERVER: "smtp.gmail.com"
   MAIL_PORT: "587"
