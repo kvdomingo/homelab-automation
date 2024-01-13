@@ -23,7 +23,7 @@ config:
   existingSecret: ""
 
   # -- Set environment variables from configMaps or Secrets
-  envValueFrom: {}
+  envValueFrom: { }
 
   # -- Directly defined environment variables. Use this for non-secret configuration values.
   env:
@@ -38,32 +38,32 @@ config:
         This is a test file with some content
 
 # -- Configure additional mounts for the pod. Value is a list of VolumeMount specs, see https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.24/#volumemount-v1-core
-additionalVolumeMounts: []
+additionalVolumeMounts: [ ]
 
 # -- Configure additional volumes for the Pod. Value is a list of Volume specs, see https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.24/#volume-v1-core
-additionalVolumes: []
+additionalVolumes: [ ]
 
 image:
   repository: fireflyiii/data-importer
   pullPolicy: IfNotPresent
-  tag: "version-0.8.0"
+  tag: version-1.4.0
 
-imagePullSecrets: []
+imagePullSecrets: [ ]
 nameOverride: ""
 fullnameOverride: ""
 
-podAnnotations: {}
+podAnnotations: { }
 
-podSecurityContext: {}
-  # fsGroup: 2000
+podSecurityContext: { }
+# fsGroup: 2000
 
-securityContext: {}
+securityContext: { }
   # capabilities:
   #   drop:
   #   - ALL
   # readOnlyRootFilesystem: true
   # runAsNonRoot: true
-  # runAsUser: 1000
+# runAsUser: 1000
 
 service:
   type: ClusterIP
@@ -72,17 +72,17 @@ service:
 ingress:
   enabled: false
   className: ""
-  annotations: {}
+  annotations: { }
     # kubernetes.io/ingress.class: nginx
-    # kubernetes.io/tls-acme: "true"
+  # kubernetes.io/tls-acme: "true"
   hosts:
     - chart-example.local
-  tls: []
+  tls: [ ]
   #  - secretName: chart-example-tls
   #    hosts:
   #      - chart-example.local
 
-resources: {}
+resources: { }
   # We usually recommend not to specify default resources and to leave this as a conscious
   # choice for the user. This also increases chances charts run on environments with little
   # resources, such as Minikube. If you do want to specify resources, uncomment the following
@@ -92,10 +92,10 @@ resources: {}
   #   memory: 128Mi
   # requests:
   #   cpu: 100m
-  #   memory: 128Mi
+#   memory: 128Mi
 
-nodeSelector: {}
+nodeSelector: { }
 
-tolerations: []
+tolerations: [ ]
 
-affinity: {}
+affinity: { }
