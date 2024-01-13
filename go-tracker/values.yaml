@@ -3,35 +3,30 @@
 # Declare variables to be passed into your templates.
 
 replicaCount: 1
-
 image:
   repository: git.lab.kvd.studio/r/go-tracker
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: ""
-
-imagePullSecrets: [ ]
+  tag: "fff809b693bb9e9d90091091a194741c25a1b7df"
+imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
-
 serviceAccount:
   # Specifies whether a service account should be created
   create: true
   # Automatically mount a ServiceAccount's API credentials?
   automount: true
   # Annotations to add to the service account
-  annotations: { }
+  annotations: {}
   # The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
   name: ""
-
-podAnnotations: { }
-podLabels: { }
-
-podSecurityContext: { }
+podAnnotations: {}
+podLabels: {}
+podSecurityContext: {}
 # fsGroup: 2000
 
-securityContext: { }
+securityContext: {}
 # capabilities:
 #   drop:
 #   - ALL
@@ -42,7 +37,6 @@ securityContext: { }
 service:
   type: ClusterIP
   port: 5000
-
 ingress:
   enabled: true
   className: ""
@@ -57,14 +51,13 @@ ingress:
       paths:
         - path: /
           pathType: Prefix
-  tls: [ ]
+  tls: []
   #  - secretName: chart-example-tls
   #    hosts:
   #      - chart-example.local
-
-resources: { }
-  # We usually recommend not to specify default resources and to leave this as a conscious
-  # choice for the user. This also increases chances charts run on environments with little
+resources: {}
+# We usually recommend not to specify default resources and to leave this as a conscious
+# choice for the user. This also increases chances charts run on environments with little
 # resources, such as Minikube. If you do want to specify resources, uncomment the following
 # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
 # limits:
@@ -80,22 +73,19 @@ autoscaling:
   maxReplicas: 100
   targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80
-
 # Additional volumes on the output Deployment definition.
-volumes: [ ]
+volumes: []
 # - name: foo
 #   secret:
 #     secretName: mysecret
 #     optional: false
 
 # Additional volumeMounts on the output Deployment definition.
-volumeMounts: [ ]
+volumeMounts: []
 # - name: foo
 #   mountPath: "/etc/foo"
 #   readOnly: true
 
-nodeSelector: { }
-
-tolerations: [ ]
-
-affinity: { }
+nodeSelector: {}
+tolerations: []
+affinity: {}
