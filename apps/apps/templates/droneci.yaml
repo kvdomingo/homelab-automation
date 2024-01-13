@@ -2,9 +2,11 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: droneci
-  namespace: argocd
+  namespace: {{ include "apps.argocdNamespace" . | quote }}
+  finalizers:
+    {{- include "apps.finalizers" . | nindent 4 }}
 spec:
-  project: default
+  project: {{ .Values.project }}
   source:
     repoURL: https://charts.drone.io
     targetRevision: 0.6.5
@@ -37,7 +39,7 @@ spec:
               DRONE_GIT_ALWAYS_AUTH: true
               DRONE_RPC_SECRET: <path:kv/data/lab/droneci#DRONE_RPC_SECRET>
   destination:
-    server: https://kubernetes.default.svc
+    server: {{ .Values.destination.server }}
     namespace: droneci
   syncPolicy:
     syncOptions:
