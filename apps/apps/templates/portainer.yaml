@@ -1,0 +1,41 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: portainer
+  namespace: {{ include "apps.argocdNamespace" . | quote }}
+  finalizers:
+    {{- include "apps.finalizers" . | nindent 4 }}
+spec:
+  project: {{ .Values.project }}
+  source:
+    repoURL: https://portainer.github.io/k8s/
+    chart: portainer
+    targetRevision: 1.0.49
+    plugin:
+      name: argocd-vault-plugin-helm
+      env:
+        - name: HELM_VALUES
+          value: |
+            service:
+              type: ClusterIP
+            ingress:
+              enabled: true
+              annotations:
+                gethomepage.dev/enabled: "true"
+                gethomepage.dev/name: "Portainer"
+                gethomepage.dev/group: "Admin"
+                gethomepage.dev/icon: "portainer.png"
+                gethomepage.dev/ping: "portainer.{{ .Values.ingress.baseDomain }}"
+              hosts:
+                - host: "portainer.{{ .Values.ingress.baseDomain }}"
+                  paths:
+                    - path: /
+  destination:
+    server: {{ .Values.destination.server }}
+    namespace: portainer
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+    automated:
+      selfHeal: true
+      prune: true

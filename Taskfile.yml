@@ -71,6 +71,7 @@ tasks:
       - helm repo add firefly https://firefly-iii.github.io/kubernetes/
       - helm repo add drone https://charts.drone.io
       - helm repo add jameswynn https://jameswynn.github.io/helm-charts
+      - helm repo add portainer https://portainer.github.io/k8s/
       - helm repo update
 
   setup-traefik:
