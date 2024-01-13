@@ -2,17 +2,19 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: apod
-  namespace: argocd
+  namespace: {{ include "apps.argocdNamespace" . | quote }}
+  finalizers:
+      {{- include "apps.finalizers" . | nindent 4 }}
 spec:
-  project: default
+  project: {{ .Values.project }}
   source:
     repoURL: https://git.lab.kvd.studio/r/homelab.git
     targetRevision: main
-    path: apod/apod
+    path: apod
     plugin:
       name: argocd-vault-plugin-helm
   destination:
-    server: https://kubernetes.default.svc
+    server: {{ .Values.destination.server }}
     namespace: apod
   syncPolicy:
     syncOptions:
