@@ -167,7 +167,6 @@ tasks:
       - kubectl apply -f secrets.yaml
       - kubectl apply -f cm.yaml
       - helm upgrade --install argocd argo/argo-cd --values values.yaml --namespace argocd
-      - kubectl apply -f install-argocd-image-updater.yaml -n argocd
 
   setup-argo-rollouts:
     desc: Setup Argo Rollouts
