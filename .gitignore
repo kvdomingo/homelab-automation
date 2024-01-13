@@ -1,6 +1,10 @@
 ### Ansible template
 *.retry
 
+### Helm template
+# Chart dependencies
+**/charts/*.tgz
+
 .env
 *.env
 .envrc

@@ -11,6 +11,11 @@ data:
       name: argocd-vault-plugin-helm
     spec:
       allowConcurrency: true
+      init:
+        command:
+          - sh
+          - "-c"
+          - helm dependency build
       discover:
         find:
           command:
