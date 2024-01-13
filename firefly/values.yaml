@@ -41,3 +41,15 @@ importer:
   enabled: true
   config:
     existingSecret: firefly-secrets
+  fireflyiii:
+    url: https://firefly.lab.kvd.studio
+  ingress:
+    enabled: true
+    annotations:
+      gethomepage.dev/enabled: "true"
+      gethomepage.dev/name: "Firefly Importer"
+      gethomepage.dev/group: "Finances"
+      gethomepage.dev/icon: "firefly.png"
+      gethomepage.dev/ping: "firefly-importer.lab.kvd.studio"
+    hosts:
+      - firefly-importer.lab.kvd.studio
