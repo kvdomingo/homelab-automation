@@ -7,7 +7,7 @@ image:
   repository: git.lab.kvd.studio/r/go-tracker
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "fff809b693bb9e9d90091091a194741c25a1b7df"
+  tag: "9f6be4c157e11fa274278b7f1ac2d08e39619bd2"
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
