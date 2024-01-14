@@ -1,0 +1,39 @@
+{{- if not .Values.disableNfsProvisioner }}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: nfs-provisioner
+  namespace: {{ include "apps.argocdNamespace" . | quote }}
+  finalizers:
+    {{- include "apps.finalizers" . | nindent 4 }}
+spec:
+  project: {{ .Values.project }}
+  source:
+    repoURL: https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner/
+    chart: nfs-subdir-external-provisioner
+    targetRevision: 4.0.18
+    helm:
+      releaseName: nfs-provisioner
+      valuesObject:
+        replicaCount: 3
+        nfs:
+          server: 10.10.10.100
+          path: /mnt/big-chonk/k8s-nfs-prod
+          mountOptions: [ ]
+        storageClass:
+          defaultClass: true
+          archiveOnDelete: false
+          accessModes: ReadWriteMany
+        podDisruptionBudget:
+          enabled: true
+          minAvailable: 1
+  destination:
+    server: {{ .Values.destination.server }}
+    namespace: kube-system
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+    automated:
+      selfHeal: true
+      prune: true
+{{- end }}
