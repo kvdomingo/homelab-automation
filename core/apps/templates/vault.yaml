@@ -29,6 +29,8 @@ spec:
               gethomepage.dev/ping: "vault2.lab.kvd.studio"
             hosts:
               - host: vault2.lab.kvd.studio
+                paths: [ ]
+            activeService: true
           auditStorage:
             enabled: true
           standalone:
