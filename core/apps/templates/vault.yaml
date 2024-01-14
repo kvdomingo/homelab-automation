@@ -30,15 +30,13 @@ spec:
             hosts:
               - host: vault2.lab.kvd.studio
                 paths: [ ]
-            activeService: true
+            activeService: false
           auditStorage:
             enabled: true
           standalone:
-            enabled: false
-          ha:
             enabled: true
-            raft:
-              enabled: true
+          ha:
+            enabled: false
         ui:
           enabled: true
         csi:
