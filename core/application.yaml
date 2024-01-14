@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: prod-core
+  name: core-prod
   namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
@@ -12,7 +12,7 @@ spec:
     targetRevision: main
     path: core/apps
     helm:
-      releaseName: prod-core
+      releaseName: core-prod
   destination:
     server: https://kubernetes.default.svc
     namespace: argocd

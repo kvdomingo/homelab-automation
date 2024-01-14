@@ -1,4 +1,4 @@
-project: default
+project: core-prod
 
 destination:
   server: https://kubernetes.default.svc
@@ -7,5 +7,3 @@ ingress:
   baseDomain: lab.kvd.studio
 
 disableDroneCi: true
-
-disableVault: true
