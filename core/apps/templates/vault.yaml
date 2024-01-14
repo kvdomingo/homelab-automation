@@ -23,12 +23,12 @@ spec:
             enabled: true
             annotations:
               gethomepage.dev/enabled: "true"
-              gethomepage.dev/name: "Vault Backup"
+              gethomepage.dev/name: "Vault"
               gethomepage.dev/group: "Security"
               gethomepage.dev/icon: "vault.png"
-              gethomepage.dev/ping: "vault2.lab.kvd.studio"
+              gethomepage.dev/ping: "vault.lab.kvd.studio"
             hosts:
-              - host: vault2.lab.kvd.studio
+              - host: vault.lab.kvd.studio
                 paths: [ ]
             activeService: false
           auditStorage:
@@ -46,7 +46,7 @@ spec:
             enabled: true
   destination:
     server: {{ .Values.destination.server }}
-    namespace: vault2
+    namespace: vault
   syncPolicy:
     syncOptions:
       - CreateNamespace=true
