@@ -1,4 +1,4 @@
-{{- if (.Values.goTracker.enabled | default true) }}
+{{- if not .Values.disableGoTracker }}
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:

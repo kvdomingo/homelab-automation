@@ -1,4 +1,4 @@
-{{- if (.Values.portainer.enabled | default true) }}
+{{- if not .Values.disablePortainer }}
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:

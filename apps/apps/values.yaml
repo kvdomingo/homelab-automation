@@ -6,5 +6,4 @@ destination:
 ingress:
   baseDomain: lab.kvd.studio
 
-firefly:
-  enabled: false
+disableFirefly: true

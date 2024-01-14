@@ -1,4 +1,4 @@
-{{- if (.Values.nextcloud.enabled | default true) }}
+{{- if not .Values.disableNextcloud }}
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:

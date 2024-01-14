@@ -1,4 +1,4 @@
-{{- if (.Values.apod.enabled | default true) }}
+{{- if not .Values.disableApod }}
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
