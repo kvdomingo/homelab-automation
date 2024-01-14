@@ -18,7 +18,6 @@ tasks:
       - task: bootstrap-vms
       - task: setup-k8s-master
       - task: setup-k8s-workers
-      - task: setup-nfs-provisioner
       - task: setup-traefik
       - task: setup-promstack
       - task: setup-longhorn
@@ -47,16 +46,6 @@ tasks:
     cmds:
       - ansible-playbook -i inventory/hosts playbooks/setup-k8s-workers.yml
 
-  setup-nfs-provisioner:
-    desc: Setup K8s NFS storage provisioner
-    dir: nfs-provisioner
-    cmds:
-      - >
-        helm upgrade --install nfs-provisioner
-        nfs-subdir-external-provisioner/nfs-subdir-external-provisioner
-        --namespace kube-system
-        --values values.yaml
-
   setup-init:
     desc: Initial setup
     cmds:
@@ -73,6 +62,7 @@ tasks:
       - helm repo add jameswynn https://jameswynn.github.io/helm-charts
       - helm repo add portainer https://portainer.github.io/k8s/
       - helm repo add secrets-store-csi-driver https://kubernetes-sigs.github.io/secrets-store-csi-driver/charts
+      - helm repo add nfs-subdir-external-provisioner https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner/
       - helm repo update
 
   setup-traefik:
@@ -265,16 +255,6 @@ tasks:
       - helm upgrade --install readarr ./readarr --namespace arrstack
       - helm upgrade --install lidarr ./lidarr --namespace arrstack
       - helm upgrade --install jellyseerr ./jellyseerr --namespace arrstack
-
-  setup-vault:
-    desc: Setup HashiCorp Vault
-    dir: vault
-    cmds:
-      - >
-        helm upgrade --install vault hashicorp/vault 
-        --values values.yaml
-        --create-namespace
-        --namespace vault
 
   setup-core:
     desc: Setup core infra
