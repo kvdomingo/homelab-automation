@@ -31,6 +31,9 @@ spec:
                     - path: /
                       pathType: Prefix
             automountServiceAccountToken: true
+            persistentVolume:
+              annotations:
+                argocd.argoproj.io/sync-options: Delete=false,Prune=false
             env:
               DRONE_SERVER_HOST: drone.lab.kvd.studio
               DRONE_SERVER_PROTO: https

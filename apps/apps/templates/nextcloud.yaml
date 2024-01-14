@@ -60,6 +60,8 @@ spec:
               primary:
                 persistence:
                   enabled: true
+                  annotations:
+                    argocd.argoproj.io/sync-options: Delete=false,Prune=false
                 livenessProbe:
                   enabled: false
                 readinessProbe:
@@ -69,10 +71,16 @@ spec:
               auth:
                 enabled: true
                 password: <path:kv/data/lab/nextcloud#REDIS_PASSWORD>
+              master:
+                persistence:
+                  annotations:
+                    argocd.argoproj.io/sync-options: Delete=false,Prune=false
             cronjob:
               enabled: true
             persistence:
               enabled: true
+              annotations:
+                argocd.argoproj.io/sync-options: Delete=false,Prune=false
             metrics:
               enabled: true
               serviceMonitor:
