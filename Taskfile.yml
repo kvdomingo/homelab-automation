@@ -20,10 +20,7 @@ tasks:
       - task: setup-k8s-workers
       - task: setup-traefik
       - task: setup-promstack
-      - task: setup-longhorn
       - task: setup-argocd
-      - task: setup-argo-rollouts
-      - task: setup-droneci
 
   bootstrap-vms:
     desc: Install pre-requisites in VMs
@@ -63,6 +60,7 @@ tasks:
       - helm repo add portainer https://portainer.github.io/k8s/
       - helm repo add secrets-store-csi-driver https://kubernetes-sigs.github.io/secrets-store-csi-driver/charts
       - helm repo add nfs-subdir-external-provisioner https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner/
+      - helm repo add minio-operator https://operator.min.io
       - helm repo update
 
   setup-traefik:
@@ -173,53 +171,6 @@ tasks:
         --values values.yaml
         --set-string grafana.adminPassword={{.GRAFANA_PASSWORD}}
         --set-string grafana.ingress.annotations."gethomepage\.dev/widget\.password"={{.GRAFANA_PASSWORD}}
-
-  setup-minio:
-    desc: Setup MinIO
-    dir: minio
-    cmds:
-      - kubectl apply -f namespace.yaml
-      - kubectl apply -f secrets.yaml
-      - >
-        helm upgrade --install minio bitnami/minio
-        --create-namespace
-        --namespace minio
-        --values values.yaml
-
-  setup-uptime:
-    desc: Setup Uptime Kuma
-    dir: uptime-kuma
-    cmds:
-      - kubectl apply -f namespace.yaml
-      - kubectl apply -f secrets.yaml
-      - >
-        helm upgrade --install uptime k3/uptime-kuma
-        --namespace uptime
-        --values values.yaml
-
-  setup-tandoor:
-    desc: Setup Tandoor
-    dir: tandoor
-    cmds:
-      - kubectl apply -f namespace.yaml
-      - kubectl apply -f secrets.yaml
-      - >
-        helm upgrade --install postgres bitnami/postgresql
-        --namespace tandoor
-        --values pg-values.yaml
-      - helm upgrade --install tandoor ./tandoor --namespace tandoor
-
-  setup-longhorn:
-    desc: Setup Longhorn
-    dir: longhorn
-    cmds:
-      - kubectl apply -f namespace.yaml
-      - kubectl apply -f longhorn-iscsi-installation.yaml
-      - >
-        helm upgrade --install longhorn longhorn/longhorn
-        --namespace longhorn-system
-        --create-namespace
-        --values values.yaml
 
   setup-jellyfin:
     desc: Setup Jellyfin
