@@ -7,3 +7,5 @@ ingress:
   baseDomain: lab.kvd.studio
 
 disableDroneCi: true
+
+disableVault: true
