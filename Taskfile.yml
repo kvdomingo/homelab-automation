@@ -275,3 +275,15 @@ tasks:
         --values values.yaml
         --create-namespace
         --namespace vault
+
+  setup-core:
+    desc: Setup core infra
+    dir: core
+    cmds:
+      - kubectl apply -f application.yaml
+
+  setup-apps:
+    desc: Setup prod apps
+    dir: apps
+    cmds:
+      - kubectl apply -f application.yaml

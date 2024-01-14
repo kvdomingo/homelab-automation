@@ -1,4 +1,4 @@
-{{- if (.Values.time_machine.enabled | default true) }}
+{{- if (.Values.timeMachine.enabled | default true) }}
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
