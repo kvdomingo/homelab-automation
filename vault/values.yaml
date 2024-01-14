@@ -60,7 +60,7 @@ injector:
 
   # If true, will enable a node exporter metrics endpoint at /metrics.
   metrics:
-    enabled: false
+    enabled: true
 
   # Deprecated: Please use global.externalVaultAddr instead.
   externalVaultAddr: ""
@@ -407,16 +407,15 @@ server:
   # If deployment is on OpenShift, the following block is ignored.
   # In order to expose the service, use the route section below
   ingress:
-    enabled: false
+    enabled: true
     labels: { }
     # traffic: external
-    annotations: { }
-      # |
-      # kubernetes.io/ingress.class: nginx
-      # kubernetes.io/tls-acme: "true"
-      #   or
-      # kubernetes.io/ingress.class: nginx
-    # kubernetes.io/tls-acme: "true"
+    annotations:
+      gethomepage.dev/enabled: "true"
+      gethomepage.dev/name: "Vault"
+      gethomepage.dev/group: "Security"
+      gethomepage.dev/icon: "vault.png"
+      gethomepage.dev/ping: "vault.lab.kvd.studio"
 
     # Optionally use ingressClassName instead of deprecated annotation.
     # See: https://kubernetes.io/docs/concepts/services-networking/ingress/#deprecated-annotation
@@ -430,7 +429,7 @@ server:
     # configure the ingress to point to the Vault active service.
     activeService: true
     hosts:
-      - host: chart-example.local
+      - host: vault.lab.kvd.studio
         paths: [ ]
     ## Extra paths to prepend to the host configuration. This is useful when working with annotation based services.
     extraPaths: [ ]
@@ -491,7 +490,7 @@ server:
     #       mv vault-plugin-secrets-oauthapp-v1.2.0-linux-amd64 /usr/local/libexec/vault/oauthapp &&
     #       chmod +x /usr/local/libexec/vault/oauthapp
     #   volumeMounts:
-    #     - name: plugins
+  #     - name: plugins
   #       mountPath: /usr/local/libexec/vault
 
   # extraContainers is a list of sidecar containers. Specified as a YAML list.
@@ -507,7 +506,7 @@ server:
   # extraPorts is a list of extra ports. Specified as a YAML list.
   # This is useful if you need to add additional ports to the statefulset in dynamic way.
   extraPorts: null
-    # - containerPort: 8300
+  # - containerPort: 8300
   #   name: http-monitoring
 
   # Used to define custom readinessProbe settings
@@ -570,14 +569,14 @@ server:
   # used to include variables required for auto-unseal.
   extraEnvironmentVars: { }
     # GOOGLE_REGION: global
-    # GOOGLE_PROJECT: myproject
+  # GOOGLE_PROJECT: myproject
   # GOOGLE_APPLICATION_CREDENTIALS: /vault/userconfig/myproject/myproject-creds.json
 
   # extraSecretEnvironmentVars is a list of extra environment variables to set with the stateful set.
   # These variables take value from existing Secret objects.
   extraSecretEnvironmentVars: [ ]
     # - envName: AWS_SECRET_ACCESS_KEY
-    #   secretName: vault
+  #   secretName: vault
   #   secretKey: AWS_SECRET_ACCESS_KEY
 
   # Deprecated: please use 'volumes' instead.
@@ -586,7 +585,7 @@ server:
   # an array of objects, examples are shown below.
   extraVolumes: [ ]
     # - type: secret (or "configMap")
-    #   name: my-secret
+  #   name: my-secret
   #   path: null # default is `/vault/userconfig`
 
   # volumes is a list of volumes made available to all containers. These are rendered
@@ -886,7 +885,7 @@ server:
     raft:
 
       # Enables Raft integrated storage
-      enabled: false
+      enabled: true
       # Set the Node Raft ID to the name of the pod
       setNodeId: false
 
@@ -1025,7 +1024,7 @@ ui:
   # serviceType can be used to control the type of service created. For
   # example, setting this to "LoadBalancer" will create an external load
   # balancer (for supported K8S installations) to access the UI.
-  enabled: false
+  enabled: true
   publishNotReadyAddresses: true
   # The service should only contain selectors for active Vault pod
   activeVaultPodOnly: false
@@ -1076,7 +1075,7 @@ csi:
   # With the driver and provider installed, you can mount Vault secrets into volumes
   # similar to the Vault Agent injector, and you can also sync those secrets into
   # Kubernetes secrets.
-  enabled: false
+  enabled: true
 
   image:
     repository: "hashicorp/vault-csi-provider"
@@ -1264,7 +1263,7 @@ serverTelemetry:
     #  https://github.com/prometheus-operator/kube-prometheus
 
     # Enable deployment of the Vault Server ServiceMonitor CustomResource.
-    enabled: false
+    enabled: true
 
     # Selector labels to add to the ServiceMonitor.
     # When empty, defaults to:

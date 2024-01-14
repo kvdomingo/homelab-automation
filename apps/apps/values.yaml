@@ -1,4 +1,4 @@
-project: default
+project: apps-prod
 
 destination:
   server: https://kubernetes.default.svc
