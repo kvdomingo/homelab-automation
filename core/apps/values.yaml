@@ -5,3 +5,6 @@ destination:
 
 ingress:
   baseDomain: lab.kvd.studio
+
+droneci:
+  enabled: false
