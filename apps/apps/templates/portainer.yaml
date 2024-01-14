@@ -31,6 +31,9 @@ spec:
                 - host: "portainer.{{ .Values.ingress.baseDomain }}"
                   paths:
                     - path: /
+            persistence:
+              annotations:
+                argocd.argoproj.io/sync-options: Delete=false,Prune=false
   destination:
     server: {{ .Values.destination.server }}
     namespace: portainer

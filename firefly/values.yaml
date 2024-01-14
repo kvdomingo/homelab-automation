@@ -7,6 +7,10 @@ postgresql:
       adminPasswordKey: POSTGRES_PASSWORD
       replicationPasswordKey: POSTGRES_PASSWORD
       userPasswordKey: POSTGRES_PASSWORD
+  primary:
+    persistence:
+      annotations:
+        argocd.argoproj.io/sync-options: Delete=false,Prune=false
   volumePermissions:
     enabled: true
 
@@ -16,6 +20,10 @@ redis:
     existingSecret: firefly-secrets
     existingSecretPasswordKey: REDIS_PASSWORD
   architecture: standalone
+  master:
+    persistence:
+      annotations:
+        argocd.argoproj.io/sync-options: Delete=false,Prune=false
   volumePermissions:
     enabled: true
 

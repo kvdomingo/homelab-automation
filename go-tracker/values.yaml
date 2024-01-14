@@ -8,7 +8,7 @@ image:
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: "9f6be4c157e11fa274278b7f1ac2d08e39619bd2"
-imagePullSecrets: []
+imagePullSecrets: [ ]
 nameOverride: ""
 fullnameOverride: ""
 serviceAccount:
@@ -95,6 +95,10 @@ redis:
     enabled: true
     existingSecret: go-tracker-secrets
     existingSecretPasswordKey: REDIS_PASSWORD
+  master:
+    persistence:
+      annotations:
+      argocd.argoproj.io/sync-options: Delete=false,Prune=false
   volumePermissions:
     enabled: true
   metrics:
