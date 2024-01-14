@@ -1,3 +1,4 @@
+{{- if (.Values.portainer.enabled | default true) }}
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -39,3 +40,4 @@ spec:
     automated:
       selfHeal: true
       prune: true
+{{- end }}
