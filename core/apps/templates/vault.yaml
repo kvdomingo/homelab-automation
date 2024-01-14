@@ -12,40 +12,38 @@ spec:
     repoURL: https://helm.releases.hashicorp.com
     chart: vault
     targetRevision: 0.27.0
-    plugin:
-      name: argocd-vault-plugin-helm
-      env:
-        - name: HELM_VALUES
-          value: |
-            injector:
-              metrics:
-                enabled: true
-            server:
-              ingress:
-                enabled: true
-                annotations:
-                  gethomepage.dev/enabled: "true"
-                  gethomepage.dev/name: "Vault Backup"
-                  gethomepage.dev/group: "Security"
-                  gethomepage.dev/icon: "vault.png"
-                  gethomepage.dev/ping: "vault2.lab.kvd.studio"
-                hosts:
-                  - host: vault2.lab.kvd.studio
-              auditStorage:
-                enabled: true
-              standalone:
-                enabled: false
-              ha:
-                enabled: true
-                raft:
-                  enabled: true
-            ui:
+    helm:
+      releaseName: vault
+      valuesObject:
+        injector:
+          metrics:
+            enabled: true
+        server:
+          ingress:
+            enabled: true
+            annotations:
+              gethomepage.dev/enabled: "true"
+              gethomepage.dev/name: "Vault Backup"
+              gethomepage.dev/group: "Security"
+              gethomepage.dev/icon: "vault.png"
+              gethomepage.dev/ping: "vault2.lab.kvd.studio"
+            hosts:
+              - host: vault2.lab.kvd.studio
+          auditStorage:
+            enabled: true
+          standalone:
+            enabled: false
+          ha:
+            enabled: true
+            raft:
               enabled: true
-            csi:
-              enabled: true
-            serverTelemetry:
-              serviceMonitor:
-                enabled: true
+        ui:
+          enabled: true
+        csi:
+          enabled: true
+        serverTelemetry:
+          serviceMonitor:
+            enabled: true
   destination:
     server: {{ .Values.destination.server }}
     namespace: vault2
