@@ -1,0 +1,156 @@
+{{- if not .Values.disableHomepage }}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: homepage
+  namespace: {{ include "apps.argocdNamespace" . | quote }}
+  finalizers:
+    {{- include "apps.finalizers" . | nindent 4 }}
+spec:
+  project: {{ .Values.project }}
+  source:
+    repoURL: https://jameswynn.github.io/helm-charts
+    chart: homepage
+    targetRevision: 1.2.3
+    plugin:
+      name: argocd-vault-plugin-helm
+      env:
+        - name: HELM_VALUES
+          value: |
+            image:
+              repository: ghcr.io/gethomepage/homepage
+              tag: v0.8.4
+            enableRbac: true
+            serviceAccount:
+              create: true
+            ingress:
+              main:
+                enabled: true
+                annotations:
+                  gethomepage.dev/enabled: "true"
+                  gethomepage.dev/name: "Homepage"
+                  gethomepage.dev/group: "Admin"
+                  gethomepage.dev/icon: "homepage.png"
+                  gethomepage.dev/ping: "home.lab.kvd.studio"
+                hosts:
+                  - host: home.lab.kvd.studio
+                    paths:
+                      - path: /
+                        pathType: Prefix
+            config:
+              services:
+                - Networking:
+                    - Cloudflare:
+                        icon: cloudflare.png
+                        widget:
+                          type: cloudflared
+                          accountid: <path:kv/data/lab/homepage#CLOUDFLARE_ACCOUNT_ID>
+                          tunnelid: <path:kv/data/lab/homepage#CLOUDFLARE_TUNNEL_ID>
+                          key: <path:kv/data/lab/homepage#CLOUDFLARE_KEY>
+                    - pfSense:
+                        icon: pfsense.png
+                        href: https://pfsense.local.kvdomingo.dev
+                        ping: https://pfsense.local.kvdomingo.dev
+                - Admin:
+                    - Traefik:
+                        icon: traefik.png
+                        href: https://traefik.lab.kvd.studio
+                        ping: https://traefik.lab.kvd.studio
+                        widget:
+                          type: traefik
+                          url: https://traefik.lab.kvd.studio
+                          routers: true
+                          services: true
+                          middleware: true
+                - Media:
+                    - Calendar:
+                        widget:
+                          type: calendar
+                          firstDayInWeek: monday
+                          view: monthly
+                          maxEvents: 10
+                          showTime: true
+                          integrations:
+                            - type: sonarr
+                              service_group: Media
+                              service_name: Sonarr
+                            - type: radarr
+                              service_group: Media
+                              service_name: Radarr
+                            - type: readarr
+                              service_group: Media
+                              service_name: Readarr
+              widgets:
+                - logo:
+                    icon: https://res.cloudinary.com/kdphotography-assets/image/upload/v1597254769/logo/logo-white.png
+                - resources:
+                    backend: kubernetes
+                    expanded: true
+                    cpu: true
+                    memory: true
+                    disk: /
+                - search:
+                    provider: google
+                    target: _blank
+                - datetime:
+                    text_size: xl
+                    format:
+                      dateStyle: long
+                      timeStyle: short
+                      hourCycle: h23
+                - openmeteo:
+                    label: Plaridel
+                    units: metric
+                    cache: 5
+                    timezone: Asia/Manila
+                    latitude: 14.88
+                    longitude: 120.85
+                - kubernetes:
+                    cluster:
+                      show: true
+                      cpu: true
+                      memory: true
+                      showLabel: true
+                      label: "cluster"
+                    nodes:
+                      show: true
+                      cpu: true
+                      memory: true
+                      showLabel: true
+              kubernetes:
+                mode: cluster
+              settings:
+                layout:
+                  Admin:
+                    style: row
+                    columns: 3
+                  Media:
+                    style: row
+                    columns: 5
+                  Networking:
+                    style: row
+                    columns: 3
+                  CI/CD:
+                    style: row
+                    columns: 3
+                headerStyle: underlined
+                quickLaunch:
+                  searchDescriptions: true
+                  hideInternetSearch: false
+                  hideVisitURL: false
+                showStats: false
+                background: https://apod.lab.kvd.studio
+                backgroundOpacity: 0.33
+            persistence:
+              logs:
+                enabled: true
+  destination:
+    server: {{ .Values.destination.server }}
+    namespace: homepage
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+    automated:
+      selfHeal: true
+      prune: true
+{{- end }}
