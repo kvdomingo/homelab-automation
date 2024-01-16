@@ -27,6 +27,10 @@ spec:
                 gethomepage.dev/group: "Admin"
                 gethomepage.dev/icon: "portainer.png"
                 gethomepage.dev/ping: "portainer.{{ .Values.ingress.baseDomain }}"
+                gethomepage.dev/widget.type: "portainer"
+                gethomepage.dev/widget.url: "https://portainer.{{ .Values.ingress.baseDomain }}"
+                gethomepage.dev/widget.env: "1"
+                gethomepage.dev/widget.key: "<path:kv/data/lab/homepage#PORTAINER_ACCESS_KEY>"
               hosts:
                 - host: "portainer.{{ .Values.ingress.baseDomain }}"
                   paths:
