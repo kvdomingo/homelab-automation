@@ -38,6 +38,7 @@ spec:
                       - path: /
                         pathType: Prefix
             config:
+              bookmarks: []
               services:
                 - Networking:
                     - Cloudflare:
@@ -62,6 +63,33 @@ spec:
                           routers: true
                           services: true
                           middleware: true
+                - Machines:
+                    - Bastion:
+                        icon: proxmox.png
+                        href: https://bastion.local.kvdomingo.dev
+                        ping: https://bastion.local.kvdomingo.dev
+                        widget:
+                          type: proxmox
+                          url: https://bastion.local.kvdomingo.dev
+                          username: <path:kv/data/lab/homepage#BASTION_USERNAME>
+                          password: <path:kv/data/lab/homepage#BASTION_PASSWORD>
+                    - Aurora:
+                        icon: proxmox.png
+                        href: https://aurora.local.kvdomingo.dev
+                        ping: https://aurora.local.kvdomingo.dev
+                        widget:
+                          type: proxmox
+                          url: https://aurora.local.kvdomingo.dev
+                          username: <path:kv/data/lab/homepage#AURORA_USERNAME>
+                          password: <path:kv/data/lab/homepage#AURORA_PASSWORD>
+                    - TrueNAS:
+                        icon: truenas-scale.png
+                        href: https://truenas.local.kvdomingo.dev
+                        ping: https://truenas.local.kvdomingo.dev
+                        widget:
+                          type: truenas
+                          url: https://truenas.local.kvdomingo.dev
+                          key: <path:kv/data/lab/homepage#TRUENAS_KEY>
                 - Media:
                     - Calendar:
                         widget:
