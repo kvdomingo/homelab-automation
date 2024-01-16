@@ -163,12 +163,6 @@ spec:
                   Media:
                     style: row
                     columns: 5
-                  Networking:
-                    style: row
-                    columns: 3
-                  CI/CD:
-                    style: row
-                    columns: 3
                 headerStyle: underlined
                 quickLaunch:
                   searchDescriptions: true
