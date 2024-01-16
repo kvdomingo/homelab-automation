@@ -31,9 +31,9 @@ spec:
                   gethomepage.dev/name: "Homepage"
                   gethomepage.dev/group: "Admin"
                   gethomepage.dev/icon: "homepage.png"
-                  gethomepage.dev/ping: "home.lab.kvd.studio"
+                  gethomepage.dev/ping: "home.{{ .Values.ingress.baseDomain }}"
                 hosts:
-                  - host: home.lab.kvd.studio
+                  - host: home.{{ .Values.ingress.baseDomain }}
                     paths:
                       - path: /
                         pathType: Prefix
@@ -117,8 +117,16 @@ spec:
                       cpu: true
                       memory: true
                       showLabel: true
+                - longhorn:
+                    expanded: true
+                    total: true
+                    labels: true
+                    nodes: true
               kubernetes:
                 mode: cluster
+              providers:
+                longhorn:
+                  url: https://longhorn.lab.kvd.studio
               settings:
                 layout:
                   Admin:
