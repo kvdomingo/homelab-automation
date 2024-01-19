@@ -368,3 +368,19 @@
           package:
             name: google-cloud-cli
             state: latest
+
+    - name: Install Supabase CLI
+      block:
+        - name: Download Supabase CLI
+          get_url:
+            url: https://github.com/supabase/cli/releases/latest/download/supabase_linux_amd64.tar.gz
+            dest: ~/Downloads/supabase_linux_amd64.tar.gz
+        - name: Extract Supabase CLI
+          unarchive:
+            src: ~/Downloads/supabase_linux_amd64.tar.gz
+            dest: ~/Downloads
+        - name: Install Supabase CLI
+          copy:
+            src: ~/Downloads/supabase
+            dest: ~/.local/bin/supabase
+            mode: "0755"
