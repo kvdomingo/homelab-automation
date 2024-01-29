@@ -1,0 +1,64 @@
+{
+  // Declare static groups of users. Use autogroups for all users or users with a specific role.
+  "groups": {
+    "group:palworld": [
+      "kvdomingo"
+    ],
+  },
+  // Define the tags which can be applied to devices and by which users.
+  "tagOwners": {
+    "tag:gameserver": [
+      "autogroup:admin"
+    ],
+  },
+  // Define access control lists for users, groups, autogroups, tags,
+  // Tailscale IP addresses, and subnet ranges.
+  "acls": [
+    // Allow connections to own devices
+    {
+      "action": "accept",
+      "src": [
+        "autogroup:member"
+      ],
+      "dst": [
+        "autogroup:self:*"
+      ]
+    },
+    // Allow connections to Palworld server
+    {
+      "action": "accept",
+      "src": [
+        "group:palworld"
+      ],
+      "dst": [
+        "tag:gameserver:8211"
+      ]
+    }
+  ],
+  // Define users and devices that can use Tailscale SSH.
+  "ssh": [
+    // Allow all users to SSH into their own devices in check mode.
+    {
+      "action": "check",
+      "src": [
+        "autogroup:members"
+      ],
+      "dst": [
+        "autogroup:self"
+      ],
+      "users": [
+        "autogroup:nonroot",
+        "root",
+        "kvdomingo"
+      ],
+    }
+  ]
+  // Test access rules every time they're saved.
+  // "tests": [
+  //  	{
+  //  		"src": "alice@example.com",
+  //  		"accept": ["tag:example"],
+  //  		"deny": ["100.101.102.103:443"],
+  //  	},
+  // ],
+}
