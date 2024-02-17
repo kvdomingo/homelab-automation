@@ -14,6 +14,7 @@
       become: true
       package:
         name:
+          - apache2-utils
           - apt-transport-https
           - build-essential
           - ca-certificates
