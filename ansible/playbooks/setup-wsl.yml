@@ -35,6 +35,7 @@
           - libxmlsec1-dev
           - libxml2-dev
           - lsb-release
+          - net-tools
           - python3
           - tk-dev
           - tmux
