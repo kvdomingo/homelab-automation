@@ -16,6 +16,7 @@
         name:
           - apache2-utils
           - apt-transport-https
+          - asciinema
           - build-essential
           - ca-certificates
           - curl
@@ -170,6 +171,7 @@
               asdf plugin add nodejs
               asdf plugin add poetry
               asdf plugin add python
+              asdf plugin add just
         - name: Install asdf tools
           shell:
             cmd: asdf install
