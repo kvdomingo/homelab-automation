@@ -172,6 +172,7 @@
               asdf plugin add poetry
               asdf plugin add python
               asdf plugin add just
+              asdf plugin add rust
         - name: Install asdf tools
           shell:
             cmd: asdf install
