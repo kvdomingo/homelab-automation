@@ -102,12 +102,16 @@ spec:
                             - type: sonarr
                               service_group: Media
                               service_name: Sonarr
+                              params:
+                                unmonitored: true
                             - type: radarr
                               service_group: Media
                               service_name: Radarr
+                                unmonitored: true
                             - type: readarr
                               service_group: Media
                               service_name: Readarr
+                                unmonitored: true
               widgets:
                 - logo:
                     icon: https://res.cloudinary.com/kdphotography-assets/image/upload/v1597254769/logo/logo-white.png
