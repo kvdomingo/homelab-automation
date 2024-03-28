@@ -981,7 +981,7 @@ grafana:
       gethomepage.dev/ping: "grafana.lab.kvd.studio"
       gethomepage.dev/widget.type: "grafana"
       gethomepage.dev/widget.url: "https://grafana.lab.kvd.studio"
-      gethomepage.dev/widget.username: "kvdomingo"
+      gethomepage.dev/widget.username: "admin"
 
     ## Labels to be added to the Ingress
     ##
@@ -3729,7 +3729,7 @@ prometheus:
       #     # name: ""
       #     # key: ""
       #   # will render objectStorageConfig secret data and configure it to be used by Thanos custom resource,
-      #   # ignored when prometheusspec.thanos.objectStorageConfig.existingSecret is set
+    #   # ignored when prometheusspec.thanos.objectStorageConfig.existingSecret is set
     #   # https://thanos.io/tip/thanos/storage.md/#s3
     #   secret: {}
     #     # type: S3
@@ -3969,7 +3969,7 @@ prometheus:
     #   regex: 'kube_(daemonset|deployment|pod|namespace|node|statefulset).+'
     #   sourceLabels: [__name__]
 
-    ## RelabelConfigs to apply to samples before scraping
+  ## RelabelConfigs to apply to samples before scraping
   ## ref: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api.md#relabelconfig
   ##
   # relabelings: []
@@ -4010,7 +4010,7 @@ prometheus:
     ## Namespaces from which pods are selected
     ##
     # namespaceSelector:
-    ## Match any namespace
+  ## Match any namespace
   ##
   # any: false
 
@@ -4285,7 +4285,7 @@ thanosRuler:
       # will render render alertmanagersConfig secret data and configure it to be used by Thanos Ruler custom resource, ignored when alertmanagersConfig.existingSecret is set
       # https://thanos.io/tip/components/rule.md/#alertmanager
       secret: { }
-        # alertmanagers:
+      # alertmanagers:
       # - api_version: v2
       #   http_config:
       #     basic_auth:
