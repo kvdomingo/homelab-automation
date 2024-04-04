@@ -50,8 +50,8 @@ spec:
                           key: <path:kv/data/lab/homepage#CLOUDFLARE_KEY>
                     - pfSense:
                         icon: pfsense.png
-                        href: https://pfsense.local.kvdomingo.dev
-                        ping: https://pfsense.local.kvdomingo.dev
+                        href: https://pfsense.dev.kvd.studio
+                        ping: https://pfsense.dev.kvd.studio
                 - Admin:
                     - Traefik:
                         icon: traefik.png
@@ -66,29 +66,29 @@ spec:
                 - Machines:
                     - Bastion:
                         icon: proxmox.png
-                        href: https://bastion.local.kvdomingo.dev
-                        ping: https://bastion.local.kvdomingo.dev
+                        href: https://bastion.dev.kvd.studio
+                        ping: https://bastion.dev.kvd.studio
                         widget:
                           type: proxmox
-                          url: https://bastion.local.kvdomingo.dev
+                          url: https://bastion.dev.kvd.studio
                           username: <path:kv/data/lab/homepage#BASTION_USERNAME>
                           password: <path:kv/data/lab/homepage#BASTION_PASSWORD>
                     - Aurora:
                         icon: proxmox.png
-                        href: https://aurora.local.kvdomingo.dev
-                        ping: https://aurora.local.kvdomingo.dev
+                        href: https://aurora.dev.kvd.studio
+                        ping: https://aurora.dev.kvd.studio
                         widget:
                           type: proxmox
-                          url: https://aurora.local.kvdomingo.dev
+                          url: https://aurora.dev.kvd.studio
                           username: <path:kv/data/lab/homepage#AURORA_USERNAME>
                           password: <path:kv/data/lab/homepage#AURORA_PASSWORD>
                     - TrueNAS:
                         icon: truenas-scale.png
-                        href: https://truenas.local.kvdomingo.dev
-                        ping: https://truenas.local.kvdomingo.dev
+                        href: https://truenas.dev.kvd.studio
+                        ping: https://truenas.dev.kvd.studio
                         widget:
                           type: truenas
-                          url: https://truenas.local.kvdomingo.dev
+                          url: https://truenas.dev.kvd.studio
                           key: <path:kv/data/lab/homepage#TRUENAS_KEY>
                 - Media:
                     - Calendar:
