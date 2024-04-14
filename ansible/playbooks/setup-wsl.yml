@@ -183,7 +183,6 @@
           - pip
           - pre-commit
           - ansible
-          - thefuck
         state: latest
 
     - name: Install/update global Node.js package managers
@@ -219,6 +218,14 @@
           shell:
             chdir: ~/Downloads
             cmd: ./install-bun.sh
+
+    - name: Install/update global Go packages
+      shell:
+        cmd: |
+          go install github.com/cosmtrek/air@latest
+          go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
+          go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
+          go install github.com/jesseduffield/lazygit@latest
 
     - name: Setup k8s development environment
       block:
