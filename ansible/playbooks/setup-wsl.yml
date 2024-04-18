@@ -226,6 +226,8 @@
           go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
           go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
           go install github.com/jesseduffield/lazygit@latest
+          go install github.com/jesseduffield/lazydocker@latest
+          go install github.com/owenrumney/lazytrivy@latest
 
     - name: Setup k8s development environment
       block:
