@@ -30,7 +30,7 @@ replicaCount: 1
 strategy:
   type: "RollingUpdate"
   rollingUpdate:
-    maxSurge: 1
+    maxSurge: "100%"
     maxUnavailable: 0
 
 ## @param clusterDomain cluster domain
@@ -43,14 +43,16 @@ clusterDomain: cluster.local
 ## @param image.digest Image digest. Allows to pin the given image tag. Useful for having control over mutable tags like `latest`
 ## @param image.pullPolicy Image pull policy
 ## @param image.rootless Wether or not to pull the rootless version of Gitea, only works on Gitea 1.14.x or higher
+## @param image.fullOverride Completely overrides the image registry, path/image, tag and digest. **Adjust `image.rootless` accordingly and review [Rootless defaults](#rootless-defaults).**
 image:
   registry: ""
   repository: gitea/gitea
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "1.21.3"
+  tag: "1.21.10"
   digest: ""
   pullPolicy: IfNotPresent
   rootless: true
+  fullOverride: ""
 
 ## @param imagePullSecrets Secret to use for pulling the image
 imagePullSecrets: [ ]
@@ -104,6 +106,7 @@ service:
   ## @param service.http.ipFamilies HTTP service dual-stack familiy selection,for dual-stack parameters see official kubernetes [dual-stack concept documentation](https://kubernetes.io/docs/concepts/services-networking/dual-stack/).
   ## @param service.http.loadBalancerSourceRanges Source range filter for http loadbalancer
   ## @param service.http.annotations HTTP service annotations
+  ## @param service.http.labels HTTP service additional labels
   http:
     type: ClusterIP
     port: 3000
@@ -116,6 +119,7 @@ service:
     ipFamilies:
     loadBalancerSourceRanges: [ ]
     annotations: { }
+    labels: { }
   ## @param service.ssh.type Kubernetes service type for ssh traffic
   ## @param service.ssh.port Port number for ssh traffic
   ## @param service.ssh.clusterIP ClusterIP setting for ssh autosetup for deployment is None
@@ -128,10 +132,11 @@ service:
   ## @param service.ssh.hostPort HostPort for ssh service
   ## @param service.ssh.loadBalancerSourceRanges Source range filter for ssh loadbalancer
   ## @param service.ssh.annotations SSH service annotations
+  ## @param service.ssh.labels SSH service additional labels
   ssh:
     type: ClusterIP
     port: 22
-    clusterIP:
+    clusterIP: None
     loadBalancerIP:
     nodePort:
     externalTrafficPolicy:
@@ -141,6 +146,7 @@ service:
     hostPort:
     loadBalancerSourceRanges: [ ]
     annotations: { }
+    labels: { }
 
 ## @section Ingress
 ## @param ingress.enabled Enable ingress
@@ -154,7 +160,7 @@ service:
 ingress:
   enabled: true
   # className: nginx
-  className: traefik
+  className:
   annotations:
     gethomepage.dev/enabled: "true"
     gethomepage.dev/name: "Gitea"
@@ -475,9 +481,14 @@ gitea:
 ## @section redis-cluster
 ## @param redis-cluster.enabled Enable redis
 ## @param redis-cluster.usePassword Whether to use password authentication
+## @param redis-cluster.cluster.nodes Number of redis cluster master nodes
+## @param redis-cluster.cluster.replicas Number of redis cluster master node replicas
 redis-cluster:
   enabled: true
   usePassword: false
+  cluster:
+    nodes: 3 # default: 6
+    replicas: 3 # default: 1
 
 ## @section postgresql-ha
 #
