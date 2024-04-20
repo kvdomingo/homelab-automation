@@ -13,3 +13,4 @@ data:
   POSTGRESQL_PORT: "5432"
   POSTGRESQL_USERNAME: "timemachine-client"
   POSTGRESQL_DATABASE: "timemachine"
+  PORT: "5000"
