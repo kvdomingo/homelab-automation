@@ -79,7 +79,7 @@ spec:
               sleep 2;
               done;
         - name: migrate-db
-          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          image: {{ .Values.migrate.image.repository }}:{{ .Values.migrate.image.tag }}
           envFrom:
             - configMapRef:
                 name: time-machine-configmap
