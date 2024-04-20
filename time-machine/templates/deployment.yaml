@@ -78,6 +78,21 @@ spec:
               until pg_isready -h $POSTGRESQL_HOST -U $POSTGRESQL_USERNAME -d $POSTGRESQL_DATABASE; do
               sleep 2;
               done;
+        - name: migrate-db
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          envFrom:
+            - configMapRef:
+                name: time-machine-configmap
+            - secretRef:
+                name: time-machine-secrets
+          command:
+            - /bin/sh
+            - -c
+            - >
+              migrate
+              -source file://migrations
+              -database pgx5://$POSTGRESQL_USERNAME:$POSTGRESQL_PASSWORD@$POSTGRESQL_HOST:$POSTGRESQL_PORT/$POSTGRESQL_DATABASE?sslmode=disable
+              up
       {{- with .Values.volumes }}
       volumes:
         {{- toYaml . | nindent 8 }}
