@@ -93,7 +93,7 @@ postgresql:
   image:
     registry: git.lab.kvd.studio
     repository: r/time-machine-postgresql
-    tag: "1934a2578a6de842010ee7c55008ee41e556c2b5"
+    tag: "884fa348fdef8867e29328c80935b0e1617fef76"
   auth:
     username: timemachine-client
     database: timemachine
