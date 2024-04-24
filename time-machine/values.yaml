@@ -7,8 +7,8 @@ image:
   repository: git.lab.kvd.studio/r/time-machine
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "a8c6ec4339ea7816ed8d74bbc8af8f3df84543c4"
-imagePullSecrets: []
+  tag: "4c7b99ccd4cc837b32af60c9b65124a3c9c279be"
+imagePullSecrets: [ ]
 nameOverride: ""
 fullnameOverride: ""
 serviceAccount:
@@ -17,13 +17,13 @@ serviceAccount:
   # Automatically mount a ServiceAccount's API credentials?
   automount: true
   # Annotations to add to the service account
-  annotations: {}
+  annotations: { }
   # The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
   name: ""
-podAnnotations: {}
-podLabels: {}
-podSecurityContext: {}
+podAnnotations: { }
+podLabels: { }
+podSecurityContext: { }
 # fsGroup: 2000
 
 securityContext:
@@ -51,11 +51,11 @@ ingress:
       paths:
         - path: /
           pathType: Prefix
-  tls: []
+  tls: [ ]
   #  - secretName: chart-example-tls
   #    hosts:
   #      - chart-example.local
-resources: {}
+resources: { }
 # We usually recommend not to specify default resources and to leave this as a conscious
 # choice for the user. This also increases chances charts run on environments with little
 # resources, such as Minikube. If you do want to specify resources, uncomment the following
@@ -74,26 +74,29 @@ autoscaling:
   targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80
 # Additional volumes on the output Deployment definition.
-volumes: []
+volumes: [ ]
 # - name: foo
 #   secret:
 #     secretName: mysecret
 #     optional: false
 
 # Additional volumeMounts on the output Deployment definition.
-volumeMounts: []
+volumeMounts: [ ]
 # - name: foo
 #   mountPath: "/etc/foo"
 #   readOnly: true
 
-nodeSelector: {}
-tolerations: []
-affinity: {}
+nodeSelector: { }
+
+tolerations: [ ]
+
+affinity: { }
+
 postgresql:
   image:
     registry: git.lab.kvd.studio
     repository: r/time-machine-postgresql
-    tag: "a8c6ec4339ea7816ed8d74bbc8af8f3df84543c4"
+    tag: "4c7b99ccd4cc837b32af60c9b65124a3c9c279be"
   auth:
     username: timemachine-client
     database: timemachine
@@ -108,7 +111,8 @@ postgresql:
         argocd.argoproj.io/sync-options: Delete=false,Prune=false
   volumePermissions:
     enabled: true
+
 migrate:
   image:
     repository: git.lab.kvd.studio/r/time-machine-migrate
-    tag: "a8c6ec4339ea7816ed8d74bbc8af8f3df84543c4"
+    tag: "4c7b99ccd4cc837b32af60c9b65124a3c9c279be"
