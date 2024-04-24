@@ -63,33 +63,6 @@ spec:
                 name: time-machine-configmap
             - secretRef:
                 name: time-machine-secrets
-      initContainers:
-        - name: init-wait-db
-          image: bitnami/postgresql:13.13.0-debian-11-r20
-          envFrom:
-            - configMapRef:
-                name: time-machine-configmap
-            - secretRef:
-                name: time-machine-secrets
-          command:
-            - /bin/sh
-            - -c
-            - >
-              until pg_isready -h $POSTGRESQL_HOST -U $POSTGRESQL_USERNAME -d $POSTGRESQL_DATABASE; do
-              sleep 2;
-              done;
-        - name: migrate-db
-          image: {{ .Values.migrate.image.repository }}:{{ .Values.migrate.image.tag }}
-          envFrom:
-            - configMapRef:
-                name: time-machine-configmap
-            - secretRef:
-                name: time-machine-secrets
-          command:
-            - >
-              -source file://migrations
-              -database pgx5://$POSTGRESQL_USERNAME:$POSTGRESQL_PASSWORD@$POSTGRESQL_HOST:$POSTGRESQL_PORT/$POSTGRESQL_DATABASE?sslmode=disable
-              up
       {{- with .Values.volumes }}
       volumes:
         {{- toYaml . | nindent 8 }}
