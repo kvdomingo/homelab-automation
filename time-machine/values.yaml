@@ -111,4 +111,4 @@ postgresql:
 migrate:
   image:
     repository: git.lab.kvd.studio/r/time-machine-migrate
-    tag: "4c7b99ccd4cc837b32af60c9b65124a3c9c279be"
+    tag: "3a0790e499954c133fd52e2c87a9c66d6323b9c3"
