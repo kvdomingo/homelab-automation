@@ -1,0 +1,60 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "time-machine.fullname" . }}-init-wait-db
+  labels:
+    {{- include "time-machine.labels" . | nindent 4 }}
+  annotations:
+    helm.sh/hook: pre-install, pre-upgrade
+    helm.sh/hook-weight: "-5"
+    helm.sh/hook-delete-policy: before-hook-creation
+spec:
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: {{ include "time-machine.fullname" . }}-init-wait-db
+          image: bitnami/postgresql:13.13.0-debian-11-r20
+          envFrom:
+            - configMapRef:
+                name: time-machine-configmap
+            - secretRef:
+                name: time-machine-secrets
+          command:
+            - /bin/sh
+            - -c
+            - >
+              until pg_isready -h $POSTGRESQL_HOST -U $POSTGRESQL_USERNAME -d $POSTGRESQL_DATABASE; do
+              sleep 2;
+              done;
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "time-machine.fullname" . }}-init-migrate-db
+  labels:
+    {{- include "time-machine.labels" . | nindent 4 }}
+  annotations:
+    helm.sh/hook: pre-install, pre-upgrade
+    helm.sh/hook-weight: "-4"
+    helm.sh/hook-delete-policy: before-hook-creation
+spec:
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: {{ include "time-machine.fullname" . }}-init-migrate-db
+          image: {{ .Values.migrate.image.repository }}:{{ .Values.migrate.image.tag }}
+          envFrom:
+            - configMapRef:
+                name: time-machine-configmap
+            - secretRef:
+                name: time-machine-secrets
+          command:
+            - /bin/sh
+            - -c
+            - >
+              migrate
+              -source file://migrations
+              -database postgres://$POSTGRESQL_USERNAME:$POSTGRESQL_PASSWORD@$POSTGRESQL_HOST:$POSTGRESQL_PORT/$POSTGRESQL_DATABASE?sslmode=disable
+              up
