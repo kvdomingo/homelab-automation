@@ -11,7 +11,7 @@ data:
   DJANGO_SETTINGS_MODULE: "time_machine.settings"
   POSTGRESQL_HOST: "time-machine-postgresql"
   POSTGRESQL_PORT: "5432"
-  POSTGRESQL_USERNAME: "timemachine-client"
+  POSTGRESQL_USERNAME: "postgres"
   POSTGRESQL_DATABASE: "timemachine"
   PORT: "5000"
   PRODUCTION: "true"
