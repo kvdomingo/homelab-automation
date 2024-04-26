@@ -1,0 +1,50 @@
+{{- if not .Values.disablePlausible }}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: plausible
+  namespace: {{ include "apps.argocdNamespace" . | quote }}
+  finalizers:
+    {{- include "apps.finalizers" . | nindent 4 }}
+spec:
+  project: {{ .Values.project }}
+  source:
+    repoURL: https://imio.github.io/helm-charts
+    targetRevision: 0.2.4
+    chart: plausible-analytics
+    plugin:
+      name: argocd-vault-plugin-helm
+      env:
+        - name: HELM_VALUES
+          value: |
+            baseURL: "plausible.{{ .Values.ingress.baseDomain }}"
+            databaseURL: "postgres://postgres:<path:kv/data/lab/plausible#POSTGRESQL_PASSWORD>@plausible-postgresql:5432/plausible_db"
+            clickhouseDatabaseURL: "http://clickhouse:<path:kv/data/lab/plausible#CLICKHOUSE_PASSWORD>@plausible-clickhouse:8123/plausible_events_db"
+            clickhouse:
+              auth:
+                password: <path:kv/data/lab/plausible#CLICKHOUSE_PASSWORD>
+              zookeeper:
+                enabled: true
+              persistence:
+                enabled: true
+            postgresql:
+              password: <path:kv/data/lab/plausible#POSTGRESQL_PASSWORD>
+              metrics:
+                enabled: true
+              primary:
+                persistence:
+                  enabled: true
+            ingress:
+              enabled: true
+              hosts:
+                - "plausible.{{ .Values.ingress.baseDomain }}"
+  destination:
+    server: {{ .Values.destination.server }}
+    namespace: plausible
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+    automated:
+      selfHeal: true
+      prune: true
+{{- end }}
