@@ -1,0 +1,74 @@
+{{- if not .Values.disablePromstack }}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: promstack
+  namespace: {{ include "apps.argocdNamespace" . | quote }}
+  finalizers:
+    {{- include "apps.finalizers" . | nindent 4 }}
+spec:
+  project: {{ .Values.project }}
+  source:
+    repoURL: https://prometheus-community.github.io/helm-charts
+    chart: kube-prometheus-stack
+    targetRevision: 58.2.2
+    plugin:
+      name: argocd-vault-plugin-helm
+      env:
+        - name: HELM_VALUES
+          value: |
+            alertmanager:
+              ingress:
+                enabled: true
+                annotations:
+                  gethomepage.dev/enabled: "true"
+                  gethomepage.dev/name: "Alertmanager"
+                  gethomepage.dev/group: "Monitoring"
+                  gethomepage.dev/icon: "alertmanager.png"
+                  gethomepage.dev/ping: "alertmanager.{{ .Values.ingress.baseDomain }}"
+                hosts:
+                  - "alertmanager.{{ .Values.ingress.baseDomain }}"
+                paths: [ "/" ]
+            grafana:
+              adminPassword: "<path:kv/data/lab/promstack#GRAFANA_PASSWORD>"
+              ingress:
+                enabled: true
+              annotations:
+                gethomepage.dev/enabled: "true"
+                gethomepage.dev/name: "Grafana"
+                gethomepage.dev/group: "Monitoring"
+                gethomepage.dev/icon: "grafana.png"
+                gethomepage.dev/ping: "grafana.{{ .Values.ingress.baseDomain }}"
+                gethomepage.dev/widget.type: "grafana"
+                gethomepage.dev/widget.url: "https://grafana.{{ .Values.ingress.baseDomain }}"
+                gethomepage.dev/widget.username: "admin"
+                gethomepage.dev/widget.password: "<path:kv/data/lab/promstack#GRAFANA_PASSWORD>"
+              hosts:
+                - "grafana.{{ .Values.ingress.baseDomain }}"
+              persistence:
+                enabled: true
+            prometheus:
+              ingress:
+                enabled: true
+                annotations:
+                  gethomepage.dev/enabled: "true"
+                  gethomepage.dev/name: "Prometheus"
+                  gethomepage.dev/group: "Monitoring"
+                  gethomepage.dev/icon: "prometheus.png"
+                  gethomepage.dev/ping: "prometheus.{{ .Values.ingress.baseDomain }}"
+                  gethomepage.dev/widget.type: "prometheus"
+                  gethomepage.dev/widget.url: "https://prometheus.{{ .Values.ingress.baseDomain }}"
+                hosts:
+                  - "prometheus.{{ .Values.ingress.baseDomain }}"
+                paths: [ "/" ]
+
+  destination:
+    server: {{ .Values.destination.server }}
+    namespace: promstack
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+    automated:
+      selfHeal: true
+      prune: true
+{{- end }}
