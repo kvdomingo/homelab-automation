@@ -68,12 +68,15 @@ spec:
                 hosts:
                   - "prometheus.{{ .Values.ingress.baseDomain }}"
                 paths: [ "/" ]
-
+            prometheusOperator:
+              admissionWebhooks:
+                failurePolicy: Ignore
   destination:
     server: {{ .Values.destination.server }}
     namespace: promstack
   syncPolicy:
     syncOptions:
+      - ServerSideApply=true
       - CreateNamespace=true
     automated:
       selfHeal: true
