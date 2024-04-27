@@ -6,9 +6,6 @@ vars:
 
 dotenv:
   - ./gitea/.env
-  - ./homepage/.env
-  - ./promstack/.env
-  - ./zitadel/.env
 
 tasks:
   setup-k8s:
@@ -19,7 +16,6 @@ tasks:
       - task: setup-k8s-master
       - task: setup-k8s-workers
       - task: setup-traefik
-      - task: setup-promstack
       - task: setup-argocd
 
   bootstrap-vms:
@@ -96,26 +92,6 @@ tasks:
         --set postgresql.auth.username={{.GITEA_POSTGRES_USERNAME}}
       - kubectl apply -f ingress.yaml
 
-  setup-homepage:
-    desc: Setup Homepage
-    dir: homepage
-    cmds:
-      - >
-        helm upgrade --install homepage jameswynn/homepage
-        --namespace homepage
-        --create-namespace
-        --values values.yaml
-        --set config.services[0].Networking[0].Cloudflare.widget.accountid={{.CLOUDFLARE_ACCOUNT_ID}}
-        --set config.services[0].Networking[0].Cloudflare.widget.tunnelid={{.CLOUDFLARE_TUNNEL_ID}}
-        --set config.services[0].Networking[0].Cloudflare.widget.key={{.CLOUDFLARE_KEY}}
-
-  reload-homepage:
-    desc: Reload Homepage with new configuration
-    dir: homepage
-    cmds:
-      - task: setup-homepage
-      - kubectl rollout restart deployment homepage --namespace homepage
-
   setup-vaultwarden:
     desc: Setup Vaultwarden
     dir: vaultwarden
@@ -142,36 +118,6 @@ tasks:
       - kubectl apply -f secrets.yaml
       - kubectl apply -f cm.yaml
       - helm upgrade --install argocd argo/argo-cd --values values.yaml --namespace argocd
-
-  setup-zitadel:
-    desc: Setup Zitadel
-    dir: zitadel
-    cmds:
-      - kubectl apply -f namespace.yaml
-      - kubectl apply -f secrets.yaml
-      - >
-        helm upgrade --install crdb cockroachdb/cockroachdb
-        --create-namespace
-        --namespace zitadel
-        --values crdb-values.yaml
-      - >
-        helm upgrade --install zitadel zitadel/zitadel
-        --create-namespace
-        --namespace zitadel
-        --values values.yaml
-
-  setup-promstack:
-    desc: Setup Promstack
-    dir: promstack
-    cmds:
-      - kubectl apply -f namespace.yaml
-      - kubectl apply -f secrets.yaml
-      - >
-        helm upgrade --install prometheus prometheus/kube-prometheus-stack
-        --namespace promstack
-        --values values.yaml
-        --set-string grafana.adminPassword={{.GRAFANA_PASSWORD}}
-        --set-string grafana.ingress.annotations."gethomepage\.dev/widget\.password"={{.GRAFANA_PASSWORD}}
 
   setup-jellyfin:
     desc: Setup Jellyfin
