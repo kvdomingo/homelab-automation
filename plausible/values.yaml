@@ -134,6 +134,8 @@ postgresql:
       userPasswordKey: POSTGRESQL_PASSWORD
 
 clickhouse:
+  shards: 1
+  replicaCount: 3
   volumePermissions:
     enabled: true
   auth:
