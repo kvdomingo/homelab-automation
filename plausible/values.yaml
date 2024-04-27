@@ -100,6 +100,8 @@ volumeMounts: [ ]
 #   mountPath: "/etc/foo"
 #   readOnly: true
 
+env: [ ]
+
 envFrom:
   #  - configMapRef:
   #      name: my-configmap
