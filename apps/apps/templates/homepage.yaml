@@ -156,9 +156,17 @@ spec:
                   Admin:
                     style: row
                     columns: 3
+                  Machines:
+                  Networking:
+                  "CI/CD":
+                  Monitoring:
+                  Security:
+                  Storage:
                   Media:
                     style: row
                     columns: 5
+                  Analytics:
+                  "Background Services":
                 headerStyle: underlined
                 quickLaunch:
                   searchDescriptions: true
