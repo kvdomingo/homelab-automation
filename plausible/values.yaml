@@ -44,7 +44,7 @@ service:
   port: 8000
 
 ingress:
-  enabled: false
+  enabled: true
   className: ""
   annotations:
     gethomepage.dev/enabled: "true"
@@ -138,9 +138,15 @@ postgresql:
 clickhouse:
   shards: 1
   replicaCount: 3
+  persistence:
+    enabled: true
   volumePermissions:
     enabled: true
   auth:
-    username: plausible
+    username: plausible_events_db
     existingSecret: plausible-secrets
     existingSecretKey: CLICKHOUSE_PASSWORD
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
