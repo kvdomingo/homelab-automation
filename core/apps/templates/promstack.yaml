@@ -33,18 +33,18 @@ spec:
               adminPassword: "<path:kv/data/lab/promstack#GRAFANA_PASSWORD>"
               ingress:
                 enabled: true
-              annotations:
-                gethomepage.dev/enabled: "true"
-                gethomepage.dev/name: "Grafana"
-                gethomepage.dev/group: "Monitoring"
-                gethomepage.dev/icon: "grafana.png"
-                gethomepage.dev/ping: "grafana.{{ .Values.ingress.baseDomain }}"
-                gethomepage.dev/widget.type: "grafana"
-                gethomepage.dev/widget.url: "https://grafana.{{ .Values.ingress.baseDomain }}"
-                gethomepage.dev/widget.username: "admin"
-                gethomepage.dev/widget.password: "<path:kv/data/lab/promstack#GRAFANA_PASSWORD>"
-              hosts:
-                - "grafana.{{ .Values.ingress.baseDomain }}"
+                annotations:
+                  gethomepage.dev/enabled: "true"
+                  gethomepage.dev/name: "Grafana"
+                  gethomepage.dev/group: "Monitoring"
+                  gethomepage.dev/icon: "grafana.png"
+                  gethomepage.dev/ping: "grafana.{{ .Values.ingress.baseDomain }}"
+                  gethomepage.dev/widget.type: "grafana"
+                  gethomepage.dev/widget.url: "https://grafana.{{ .Values.ingress.baseDomain }}"
+                  gethomepage.dev/widget.username: "admin"
+                  gethomepage.dev/widget.password: "<path:kv/data/lab/promstack#GRAFANA_PASSWORD>"
+                hosts:
+                  - "grafana.{{ .Values.ingress.baseDomain }}"
               persistence:
                 enabled: true
             prometheus:
