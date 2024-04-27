@@ -47,7 +47,14 @@ spec:
                   - "grafana.{{ .Values.ingress.baseDomain }}"
               persistence:
                 enabled: true
+                type: sts
+                accessModes:
+                  - ReadWriteOnce
+                size: 20Gi
             prometheus:
+              prometheusSpec:
+                scrapeInterval: 3m
+                retention: 14d
               ingress:
                 enabled: true
                 annotations:
