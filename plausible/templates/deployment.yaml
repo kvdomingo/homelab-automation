@@ -55,6 +55,10 @@ spec:
           volumeMounts:
             {{- toYaml . | nindent 12 }}
           {{- end }}
+          {{- with .Values.env }}
+          env:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           {{- with .Values.envFrom }}
           envFrom:
             {{- toYaml . | nindent 12 }}
@@ -62,6 +66,10 @@ spec:
       initContainers:
         - name: "{{ .Chart.Name }}-init-wait-db"
           image: "{{ .Values.postgresql.image.repository }}:{{ .Values.postgresql.image.tag }}"
+          {{- with .Values.env }}
+          env:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           {{- with .Values.envFrom }}
           envFrom:
             {{- toYaml . | nindent 12 }}
@@ -77,6 +85,10 @@ spec:
               done;
         - name: "{{ .Chart.Name }}-init-migrate-db"
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          {{- with .Values.env }}
+          env:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           {{- with .Values.envFrom }}
           envFrom:
               {{- toYaml . | nindent 12 }}
