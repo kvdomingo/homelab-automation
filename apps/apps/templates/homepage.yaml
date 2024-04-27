@@ -38,7 +38,7 @@ spec:
                       - path: /
                         pathType: Prefix
             config:
-              bookmarks: []
+              bookmarks: [ ]
               services:
                 - Networking:
                     - Cloudflare:
@@ -107,11 +107,11 @@ spec:
                             - type: radarr
                               service_group: Media
                               service_name: Radarr
-                                unmonitored: true
+                              unmonitored: true
                             - type: readarr
                               service_group: Media
                               service_name: Readarr
-                                unmonitored: true
+                              unmonitored: true
               widgets:
                 - logo:
                     icon: https://res.cloudinary.com/kdphotography-assets/image/upload/v1597254769/logo/logo-white.png
@@ -167,12 +167,9 @@ spec:
                 showStats: false
                 background: "https://apod.{{ .Values.ingress.baseDomain }}"
                 backgroundOpacity: 0.33
-            persistence:
-              logs:
-                enabled: true
   destination:
     server: {{ .Values.destination.server }}
-    namespace: homepage
+    namespace: homepage2
   syncPolicy:
     syncOptions:
       - CreateNamespace=true
