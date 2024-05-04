@@ -11,7 +11,7 @@ spec:
   source:
     repoURL: https://git.lab.kvd.studio/r/homelab
     targetRevision: main
-    path: traefik/avp
+    path: traefik/argocd
     plugin:
       name: argocd-vault-plugin
   destination:
