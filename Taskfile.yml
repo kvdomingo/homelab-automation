@@ -67,6 +67,7 @@ tasks:
       - kubectl apply -f secrets.yaml
       - >
         helm upgrade --install traefik traefik/traefik
+        --version 27.0.2
         --namespace traefik
         --create-namespace
         --values values.yaml
