@@ -23,10 +23,11 @@ spec:
           nameservers:
             - 1.1.1.1
             - 1.0.0.1
+        replicaCount: 4
         strategy:
           type: RollingUpdate
           rollingUpdate:
-            maxSurge: 1
+            maxUnavailable: 1
         podDisruptionBudget:
           enabled: true
           maxUnavailable: 1
