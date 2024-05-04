@@ -1,0 +1,25 @@
+$TTL 1d
+
+$ORIGIN lab.kvd.studio.
+
+@               IN      SOA     bind1.ns.lab.kvd.studio. info.lab.kvd.studio. (
+                                2024050400      ; serial
+                                12h             ; refresh
+                                15m             ; retry
+                                3w              ; expire
+                                1d              ; min ttl
+                                )
+
+                IN      NS      bind1.ns.lab.kvd.studio.
+                IN      NS      bind2.ns.lab.kvd.studio.
+
+bind1.ns        IN      A       10.10.1.54
+bind2.ns        IN      A       10.10.2.54
+pihole1.ns      IN      A       10.10.1.53
+pihole2.ns      IN      A       10.10.2.53
+
+; --
+
+*               IN      A       10.10.10.110
+*               IN      A       10.10.10.111
+*               IN      A       10.10.10.112
