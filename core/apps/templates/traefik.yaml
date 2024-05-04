@@ -1,0 +1,26 @@
+{{- if not .Values.disableTraefik }}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: traefik
+  namespace: {{ include "apps.argocdNamespace" . | quote }}
+  finalizers:
+    {{- include "apps.finalizers" . | nindent 4 }}
+spec:
+  project: {{ .Values.project }}
+  source:
+    repoURL: https://git.lab.kvd.studio/r/homelab
+    targetRevision: main
+    path: traefik/avp
+    plugin:
+      name: argocd-vault-plugin
+  destination:
+    server: {{ .Values.destination.server }}
+    namespace: traefik
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+    automated:
+      selfHeal: true
+      prune: true
+{{- end }}
