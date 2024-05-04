@@ -46,7 +46,7 @@ spec:
                 hosts:
                   - "grafana.{{ .Values.ingress.baseDomain }}"
               persistence:
-                enabled: true
+                enabled: false
                 type: sts
                 accessModes:
                   - ReadWriteOnce
