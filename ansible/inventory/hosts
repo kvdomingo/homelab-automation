@@ -7,3 +7,7 @@ srv-k8s-01.lab
 [k8s_workers]
 srv-k8s-02.lab
 srv-k8s-03.lab
+rpi5-01.lab
+
+[rpi5]
+rpi5-01.lab
