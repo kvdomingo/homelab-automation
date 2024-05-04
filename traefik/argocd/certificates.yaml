@@ -1,0 +1,27 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: dev-kvd-studio-cert
+spec:
+  issuerRef:
+    name: letsencrypt
+    kind: ClusterIssuer
+  secretName: dev-kvd-studio-tls
+  commonName: "*.dev.kvd.studio"
+  dnsNames:
+    - dev.kvd.studio
+    - "*.dev.kvd.studio"
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: lab-kvd-studio-cert
+spec:
+  issuerRef:
+    name: letsencrypt
+    kind: ClusterIssuer
+  secretName: lab-kvd-studio-tls
+  commonName: "*.lab.kvd.studio"
+  dnsNames:
+    - lab.kvd.studio
+    - "*.lab.kvd.studio"
