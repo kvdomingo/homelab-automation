@@ -1,0 +1,39 @@
+{{- if not .Values.disableCertManager }}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cert-manager
+  namespace: {{ include "apps.argocdNamespace" . | quote }}
+  finalizers:
+    {{- include "apps.finalizers" . | nindent 4 }}
+spec:
+  project: {{ .Values.project }}
+  source:
+    repoURL: https://charts.jetstack.io
+    chart: cert-manager
+    targetRevision: v1.14.5
+    helm:
+      releaseName: cert-manager
+      valuesObject:
+        installCRDs: true
+        strategy:
+          type: RollingUpdate
+          rollingUpdate:
+            maxSurge: 1
+        podDisruptionBudget:
+          enabled: true
+          maxUnavailable: 1
+        prometheus:
+          enabled: true
+          serviceMonitor:
+            enabled: true
+  destination:
+    server: {{ .Values.destination.server }}
+    namespace: cert-manager
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+    automated:
+      selfHeal: true
+      prune: true
+{{- end }}
