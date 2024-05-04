@@ -63,15 +63,13 @@ tasks:
     desc: Setup Traefik
     dir: traefik
     cmds:
-      - kubectl apply -f namespace.yaml
-      - kubectl apply -f secrets.yaml
       - >
         helm upgrade --install traefik traefik/traefik
         --version 27.0.2
         --namespace traefik
         --create-namespace
         --values values.yaml
-      - kubectl apply -f middlewares.yaml
+      - kubectl apply -f middlewares.yaml --namespace traefik
 
   setup-gitea:
     desc: Setup Gitea

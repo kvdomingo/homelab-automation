@@ -3,8 +3,7 @@ kind: Middleware
 metadata:
   name: secure-headers
   labels:
-    app: traefik
-  namespace: traefik
+    app.kubernetes.io/name: traefik
 spec:
   headers:
     browserXssFilter: true
@@ -24,8 +23,7 @@ kind: Middleware
 metadata:
   name: ip-whitelist
   labels:
-    app: traefik
-  namespace: traefik
+    app.kubernetes.io/name: traefik
 spec:
   ipWhiteList:
     sourceRange:
@@ -39,8 +37,7 @@ kind: Middleware
 metadata:
   name: compress
   labels:
-    app: traefik
-  namespace: traefik
+    app.kubernetes.io/name: traefik
 spec:
   compress: { }
 ---
@@ -49,8 +46,7 @@ kind: Middleware
 metadata:
   name: retry
   labels:
-    app: traefik
-  namespace: traefik
+    app.kubernetes.io/name: traefik
 spec:
   retry:
     attempts: 3
@@ -61,8 +57,7 @@ kind: Middleware
 metadata:
   name: secured
   labels:
-    app: traefik
-  namespace: traefik
+    app.kubernetes.io/name: traefik
 spec:
   chain:
     middlewares:
