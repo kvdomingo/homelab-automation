@@ -5,7 +5,7 @@ image:
   # -- Traefik image repository
   repository: traefik
   # -- defaults to appVersion
-  tag: v2.10
+  tag: v3.0
   # -- Traefik image pull policy
   pullPolicy: IfNotPresent
 
@@ -767,7 +767,8 @@ ports:
     protocol: TCP
   ssh:
     port: 22
-    expose: true
+    expose:
+      default: true
     exposedPort: 3322
     protocol: TCP
 
