@@ -19,7 +19,7 @@ deployment:
   # -- Enable deployment
   enabled: true
   # -- Deployment or DaemonSet
-  kind: Deployment
+  kind: DaemonSet
   # -- Number of pods of the deployment (only applies when kind == Deployment)
   replicas: 1
   # -- Number of old history to retain to allow rollback (If not set, default Kubernetes value is set to 10)
@@ -954,8 +954,7 @@ affinity: { }
 #        topologyKey: kubernetes.io/hostname
 
 # -- nodeSelector is the simplest recommended form of node selection constraint.
-nodeSelector:
-  kubernetes.io/hostname: srv-k8s-01
+nodeSelector: { }
 # -- Tolerations allow the scheduler to schedule pods with matching taints.
 tolerations: [ ]
 # -- You can use topology spread constraints to control
