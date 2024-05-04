@@ -32,6 +32,9 @@ deployment:
   ## with an external Load Balancer that performs healthchecks.
   ## Default: ports.traefik.port
   # healthchecksPort: 9000
+  ## Override the liveness/readiness host. Useful for getting ping to respond on non-default entryPoint.
+  ## Default: ports.traefik.hostIP if set, otherwise Pod IP
+  # healthchecksHost: localhost
   ## Override the liveness/readiness scheme. Useful for getting ping to
   ## respond on websecure entryPoint.
   # healthchecksScheme: HTTPS
@@ -40,6 +43,7 @@ deployment:
   # -- Additional deployment labels (e.g. for filtering deployment by custom labels)
   labels: { }
   # -- Additional pod annotations (e.g. for mesh injection or prometheus scraping)
+  # It supports templating. One can set it with values like traefik/name: '{{ template "traefik.name" . }}'
   podAnnotations: { }
   # -- Additional Pod labels (e.g. for filtering Pod by custom labels)
   podLabels: { }
@@ -99,6 +103,8 @@ deployment:
   #     port: 9000
   #     host: localhost
   #     scheme: HTTP
+  # -- Set a runtimeClassName on pod
+  runtimeClassName:
 
 # -- Pod disruption budget
 podDisruptionBudget:
@@ -119,8 +125,12 @@ experimental:
   # This value is no longer used, set the image.tag to a semver higher than 3.0, e.g. "v3.0.0-beta3"
   # v3:
   # -- Enable traefik version 3
-  #  enabled: false
+
+  # -- Enable traefik experimental plugins
   plugins: { }
+  # demo:
+  #   moduleName: github.com/traefik/plugindemo
+  #   version: v0.2.1
   kubernetesGateway:
     # -- Enable traefik experimental GatewayClass CRD
     enabled: false
@@ -188,7 +198,7 @@ updateStrategy:
   type: RollingUpdate
   rollingUpdate:
     maxUnavailable: 0
-    maxSurge: 3
+    maxSurge: 1
 
 readinessProbe:
   # -- The number of consecutive failures allowed before considering the probe as failed.
@@ -212,6 +222,17 @@ livenessProbe:
   successThreshold: 1
   # -- The number of seconds to wait for a probe response before considering it as failed.
   timeoutSeconds: 2
+
+# -- Define Startup Probe for container: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-startup-probes
+# eg.
+# `startupProbe:
+#   exec:
+#     command:
+#       - mycommand
+#       - foo
+#   initialDelaySeconds: 5
+#   periodSeconds: 5`
+startupProbe:
 
 providers:
   kubernetesCRD:
@@ -241,13 +262,15 @@ providers:
     # -- Array of namespaces to watch. If left empty, Traefik watches all namespaces.
     namespaces: [ ]
     # - "default"
+    # Disable cluster IngressClass Lookup - Requires Traefik V3.
+    # When combined with rbac.namespaced: true, ClusterRole will not be created and ingresses must use kubernetes.io/ingress.class annotation instead of spec.ingressClassName.
+    disableIngressClassLookup: false
     # IP used for Kubernetes Ingress endpoints
     publishedService:
       enabled: true
       # Published Kubernetes Service to copy status from. Format: namespace/servicename
       # By default this Traefik service
       # pathOverride: ""
-
 
   file:
     # -- Create a file provider
@@ -256,7 +279,7 @@ providers:
     watch: true
     # -- File content (YAML format, go template supported) (see https://doc.traefik.io/traefik/providers/file/)
     content: ""
-      # http:
+    # http:
     #   routers:
     #     router0:
     #       entryPoints:
@@ -343,7 +366,7 @@ metrics:
     ## Enable metrics on routers. Default=false
     addRoutersLabels: true
     ## Enable metrics on services. Default=true
-    addServicesLabels: false
+    addServicesLabels: true
     ## Buckets for latency metrics. Default="0.1,0.3,1.2,5.0"
     buckets: "0.5,1.0,2.5"
     ## When manualRouting is true, it disables the default internal router in
@@ -512,7 +535,7 @@ metrics:
 # -- https://doc.traefik.io/traefik/observability/tracing/overview/
 tracing: { }
 #  openTelemetry: # traefik v3+ only
-#    grpc: {}
+#    grpc: true
 #    insecure: true
 #    address: localhost:4317
 # instana:
@@ -623,7 +646,8 @@ ports:
     # -- You SHOULD NOT expose the traefik port on production deployments.
     # If you want to access it from outside your cluster,
     # use `kubectl port-forward` or create a secure ingress
-    expose: false
+    expose:
+      default: false
     # -- The exposed port for this service
     exposedPort: 9000
     # -- The port protocol (TCP/UDP)
@@ -634,7 +658,8 @@ ports:
     port: 8000
     # hostPort: 8000
     # containerPort: 8000
-    expose: true
+    expose:
+      default: true
     exposedPort: 80
     ## -- Different target traefik port on the cluster, useful for IP type LB
     # targetPort: 80
@@ -666,7 +691,8 @@ ports:
     port: 8443
     # hostPort: 8443
     # containerPort: 8443
-    expose: true
+    expose:
+      default: true
     exposedPort: 443
     ## -- Different target traefik port on the cluster, useful for IP type LB
     # targetPort: 80
@@ -733,7 +759,8 @@ ports:
     # -- You may not want to expose the metrics port on production deployments.
     # If you want to access it from outside your cluster,
     # use `kubectl port-forward` or create a secure ingress
-    expose: false
+    expose:
+      default: false
     # -- The exposed port for this service
     exposedPort: 9100
     # -- The port protocol (TCP/UDP)
@@ -753,7 +780,7 @@ ports:
 #     labels: {}
 #     sniStrict: true
 #     preferServerCipherSuites: true
-#   customOptions:
+#   custom-options:
 #     labels: {}
 #     curvePreferences:
 #       - CurveP521
@@ -787,7 +814,7 @@ service:
   # -- Cannot contain type, selector or ports entries.
   spec: { }
   # externalTrafficPolicy: Cluster
-  # loadBalancerIP: "10.20.10.106"
+  # loadBalancerIP: "1.2.3.4"
   # clusterIP: "2.3.4.5"
   loadBalancerSourceRanges: [ ]
   # - 192.168.0.1/32
@@ -804,7 +831,8 @@ service:
   #   - IPv4
   #   - IPv6
   ##
-  ## -- An additionnal and optional internal Service.
+  additionalServices: { }
+  ## -- An additional and optional internal Service.
   ## Same parameters as external Service
   # internal:
   #   type: ClusterIP
@@ -889,11 +917,14 @@ hostNetwork: false
 rbac:
   enabled: true
   # If set to false, installs ClusterRole and ClusterRoleBinding so Traefik can be used across namespaces.
-  # If set to true, installs Role and RoleBinding. Providers will only watch target namespace.
+  # If set to true, installs Role and RoleBinding instead of ClusterRole/ClusterRoleBinding. Providers will only watch target namespace.
+  # When combined with providers.kubernetesIngress.disableIngressClassLookup: true and Traefik V3, ClusterRole to watch IngressClass is also disabled.
   namespaced: false
   # Enable user-facing roles
   # https://kubernetes.io/docs/reference/access-authn-authz/rbac/#user-facing-roles
   # aggregateTo: [ "admin" ]
+  # List of Kubernetes secrets that are accessible for Traefik. If empty, then access is granted to every secret.
+  secretResourceNames: [ ]
 
 # -- Enable to create a PodSecurityPolicy and assign it to the Service Account via RoleBinding or ClusterRoleBinding
 podSecurityPolicy:
