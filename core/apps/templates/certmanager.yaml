@@ -8,33 +8,38 @@ metadata:
     {{- include "apps.finalizers" . | nindent 4 }}
 spec:
   project: {{ .Values.project }}
-  source:
-    repoURL: https://charts.jetstack.io
-    chart: cert-manager
-    targetRevision: v1.14.5
-    helm:
-      releaseName: cert-manager
-      valuesObject:
-        installCRDs: true
-        dns01RecursiveNameservers: "1.1.1.1:53,1.0.0.1:53"
-        dns01RecursiveNameserversOnly: true
-        podDnsPolicy: None
-        podDnsConfig:
-          nameservers:
-            - 1.1.1.1
-            - 1.0.0.1
-        replicaCount: 4
-        strategy:
-          type: RollingUpdate
-          rollingUpdate:
-            maxUnavailable: 1
-        podDisruptionBudget:
-          enabled: true
-          maxUnavailable: 1
-        prometheus:
-          enabled: true
-          serviceMonitor:
+  sources:
+    - repoURL: https://charts.jetstack.io
+      chart: cert-manager
+      targetRevision: v1.14.5
+      helm:
+        releaseName: cert-manager
+        valuesObject:
+          installCRDs: true
+          dns01RecursiveNameservers: "1.1.1.1:53,1.0.0.1:53"
+          dns01RecursiveNameserversOnly: true
+          podDnsPolicy: None
+          podDnsConfig:
+            nameservers:
+              - 1.1.1.1
+              - 1.0.0.1
+          replicaCount: 4
+          strategy:
+            type: RollingUpdate
+            rollingUpdate:
+              maxUnavailable: 1
+          podDisruptionBudget:
             enabled: true
+            maxUnavailable: 1
+          prometheus:
+            enabled: true
+            serviceMonitor:
+              enabled: true
+    - repoURL: https://git.lab.kvd.studio/r/homelab
+      targetRevision: main
+      path: cert-manager
+      plugin:
+        name: argocd-vault-plugin
   destination:
     server: {{ .Values.destination.server }}
     namespace: cert-manager
