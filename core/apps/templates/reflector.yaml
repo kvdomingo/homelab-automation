@@ -14,7 +14,8 @@ spec:
     targetRevision: 7.1.262
     helm:
       releaseName: reflector
-      valuesObject: { }
+      valuesObject:
+        replicaCount: 4
   destination:
     server: {{ .Values.destination.server }}
     namespace: reflector
