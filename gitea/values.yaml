@@ -89,9 +89,9 @@ containerSecurityContext: { }
 securityContext: { }
 
 ## @param podDisruptionBudget Pod disruption budget
-podDisruptionBudget: { }
-#  maxUnavailable: 1
-#  minAvailable: 1
+podDisruptionBudget:
+  #  maxUnavailable: 1
+  minAvailable: 1
 
 ## @section Service
 service:
