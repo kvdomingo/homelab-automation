@@ -17,7 +17,12 @@ spec:
       env:
         - name: HELM_VALUES
           value: |
+            crds:
+              enabled: true
             alertmanager:
+              podDisruptionBudget:
+                enabled: true
+                minAvailable: 1
               ingress:
                 enabled: true
                 annotations:
@@ -45,16 +50,26 @@ spec:
                   gethomepage.dev/widget.password: "<path:kv/data/lab/promstack#GRAFANA_PASSWORD>"
                 hosts:
                   - "grafana.{{ .Values.ingress.baseDomain }}"
-              persistence:
-                enabled: false
-                type: sts
-                accessModes:
-                  - ReadWriteOnce
-                size: 20Gi
+              sidecar:
+                dashboards:
+                  enableNewTablePanelSyntax: true
+                datasources:
+                  url: http://promstack-kube-prometheus-prometheus:9090/
+            kube-state-metrics:
+              selfMonitor:
+                enabled: true
             prometheus:
+              thanosService:
+                enabled: true
+              thanosServiceMonitor:
+                enabled: true
+              podDisruptionBudget:
+                enabled: true
+                minAvailable: 1
               prometheusSpec:
                 scrapeInterval: 3m
                 retention: 14d
+                externalUrl: https://prometheus.{{ .Values.ingress.baseDomain }}
               ingress:
                 enabled: true
                 annotations:
