@@ -50,7 +50,7 @@ ingress:
     gethomepage.dev/enabled: "true"
     gethomepage.dev/name: "Maybe"
     gethomepage.dev/group: "Finance"
-    gethomepage.dev/icon: "maybe.png"
+    gethomepage.dev/icon: "si-cashapp"
     gethomepage.dev/ping: "maybe.lab.kvd.studio"
   hosts:
     - host: maybe.lab.kvd.studio
