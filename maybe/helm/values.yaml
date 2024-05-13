@@ -103,19 +103,13 @@ volumeMounts: [ ]
 #   mountPath: "/etc/foo"
 #   readOnly: true
 
-env:
-  - name: SELF_HOSTING_ENABLED
-    value: "true"
-  - name: RAILS_FORCE_SSL
-    value: "false"
-  - name: RAILS_ASSUME_SSL
-    value: "false"
-  - name: GOOD_JOB_EXECUTION_MODE
-    value: async
+env: [ ]
 
 envFrom:
   - secretRef:
       name: maybe-secrets
+  - configMapRef:
+      name: maybe-configmap
 
 nodeSelector: { }
 
