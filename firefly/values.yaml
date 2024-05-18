@@ -130,3 +130,8 @@ postgresql:
       enabled: false
   volumePermissions:
     enabled: true
+
+redis:
+  volumePermissions:
+    enabled: true
+  architecture: standalone

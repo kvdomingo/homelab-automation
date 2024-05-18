@@ -27,3 +27,6 @@ dependencies:
   - name: postgresql
     version: 15.3.3
     repository: https://charts.bitnami.com/bitnami
+  - name: redis
+    version: 19.3.3
+    repository: https://charts.bitnami.com/bitnami

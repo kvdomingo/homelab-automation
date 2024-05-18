@@ -77,6 +77,24 @@ spec:
               echo "Waiting for postgres to be ready...";
               sleep 2;
               done;
+        - name: init-wait-redis
+          image: {{ .Values.redis.image.repository }}:{{ .Values.redis.image.tag }}
+          command:
+            - /bin/sh
+            - "-c"
+            - >
+              until redis-cli -h $REDIS_HOST ping; do
+              echo "waiting for redis instance...";
+              sleep 2;
+              done;
+          {{- with .Values.env }}
+          env:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.envFrom }}
+          envFrom:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
       {{- with .Values.volumes }}
       volumes:
         {{- toYaml . | nindent 8 }}
