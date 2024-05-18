@@ -13,7 +13,7 @@ data:
   APP_ENV: "production"
   TZ: "Asia/Manila"
   TRUSTED_PROXIES: "**"
-  REDIS_HOST: '{{- include "firefly.fullname" . }}-redis'
+  REDIS_HOST: '{{- include "firefly.fullname" . }}-redis-headless'
   REDIS_PORT: "6379"
   CACHE_DRIVER: "redis"
   SESSION_DRIVER: "redis"

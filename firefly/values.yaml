@@ -135,3 +135,7 @@ redis:
   volumePermissions:
     enabled: true
   architecture: standalone
+  auth:
+    enabled: true
+    existingSecret: firefly-secrets
+    existingSecretPasswordKey: REDIS_PASSWORD
