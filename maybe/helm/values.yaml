@@ -8,7 +8,7 @@ image:
   repository: ghcr.io/maybe-finance/maybe
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "sha-61fae9683259861d1deeda190cc2e24075933d21"
+  tag: "0.1.0-alpha.2"
 
 imagePullSecrets: [ ]
 nameOverride: ""
@@ -49,7 +49,7 @@ ingress:
   annotations:
     gethomepage.dev/enabled: "true"
     gethomepage.dev/name: "Maybe"
-    gethomepage.dev/group: "Finance"
+    gethomepage.dev/group: "Finances"
     gethomepage.dev/icon: "si-cashapp"
     gethomepage.dev/ping: "maybe.lab.kvd.studio"
   hosts:
