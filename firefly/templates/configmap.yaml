@@ -21,3 +21,7 @@ data:
   MAP_DEFAULT_LAT: "14.60"
   MAP_DEFAULT_LONG: "120.97"
   APP_URL: "https://{{ (index .Values.ingress.hosts 0).host }}"
+  MAIL_MAILER: "smtp"
+  MAIL_HOST: "smtp.gmail.com"
+  MAIL_PORT: "587"
+  MAIL_ENCRYPTION: "tls"
