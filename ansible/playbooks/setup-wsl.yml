@@ -42,6 +42,7 @@
           - tmux
           - unzip
           - wget
+          - xsel
           - xz-utils
           - zlib1g-dev
           - zsh
