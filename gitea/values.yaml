@@ -48,7 +48,7 @@ image:
   registry: ""
   repository: gitea/gitea
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "1.21.10"
+  tag: "1.22.0"
   digest: ""
   pullPolicy: IfNotPresent
   rootless: true
@@ -327,7 +327,7 @@ initContainers:
 #
 ## @param signing.enabled Enable commit/action signing
 ## @param signing.gpgHome GPG home directory
-## @param signing.privateKey Inline private gpg key for signed Gitea actions
+## @param signing.privateKey Inline private gpg key for signed internal Git activity
 ## @param signing.existingSecret Use an existing secret to store the value of `signing.privateKey`
 signing:
   enabled: false
@@ -365,13 +365,13 @@ gitea:
   ## @param gitea.ldap LDAP configuration
   ldap:
     [ ]
-  # - name: "LDAP 1"
-  #  existingSecret:
-  #  securityProtocol:
-  #  host:
-  #  port:
-  #  userSearchBase:
-  #  userFilter:
+    # - name: "LDAP 1"
+    #  existingSecret:
+    #  securityProtocol:
+    #  host:
+    #  port:
+    #  userSearchBase:
+    #  userFilter:
   #  adminFilter:
   #  emailAttribute:
   #  bindDn:
@@ -383,11 +383,11 @@ gitea:
   ## @param gitea.oauth OAuth configuration
   oauth:
     [ ]
-  # - name: 'OAuth 1'
-  #   provider:
-  #   key:
-  #   secret:
-  #   existingSecret:
+    # - name: 'OAuth 1'
+    #   provider:
+    #   key:
+    #   secret:
+    #   existingSecret:
   #   autoDiscoverUrl:
   #   useCustomUrls:
   #   customAuthUrl:
@@ -487,12 +487,12 @@ redis-cluster:
   enabled: true
   usePassword: false
   cluster:
-    nodes: 3 # default: 6
-    replicas: 3 # default: 1
+    nodes: 6 # default: 6
+    replicas: 1 # default: 1
 
-## @section postgresql-ha
+## @section PostgreSQL HA
 #
-## @param postgresql-ha.enabled Enable postgresql-ha
+## @param postgresql-ha.enabled Enable PostgreSQL HA
 ## @param postgresql-ha.postgresql.password Password for the `gitea` user (overrides `auth.password`)
 ## @param postgresql-ha.global.postgresql.database Name for a custom database to create (overrides `auth.database`)
 ## @param postgresql-ha.global.postgresql.username Name for a custom user to create (overrides `auth.username`)
@@ -500,8 +500,8 @@ redis-cluster:
 ## @param postgresql-ha.postgresql.repmgrPassword Repmgr Password
 ## @param postgresql-ha.postgresql.postgresPassword postgres Password
 ## @param postgresql-ha.pgpool.adminPassword pgpool adminPassword
-## @param postgresql-ha.service.ports.postgresql postgresql service port (overrides `service.ports.postgresql`)
-## @param postgresql-ha.primary.persistence.size PVC Storage Request for postgresql-ha volume
+## @param postgresql-ha.service.ports.postgresql PostgreSQL service port (overrides `service.ports.postgresql`)
+## @param postgresql-ha.primary.persistence.size PVC Storage Request for PostgreSQL HA volume
 postgresql-ha:
   global:
     postgresql:
