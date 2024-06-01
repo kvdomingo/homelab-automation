@@ -79,7 +79,7 @@ tasks:
       - kubectl apply -f configmap.yaml
       - >
         helm upgrade --install gitea gitea/gitea
-        --version 10.1.3
+        --version 10.1.4
         --namespace gitea
         --create-namespace
         --values values.yaml
