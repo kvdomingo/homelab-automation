@@ -3,6 +3,11 @@
   become: true
 
   tasks:
+    - name: Increase inotify values
+      shell: |
+        sysctl fs.inotify.max_user_instances=1280
+        sysctl fs.inotify.max_user_watches=655360
+
     - name: Install K3s
       shell:
         curl -sfL https://get.k3s.io | INSTALL_K3S_CHANNEL=v1.26 sh -s - server --cluster-init --write-kubeconfig-mode 644 --disable traefik --docker

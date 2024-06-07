@@ -50,7 +50,7 @@ image:
   # Overrides the image tag whose default is the chart appVersion.
   tag: "1.22.0"
   digest: ""
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
   rootless: true
   fullOverride: ""
 
@@ -371,7 +371,7 @@ gitea:
     #  host:
     #  port:
     #  userSearchBase:
-    #  userFilter:
+  #  userFilter:
   #  adminFilter:
   #  emailAttribute:
   #  bindDn:
@@ -387,7 +387,7 @@ gitea:
     #   provider:
     #   key:
     #   secret:
-    #   existingSecret:
+  #   existingSecret:
   #   autoDiscoverUrl:
   #   useCustomUrls:
   #   customAuthUrl:
