@@ -26,3 +26,5 @@ data:
     ENABLED=true
   security: |
     LOGIN_REMEMBER_DAYS=14
+  database: |
+    HOST=gitea-postgresql-hl
