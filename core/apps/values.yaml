@@ -6,6 +6,4 @@ destination:
 ingress:
   baseDomain: lab.kvd.studio
 
-disableDroneCi: true
-
 disableZitadel: true
