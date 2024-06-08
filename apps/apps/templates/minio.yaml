@@ -1,4 +1,4 @@
-{{- if not .Values.disableDroneCi }}
+{{- if not .Values.disableMinio }}
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
