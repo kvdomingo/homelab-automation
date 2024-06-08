@@ -7,7 +7,7 @@ image:
   repository: git.lab.kvd.studio/r/time-machine
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "f0212af370e3dae55a672b7404ec4c04416533ae"
+  tag: "1465d258c6c3e098d3d19b539535da8fdd5dbab3"
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
