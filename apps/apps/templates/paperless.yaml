@@ -34,8 +34,18 @@ spec:
             persistence:
               data:
                 enabled: true
+                accessMode: ReadWriteOnce
+                size: 1Gi
               media:
                 enabled: true
+                accessMode: ReadWriteOnce
+                size: 8Gi
+              export:
+                accessMode: ReadWriteOnce
+                size: 1Gi
+              consume:
+                accessMode: ReadWriteOnce
+                size: 4Gi
             postgresql:
               enabled: true
               auth:
@@ -43,6 +53,7 @@ spec:
               primary:
                 persistence:
                   enabled: true
+                  size: 8Gi
             redis:
               auth:
                 enabled: false
