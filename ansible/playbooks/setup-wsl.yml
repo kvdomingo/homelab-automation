@@ -128,6 +128,15 @@
           shell:
             chdir: ~/Downloads
             cmd: ./install-starship.sh -y
+        - name: Download zoxide
+          get_url:
+            url: https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh
+            dest: ~/Downloads/install-zoxide.sh
+            mode: "0755"
+        - name: Install zoxide
+          shell:
+            chdir: ~/Downloads
+            cmd: ./install-zoxide.sh
 
     - name: Install essential utilities
       block:
