@@ -7,3 +7,5 @@ ingress:
   baseDomain: lab.kvd.studio
 
 disablePaperless: true
+
+disablePlausible: true
