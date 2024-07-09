@@ -116,7 +116,12 @@ tasks:
       - kubectl apply -f namespace.yaml
       - kubectl apply -f secrets.yaml
       - kubectl apply -f cm.yaml
-      - helm upgrade --install argocd argo/argo-cd --values values.yaml --namespace argocd
+      - >
+        helm upgrade --install argocd argo/argo-cd
+        --version 6.9.3
+        --create-namespace
+        --namespace argocd
+        --values values.yaml
 
   setup-jellyfin:
     desc: Setup Jellyfin
