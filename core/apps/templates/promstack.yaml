@@ -78,6 +78,8 @@ spec:
                 ruleSelectorNilUsesHelmValues: false
                 serviceMonitorSelectorNilUsesHelmValues: false
                 podMonitorSelectorNilUsesHelmValues: false
+                tsdb:
+                  outOfOrderTimeWindow: 10m
               ingress:
                 enabled: true
                 annotations:

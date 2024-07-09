@@ -28,7 +28,7 @@ spec:
   ipWhiteList:
     sourceRange:
       - 127.0.0.1/32   # loopback
-      - 10.0.0.0/8     # LAN, DMZ, K8s internal cluster
+      - 10.0.0.0/8     # LAN, K8s internal cluster
       - 172.16.0.0/12  # Docker internal bridge
       - 100.64.0.0/10  # Tailscale
 ---
