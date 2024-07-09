@@ -386,8 +386,8 @@ configs:
 
     # -- Plugin yaml files to be added to argocd-cmp-cm
     plugins: { }
-      # --- First plugin
-      # my-plugin:
+    # --- First plugin
+    # my-plugin:
     #   init:
     #     command: [sh]
     #     args: [-c, 'echo "Initializing..."']
@@ -425,8 +425,8 @@ configs:
   ## - https://argo-cd.readthedocs.io/en/stable/operator-manual/security/#external-cluster-credentials
   ## - https://argo-cd.readthedocs.io/en/stable/user-guide/projects/#project-scoped-repositories-and-clusters
   clusterCredentials: [ ]
-    # - name: mycluster
-    #   server: https://mycluster.example.com
+  # - name: mycluster
+  #   server: https://mycluster.example.com
   #   labels: {}
   #   annotations: {}
   #   config:
@@ -2652,15 +2652,13 @@ repoServer:
     automountServiceAccountToken: true
 
   # -- Repo server rbac rules
-  rbac: [ ]
-  #   - apiGroups:
-  #     - argoproj.io
-  #     resources:
-  #     - applications
-  #     verbs:
-  #     - get
-  #     - list
-  #     - watch
+  rbac:
+    - apiGroups: [ "" ]
+      resources: [ secrets, configmaps ]
+      verbs:
+        - get
+        - list
+        - watch
 
 ## ApplicationSet controller
 applicationSet:
@@ -3486,8 +3484,8 @@ notifications:
     #   email:
     #     subject: Application {{.app.metadata.name}} has been successfully synced.
     #   message: |
-    #     {{if eq .serviceType "slack"}}:white_check_mark:{{end}} Application {{.app.metadata.name}} has been successfully synced at {{.app.status.operationState.finishedAt}}.
-    #     Sync operation details are available at: {{.context.argocdUrl}}/applications/{{.app.metadata.name}}?operation=true .
+  #     {{if eq .serviceType "slack"}}:white_check_mark:{{end}} Application {{.app.metadata.name}} has been successfully synced at {{.app.status.operationState.finishedAt}}.
+  #     Sync operation details are available at: {{.context.argocdUrl}}/applications/{{.app.metadata.name}}?operation=true .
   #   slack:
   #     attachments: |-
   #       [{
@@ -3525,8 +3523,8 @@ notifications:
     #     oncePer: app.status.sync.revision
     #     send:
     #     - app-deployed
-    #     when: app.status.operationState.phase in ['Succeeded'] and app.status.health.status == 'Healthy'
-    # trigger.on-health-degraded: |
+  #     when: app.status.operationState.phase in ['Succeeded'] and app.status.health.status == 'Healthy'
+  # trigger.on-health-degraded: |
   #   - description: Application has degraded
   #     send:
   #     - app-health-degraded
