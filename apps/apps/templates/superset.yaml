@@ -40,7 +40,7 @@ spec:
                 gethomepage.dev/enabled: "true"
                 gethomepage.dev/name: "Superset"
                 gethomepage.dev/group: "Analytics"
-                gethomepage.dev/icon: "superset.png"
+                gethomepage.dev/icon: "apache.png"
                 gethomepage.dev/ping: "superset.{{ .Values.ingress.baseDomain }}"
               pathType: Prefix
               hosts:
