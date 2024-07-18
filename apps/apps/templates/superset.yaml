@@ -77,7 +77,6 @@ spec:
               auth:
                 password: "<path:kv/data/lab/superset#POSTGRESQL_PASSWORD>"
             redis:
-              architecture: replication
               master:
                 persistence:
                   enabled: true
