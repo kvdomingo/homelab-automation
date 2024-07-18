@@ -50,6 +50,7 @@ spec:
               podDisruptionBudget:
                 enabled: true
                 minAvailable: 2
+                maxUnavailable: ~
             supersetWorker:
               autoscaling:
                 enabled: true
@@ -59,16 +60,19 @@ spec:
               podDisruptionBudget:
                 enabled: true
                 minAvailable: 2
+                maxUnavailable: ~
             supersetCeleryBeat:
               enabled: true
               podDisruptionBudget:
                 enabled: true
                 minAvailable: 2
+                maxUnavailable: ~
             supersetCeleryFlower:
               enabled: true
               podDisruptionBudget:
                 enabled: true
                 minAvailable: 2
+                maxUnavailable: ~
             postgresql:
               auth:
                 password: "<path:kv/data/lab/superset#POSTGRESQL_PASSWORD>"

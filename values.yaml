@@ -1,0 +1,60 @@
+configOverrides:
+  secret: |
+    SECRET_KEY = "<path:kv/data/lab/superset#SECRET_KEY>"
+image:
+  repository: apache/superset
+  tag: 3.1.1
+ingress:
+  enabled: true
+  annotations:
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/name: "Superset"
+    gethomepage.dev/group: "Analytics"
+    gethomepage.dev/icon: "superset.png"
+    gethomepage.dev/ping: "superset.{{ .Values.ingress.baseDomain }}"
+  pathType: Prefix
+  hosts:
+    - superset.{{ .Values.ingress.baseDomain }}
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 256Mi
+supersetNode:
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 80
+  podDisruptionBudget:
+    enabled: true
+    minAvailable: 2
+supersetWorker:
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 80
+  podDisruptionBudget:
+    enabled: true
+    minAvailable: 2
+supersetCeleryBeat:
+  enabled: true
+  podDisruptionBudget:
+    enabled: true
+    minAvailable: 2
+supersetCeleryFlower:
+  enabled: true
+  podDisruptionBudget:
+    enabled: true
+    minAvailable: 2
+postgresql:
+  auth:
+    password: "<path:kv/data/lab/superset#POSTGRESQL_PASSWORD>"
+redis:
+  architecture: replication
+  master:
+    persistence:
+      enabled: true
