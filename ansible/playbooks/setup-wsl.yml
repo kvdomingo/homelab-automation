@@ -409,3 +409,14 @@
             src: ~/Downloads/supabase
             dest: ~/.local/bin/supabase
             mode: "0755"
+
+    - name: Install Firebase tools
+      block:
+        - name: Download Firebase tools
+          get_url:
+            url: https://firebase.tools
+            dest: ~/Downloads/firebase-tools
+            mode: "0700"
+        - name: Install Firebase tools
+          shell:
+            cmd: ~/Downloads/firebase-tools.sh
