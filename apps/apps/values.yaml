@@ -9,5 +9,3 @@ ingress:
 disablePaperless: true
 
 disablePlausible: true
-
-disableCloudflareTunnel: true
