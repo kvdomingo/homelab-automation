@@ -10,3 +10,4 @@ spec:
       {{- include "time-machine.selectorLabels" . | nindent 6 }}
   endpoints:
     - port: http
+      path: /api/metrics
