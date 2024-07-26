@@ -420,3 +420,11 @@
         - name: Install Firebase tools
           shell:
             cmd: ~/Downloads/firebase-tools.sh
+
+    - name: Install Snyk CLI
+      block:
+        - name: Download Snyk CLI
+          get_url:
+            url: https://static.snyk.io/cli/latest/snyk-linux
+            dest: /usr/local/bin/snyk
+            mode: "0755"
