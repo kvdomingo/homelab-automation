@@ -10,3 +10,4 @@ spec:
       {{- include "apod.selectorLabels" . | nindent 6 }}
   endpoints:
     - port: http
+      path: /metrics
