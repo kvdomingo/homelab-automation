@@ -24,6 +24,9 @@ spec:
             operatorConfig:
               defaultTags:
                 - "tag:k8s-operator"
+              image:
+                repository: tailscale/k8s-operator
+                tag: v1.70.0
   destination:
     server: {{ .Values.destination.server }}
     namespace: tailscale
