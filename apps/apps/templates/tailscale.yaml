@@ -1,0 +1,36 @@
+{{- if not .Values.disableTailscale }}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: tailscale
+  namespace: {{ include "apps.argocdNamespace" . | quote }}
+  finalizers:
+    {{- include "apps.finalizers" . | nindent 4 }}
+spec:
+  project: {{ .Values.project }}
+  source:
+    repoURL: https://pkgs.tailscale.com/helmcharts
+    chart: tailscale-operator
+    targetRevision: 1.70.0
+    plugin:
+      name: argocd-vault-plugin-helm
+      env:
+        - name: HELM_VALUES
+          value: |
+            oauth:
+              clientId: "<path:kv/data/lab/tailscale#OAUTH_CLIENT_ID>"
+              clientSecret: "<path:kv/data/lab/tailscale#OAUTH_CLIENT_SECRET>"
+            installCRDs: true
+            operatorConfig:
+              defaultTags:
+                - "tag:k8s-operator"
+  destination:
+    server: {{ .Values.destination.server }}
+    namespace: tailscale
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+    automated:
+      selfHeal: true
+      prune: true
+{{- end }}
