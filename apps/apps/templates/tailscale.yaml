@@ -27,6 +27,14 @@ spec:
               image:
                 repository: tailscale/k8s-operator
                 tag: v1.70.0
+            apiServerProxyConfig:
+              mode: "true"
+            proxyConfig:
+              image:
+                repository: tailscale/tailscale
+                tag: v1.70.0
+              defaultTags:
+                - "tag:k8s"
   destination:
     server: {{ .Values.destination.server }}
     namespace: tailscale
