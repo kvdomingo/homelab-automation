@@ -11,3 +11,5 @@ disablePaperless: true
 disablePlausible: true
 
 disableCloudflareTunnel: true
+
+disableHannibot: true
