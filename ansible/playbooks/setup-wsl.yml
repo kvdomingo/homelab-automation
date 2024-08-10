@@ -428,3 +428,9 @@
             url: https://static.snyk.io/cli/latest/snyk-linux
             dest: /usr/local/bin/snyk
             mode: "0755"
+
+    - name: Install Cloudflare CLI
+      get_url:
+        url: https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64
+        dest: /usr/local/bin/cloudflared
+        mode: "0755"
