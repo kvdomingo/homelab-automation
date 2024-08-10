@@ -76,11 +76,11 @@ resources: { }
 
 livenessProbe: { }
 #  httpGet:
-#    path: /
+#    path: /misc/ping
 #    port: http
 readinessProbe: { }
 #  httpGet:
-#    path: /
+#    path: /misc/ping
 #    port: http
 
 autoscaling:
