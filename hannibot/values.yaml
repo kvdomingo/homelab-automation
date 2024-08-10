@@ -7,7 +7,7 @@ image:
   repository: git.lab.kvd.studio/r/hannibot
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "50b48e4179ff066b1961e4d14a368cb5e5c5779b"
+  tag: "99539f53cac439c3d76af2f0eb624e5cb0035da2"
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
