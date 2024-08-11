@@ -53,6 +53,21 @@ spec:
           envFrom:
             - secretRef:
                 name: {{ include "umami.fullname" . }}-secrets
+      initContainers:
+        - name: {{ .Chart.Name }}-init-wait-db
+          image: {{ .Values.postgresql.image.repository }}:{{ .Values.postgresql.image.tag }}
+          imagePullPolicy: {{ .Values.postgresql.image.pullPolicy }}
+          command:
+            - /bin/sh
+            - -c
+            - |
+              until pg_isready -h {{ .Chart.Name }}-postgresql -U {{ .Values.postgresql.auth.username }} -d {{ .Values.postgresql.auth.database }}; do
+                echo "Waiting for PostgreSQL to be ready..."
+                sleep 2
+              done
+          envFrom:
+            - secretRef:
+                name: {{ include "umami.fullname" . }}-secrets
       {{- with .Values.volumes }}
       volumes:
         {{- toYaml . | nindent 8 }}
