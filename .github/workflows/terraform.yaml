@@ -1,0 +1,42 @@
+name: Apply Terraform infrastructure
+
+on:
+  push:
+    branches: [ "main" ]
+    paths: [ "terraform/**" ]
+
+jobs:
+  terraform-infra:
+    name: Terraform infrastructure
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: terraform
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.8.4
+
+      - name: Create Terraform variables
+        run: |
+          cat > terraform.auto.tfvars <<EOF
+          cloudflare_account_name = "${{ secrets.CLOUDFLARE_ACCOUNT_NAME }}"
+          cloudflare_account_id = "${{ secrets.CLOUDFLARE_ACCOUNT_ID }}"
+          cloudflare_api_token = "${{ secrets.CLOUDFLARE_API_TOKEN }}"
+          lab_tunnel_secret = "${{ secrets.LAB_TUNNEL_SECRET }}"
+          EOF
+
+      - name: Terraform initialize
+        run: terraform init -input=false
+
+      - name: Terraform validate
+        run: terraform validate
+
+      - name: Terraform plan
+        run: terraform plan -out=.tfplan -input=false
+
+      - name: Terraform apply
+        run: terraform apply -auto-approve -input=false .tfplan
