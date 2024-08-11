@@ -4,21 +4,21 @@ locals {
   ])
 }
 
-resource "cloudflare_tunnel" "dev" {
+resource "cloudflare_tunnel" "lab" {
   account_id = var.cloudflare_account_id
-  name       = "homelab-dev"
-  secret     = var.dev_tunnel_secret
+  name       = "homelab-lab"
+  secret     = var.lab_tunnel_secret
 }
 
 resource "cloudflare_tunnel_route" "lab" {
   account_id = var.cloudflare_account_id
   network    = "10.20.0.0/16"
-  tunnel_id  = cloudflare_tunnel.dev.id
+  tunnel_id  = cloudflare_tunnel.lab.id
 }
 
 resource "cloudflare_tunnel_config" "lab" {
   account_id = var.cloudflare_account_id
-  tunnel_id  = cloudflare_tunnel.dev.id
+  tunnel_id  = cloudflare_tunnel.lab.id
 
   config {
     warp_routing {
