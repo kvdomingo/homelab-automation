@@ -9,11 +9,20 @@ metadata:
 spec:
   project: {{ .Values.project }}
   source:
-    repoURL: https://git.lab.kvd.studio/r/homelab.git
-    targetRevision: main
-    path: cloudflare
+    repoURL: https://cloudflare.github.io/helm-charts
+    chart: cloudflare-tunnel
+    targetRevision: 0.3.0
     plugin:
       name: argocd-vault-plugin-helm
+      env:
+        - name: HELM_VALUES
+          value: |
+            cloudflare:
+              account: "<path:kv/data/lab/cloudflare#CLOUDFLARE_ACCOUNT_NUMBER>"
+              tunnelName: "<path:kv/data/lab/cloudflare#CLOUDFLARE_TUNNEL_NAME>"
+              tunnelId: "<path:kv/data/lab/cloudflare#CLOUDFLARE_TUNNEL_ID>"
+              secret: "<path:kv/data/lab/cloudflare#CLOUDFLARE_TUNNEL_SECRET>"
+              enableWarp: true
   destination:
     server: {{ .Values.destination.server }}
     namespace: cloudflare

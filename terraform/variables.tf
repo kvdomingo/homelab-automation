@@ -11,7 +11,7 @@ variable "cloudflare_api_token" {
   sensitive = true
 }
 
-variable "dev_tunnel_secret" {
+variable "lab_tunnel_secret" {
   type = string
   sensitive = true
 }
