@@ -52,7 +52,7 @@ spec:
           {{- end }}
           envFrom:
             - secretRef:
-                name: {{ include "umami.fullname" . -}}-secrets
+                name: {{ include "umami.fullname" . }}-secrets
       {{- with .Values.volumes }}
       volumes:
         {{- toYaml . | nindent 8 }}
