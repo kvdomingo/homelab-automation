@@ -8,6 +8,4 @@ ingress:
 
 disablePaperless: true
 
-disablePlausible: true
-
 disableHannibot: true
