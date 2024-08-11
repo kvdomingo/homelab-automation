@@ -23,6 +23,8 @@ spec:
               tunnelId: "<path:kv/data/lab/cloudflare#CLOUDFLARE_TUNNEL_ID>"
               secret: "<path:kv/data/lab/cloudflare#CLOUDFLARE_TUNNEL_SECRET>"
               enableWarp: true
+            image:
+              tag: "2024.8.2"
   destination:
     server: {{ .Values.destination.server }}
     namespace: cloudflare
