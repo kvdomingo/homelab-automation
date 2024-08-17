@@ -143,12 +143,12 @@
         - name: Install yq
           get_url:
             url: https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
-            dest: ~/.local/bin/yq
+            dest: /usr/local/bin/yq
             mode: "0755"
         - name: Install jq
           get_url:
             url: https://github.com/jqlang/jq/releases/latest/download/jq-linux-amd64
-            dest: ~/.local/bin/jq
+            dest: /usr/local/bin/jq
             mode: "0755"
         - name: Download Taskfile
           get_url:
@@ -158,8 +158,8 @@
         - name: Install Taskfile
           shell:
             chdir: ~/Downloads
-            cmd: ./install-task.sh -d -b ~/.local/bin
-            creates: ~/.local/bin/task
+            cmd: ./install-task.sh -d -b /usr/local/bin
+            creates: /usr/local/bin/task
 
     - name: Install asdf
       block:
@@ -261,6 +261,18 @@
           shell:
             chdir: ~/Downloads
             cmd: ./install-helm.sh
+        - name: Download Helmfile
+          get_url:
+            url: https://github.com/helmfile/helmfile/releases/download/v1.0.0-rc.4/helmfile_1.0.0-rc.4_linux_amd64.tar.gz
+            dest: ~/Downloads
+        - name: Extract Helmfile
+          unarchive:
+            src: ~/Downloads/helmfile_1.0.0-rc.4_linux_amd64.tar.gz
+            dest: ~/Downloads/helmfile
+        - name: Install Helmfile
+          copy:
+            src: ~/Downloads/helmfile/helmfile
+            dest: /usr/local/bin/helmfile
         - name: Install Krew
           shell:
             cmd: |
@@ -407,7 +419,7 @@
         - name: Install Supabase CLI
           copy:
             src: ~/Downloads/supabase
-            dest: ~/.local/bin/supabase
+            dest: /usr/local/bin/supabase
             mode: "0755"
 
     - name: Install Firebase tools
