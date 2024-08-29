@@ -1,0 +1,62 @@
+{{- if not .Values.disableNocoDb }}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: nocodb
+  namespace: {{ include "apps.argocdNamespace" . | quote }}
+  finalizers:
+    {{- include "apps.finalizers" . | nindent 4 }}
+spec:
+  project: {{ .Values.project }}
+  source:
+    repoURL: https://zekker6.github.io/helm-charts/
+    chart: nocodb
+    targetRevision: 0.41.0
+    plugin:
+      name: argocd-vault-plugin-helm
+      env:
+        - name: HELM_VALUES
+          value: |
+            image:
+              tag: 0.255.0
+            env:
+              NC_DB: 'pg://nocodb-postgresql:5432?u=nocodb&p=<path:kv/data/lab/nocodb#POSTGRESQL_PASSWORD>&d=nocodb'
+            ingress:
+              main:
+                enabled: true
+                annotations:
+                  gethomepage.dev/enabled: "true"
+                  gethomepage.dev/name: "NocoDB"
+                  gethomepage.dev/group: "Analytics"
+                  gethomepage.dev/icon: "nocodb.png"
+                  gethomepage.dev/ping: "nocodb.{{ .Values.ingress.baseDomain }}"
+                pathType: Prefix
+                hosts:
+                  - host: nocodb.{{ .Values.ingress.baseDomain }}
+                    paths:
+                      - path: /
+                        pathType: Prefix
+            postgresql:
+              enabled: true
+              auth:
+                postgresPassword: "<path:kv/data/lab/nocodb#POSTGRESQL_PASSWORD>"
+                username: nocodb
+                password: "<path:kv/data/lab/nocodb#POSTGRESQL_PASSWORD>"
+                database: nocodb
+              primary:
+                persistence:
+                  enabled: true
+                livenessProbe:
+                  enabled: false
+                readinessProbe:
+                  enabled: false
+  destination:
+    server: {{ .Values.destination.server }}
+    namespace: nocodb
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+    automated:
+      selfHeal: true
+      prune: true
+{{- end }}
