@@ -168,7 +168,7 @@
             repo: https://github.com/asdf-vm/asdf.git
             dest: ~/.asdf
             clone: true
-            version: v0.13.1
+            version: v0.14.1
         - name: Load asdf
           shell:
             cmd: ASDF_DIR=~/.asdf . ~/.asdf/asdf.sh
