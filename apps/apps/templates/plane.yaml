@@ -1,0 +1,53 @@
+{{- if not .Values.disablePlane }}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: plane
+  namespace: {{ include "apps.argocdNamespace" . | quote }}
+  finalizers:
+    {{- include "apps.finalizers" . | nindent 4 }}
+spec:
+  project: {{ .Values.project }}
+  source:
+    repoURL: https://helm.plane.so/
+    chart: plane-ce
+    targetRevision: 1.0.21
+    plugin:
+      name: argocd-vault-plugin-helm
+      env:
+        - name: HELM_VALUES
+          value: |
+            ingress:
+              enabled: true
+              appHost: plane.{{ .Values.ingress.baseDomain }}
+              minioHost: plane-minio.{{ .Values.ingress.baseDomain }}
+              ingressClass: traefik
+              ingress_annotations:
+                gethomepage.dev/enabled: "true"
+                gethomepage.dev/name: "Plane"
+                gethomepage.dev/group: "Analytics"
+                gethomepage.dev/icon: "si-strapi"
+                gethomepage.dev/ping: "plane.{{ .Values.ingress.baseDomain }}"
+            redis:
+              storageClass: nfs-client
+            postgres:
+              storageClass: nfs-client
+            minio:
+              storageClass: nfs-client
+              root_user: "<path:kv/data/lab/plane#MINIO_ROOT_USER>"
+              root_password: "<path:kv/data/lab/plane#MINIO_ROOT_PASSWORD>"
+            env:
+              pgdb_username: plane
+              pgdb_password: "<path:kv/data/lab/plane#POSTGRESQL_PASSWORD>"
+              pgdb_name: plane
+              secret_key: "<path:kv/data/lab/plane#SECRET_KEY>"
+  destination:
+    server: {{ .Values.destination.server }}
+    namespace: plane
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+    automated:
+      selfHeal: true
+      prune: true
+{{- end }}
