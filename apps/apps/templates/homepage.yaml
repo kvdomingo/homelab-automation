@@ -11,7 +11,7 @@ spec:
   source:
     repoURL: https://jameswynn.github.io/helm-charts
     chart: homepage
-    targetRevision: 1.2.3
+    targetRevision: 2.0.1
     plugin:
       name: argocd-vault-plugin-helm
       env:
@@ -19,7 +19,7 @@ spec:
           value: |
             image:
               repository: ghcr.io/gethomepage/homepage
-              tag: v0.8.13
+              tag: v0.9.9
             enableRbac: true
             serviceAccount:
               create: true
