@@ -32,7 +32,7 @@ spec:
                   gethomepage.dev/enabled: "true"
                   gethomepage.dev/name: "Airbyte"
                   gethomepage.dev/group: "DataOps"
-                  gethomepage.dev/icon: "airbyte.png"
+                  gethomepage.dev/icon: "si-airbyte"
                   gethomepage.dev/ping: "airbyte.{{ .Values.ingress.baseDomain }}"
                 hosts:
                   - host: airbyte.{{ .Values.ingress.baseDomain }}
