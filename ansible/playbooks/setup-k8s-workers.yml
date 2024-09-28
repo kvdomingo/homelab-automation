@@ -3,9 +3,14 @@
   become: true
 
   tasks:
+    - name: Increase inotify values
+      shell: |
+        sysctl fs.inotify.max_user_instances=1280
+        sysctl fs.inotify.max_user_watches=655360
+
     - name: Install K3s
       shell: |
         curl -sfL https://get.k3s.io | \
-        INSTALL_K3S_CHANNEL=v1.26 \
+        INSTALL_K3S_CHANNEL=v1.30 \
         K3S_TOKEN={{ lookup('ansible.builtin.env', 'K3S_NODE_TOKEN') }} \
         sh -s - server --server https://srv-k8s-01.lab:6443 --disable traefik --docker
