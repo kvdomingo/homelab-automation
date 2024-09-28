@@ -54,6 +54,20 @@ spec:
           envFrom:
             {{- toYaml . | nindent 12 }}
           {{- end }}
+      initContainers:
+        - name: init-wait-db
+          image: bitnami/postgresql:16.2.0-debian-12-r16
+          {{- with .Values.envFrom }}
+          envFrom:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          command:
+            - /bin/sh
+            - -c
+            - >
+              until pg_isready -h ihatemoney-postgresql-hl -U ihatemoney -d ihatemoney; do
+              sleep 2;
+              done;
       {{- with .Values.volumes }}
       volumes:
         {{- toYaml . | nindent 8 }}
