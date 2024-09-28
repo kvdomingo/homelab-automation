@@ -11,7 +11,7 @@ spec:
   source:
     repoURL: https://prometheus-community.github.io/helm-charts
     chart: kube-prometheus-stack
-    targetRevision: 58.2.2
+    targetRevision: 62.3.1
     plugin:
       name: argocd-vault-plugin-helm
       env:
@@ -52,6 +52,8 @@ spec:
                         # title:
                         # message:
             grafana:
+              enabled: true
+              defaultDashboardsTimezone: Asia/Manila
               adminPassword: "<path:kv/data/lab/promstack#GRAFANA_PASSWORD>"
               ingress:
                 enabled: true
@@ -70,8 +72,8 @@ spec:
               sidecar:
                 dashboards:
                   enableNewTablePanelSyntax: true
-                datasources:
-                  url: http://promstack-kube-prometheus-prometheus:9090/
+              serviceMonitor:
+                enabled: true
             kube-state-metrics:
               selfMonitor:
                 enabled: true
@@ -105,9 +107,6 @@ spec:
                 hosts:
                   - "prometheus.{{ .Values.ingress.baseDomain }}"
                 paths: [ "/" ]
-            prometheusOperator:
-              admissionWebhooks:
-                failurePolicy: Ignore
   destination:
     server: {{ .Values.destination.server }}
     namespace: promstack
