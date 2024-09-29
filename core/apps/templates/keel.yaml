@@ -29,17 +29,13 @@ spec:
             service:
               enabled: true
               type: ClusterIP
-            ingress:
-              enabled: true
-              annotations:
-                gethomepage.dev/enabled: "true"
-                gethomepage.dev/name: "Keel"
-                gethomepage.dev/group: "CI/CD"
-                gethomepage.dev/icon: "si-keepachangelog"
-                gethomepage.dev/ping: "keel.{{ .Values.ingress.baseDomain }}"
-              hosts:
-                - host: "keel.{{ .Values.ingress.baseDomain }}"
-                  paths: [ "/" ]
+            resources:
+              requests:
+                cpu: 100m
+                memory: 128Mi
+              limits:
+                cpu: 200m
+                memory: 256Mi
   destination:
     server: {{ .Values.destination.server }}
     namespace: kube-system
