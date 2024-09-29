@@ -28,6 +28,7 @@ spec:
               minAvailable: 2
             service:
               enabled: true
+              type: ClusterIP
             ingress:
               enabled: true
               annotations:
