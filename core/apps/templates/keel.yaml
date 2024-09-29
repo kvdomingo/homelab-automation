@@ -26,6 +26,8 @@ spec:
             podDisruptionBudget:
               enabled: true
               minAvailable: 2
+            service:
+              enabled: true
             ingress:
               enabled: true
               annotations:
