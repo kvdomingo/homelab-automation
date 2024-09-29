@@ -1,0 +1,30 @@
+{{- if not .Values.disableKeel }}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: keel
+  namespace: {{ include "apps.argocdNamespace" . | quote }}
+  finalizers:
+    {{- include "apps.finalizers" . | nindent 4 }}
+spec:
+  project: {{ .Values.project }}
+  source:
+    repoURL: https://charts.keel.sh
+    chart: keel
+    targetRevision: 1.0.3
+    helm:
+      releaseName: keel
+      valuesObject:
+        helmProvider:
+          enabled: true
+          version: v3
+  destination:
+    server: {{ .Values.destination.server }}
+    namespace: kube-system
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+    automated:
+      selfHeal: true
+      prune: true
+{{- end }}
