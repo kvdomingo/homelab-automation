@@ -12,12 +12,31 @@ spec:
     repoURL: https://charts.keel.sh
     chart: keel
     targetRevision: 1.0.3
-    helm:
-      releaseName: keel
-      valuesObject:
-        helmProvider:
-          enabled: true
-          version: v3
+    plugin:
+      name: argocd-vault-plugin-helm
+      env:
+        - name: HELM_VALUES
+          value: |
+            helmProvider:
+              enabled: true
+              version: v3
+            discord:
+              enabled: true
+              webhookUrl: "<path:kv/data/lab/keel#DISCORD_WEBHOOK>"
+            podDisruptionBudget:
+              enabled: true
+              minAvailable: 2
+            ingress:
+              enabled: true
+              annotations:
+                gethomepage.dev/enabled: "true"
+                gethomepage.dev/name: "Keel"
+                gethomepage.dev/group: "CI/CD"
+                gethomepage.dev/icon: "si-keepachangelog"
+                gethomepage.dev/ping: "keel.{{ .Values.ingress.baseDomain }}"
+              hosts:
+                - host: "keel.{{ .Values.ingress.baseDomain }}"
+                  paths: [ "/" ]
   destination:
     server: {{ .Values.destination.server }}
     namespace: kube-system
