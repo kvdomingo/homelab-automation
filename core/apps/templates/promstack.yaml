@@ -21,7 +21,6 @@ spec:
               pdb:
                 create: true
                 minAvailable: 2
-              replicaCount: 3
               ingress:
                 enabled: true
                 pathType: Prefix
@@ -57,7 +56,6 @@ spec:
               pdb:
                 create: true
                 minAvailable: 2
-              replicaCount: 3
               ingress:
                 enabled: true
                 pathType: Prefix
