@@ -176,14 +176,24 @@
           shell:
             cmd: |
               asdf plugin add adr-tools
-              asdf plugin add golang
-              asdf plugin add java https://github.com/halcyon/asdf-java.git
-              asdf plugin add nodejs
-              asdf plugin add poetry
-              asdf plugin add python
-              asdf plugin add just
-              asdf plugin add rust
+              asdf plugin add dotnet
+              asdf plugin add erlang
               asdf plugin add gleam
+              asdf plugin add golang
+              asdf plugin add helm
+              asdf plugin add helmfile
+              asdf plugin add java https://github.com/halcyon/asdf-java.git
+              asdf plugin add just
+              asdf plugin add nodejs
+              asdf plugin add opentofu
+              asdf plugin add pipx
+              asdf plugin add poetry
+              asdf plugin add pulumi
+              asdf plugin add python
+              asdf plugin add rebar
+              asdf plugin add rust
+              asdf plugin add terraform
+              asdf plugin add uv
         - name: Install asdf tools
           shell:
             cmd: asdf install
