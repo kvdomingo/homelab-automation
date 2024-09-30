@@ -9,93 +9,23 @@ metadata:
 spec:
   project: {{ .Values.project }}
   source:
-    repoURL: https://prometheus-community.github.io/helm-charts
-    chart: kube-prometheus-stack
-    targetRevision: 62.3.1
+    repoURL: https://charts.bitnami.com/bitnami
+    chart: kube-prometheus
+    targetRevision: 9.6.2
     plugin:
       name: argocd-vault-plugin-helm
       env:
         - name: HELM_VALUES
           value: |
-            crds:
-              enabled: true
-            alertmanager:
-              podDisruptionBudget:
-                enabled: true
-                minAvailable: 1
-              ingress:
-                enabled: true
-                annotations:
-                  gethomepage.dev/enabled: "true"
-                  gethomepage.dev/name: "Alertmanager"
-                  gethomepage.dev/group: "Monitoring"
-                  gethomepage.dev/icon: "alertmanager.png"
-                  gethomepage.dev/ping: "alertmanager.{{ .Values.ingress.baseDomain }}"
-                hosts:
-                  - "alertmanager.{{ .Values.ingress.baseDomain }}"
-                paths: [ "/" ]
-              config:
-                route:
-                  receiver: discord
-                  group_by: [ 'namespace' ]
-                  group_wait: 30s
-                  group_interval: 5m
-                  repeat_interval: 12h
-                  routes:
-                    - receiver: discord
-                      matchers:
-                        - alertname="Watchdog"
-                receivers:
-                  - name: discord
-                    discord_configs:
-                      - webhook_url: "<path:kv/data/lab/promstack#DISCORD_WEBHOOK_URL>"
-                        # title:
-                        # message:
-            grafana:
-              enabled: true
-              defaultDashboardsTimezone: Asia/Manila
-              adminPassword: "<path:kv/data/lab/promstack#GRAFANA_PASSWORD>"
-              ingress:
-                enabled: true
-                annotations:
-                  gethomepage.dev/enabled: "true"
-                  gethomepage.dev/name: "Grafana"
-                  gethomepage.dev/group: "Monitoring"
-                  gethomepage.dev/icon: "grafana.png"
-                  gethomepage.dev/ping: "grafana.{{ .Values.ingress.baseDomain }}"
-                  gethomepage.dev/widget.type: "grafana"
-                  gethomepage.dev/widget.url: "https://grafana.{{ .Values.ingress.baseDomain }}"
-                  gethomepage.dev/widget.username: "admin"
-                  gethomepage.dev/widget.password: "<path:kv/data/lab/promstack#GRAFANA_PASSWORD>"
-                hosts:
-                  - "grafana.{{ .Values.ingress.baseDomain }}"
-              sidecar:
-                dashboards:
-                  enableNewTablePanelSyntax: true
-              serviceMonitor:
-                enabled: true
-            kube-state-metrics:
-              selfMonitor:
-                enabled: true
             prometheus:
-              thanosService:
-                enabled: true
-              thanosServiceMonitor:
-                enabled: true
-              podDisruptionBudget:
-                enabled: true
-                minAvailable: 1
-              prometheusSpec:
-                scrapeInterval: 3m
-                retention: 14d
-                externalUrl: https://prometheus.{{ .Values.ingress.baseDomain }}
-                ruleSelectorNilUsesHelmValues: false
-                serviceMonitorSelectorNilUsesHelmValues: false
-                podMonitorSelectorNilUsesHelmValues: false
-                tsdb:
-                  outOfOrderTimeWindow: 10m
+              pdb:
+                create: true
+                minAvailable: 2
+              replicaCount: 3
               ingress:
                 enabled: true
+                pathType: Prefix
+                hostname: "prometheus.{{ .Values.ingress.baseDomain }}"
                 annotations:
                   gethomepage.dev/enabled: "true"
                   gethomepage.dev/name: "Prometheus"
@@ -104,12 +34,69 @@ spec:
                   gethomepage.dev/ping: "prometheus.{{ .Values.ingress.baseDomain }}"
                   gethomepage.dev/widget.type: "prometheus"
                   gethomepage.dev/widget.url: "https://prometheus.{{ .Values.ingress.baseDomain }}"
-                hosts:
-                  - "prometheus.{{ .Values.ingress.baseDomain }}"
-                paths: [ "/" ]
+              scrapeInterval: 3m
+              retention: 14d
+              walCompression: true
+              persistence:
+                enabled: true
+                annotations:
+                  argocd.argoproj.io/sync-options: Delete=false,Prune=false
+              thanos:
+                create: true
+                ingress:
+                  enabled: true
+                  pathType: Prefix
+                  hostname: "thanos.{{ .Values.ingress.baseDomain }}"
+                  annotations:
+                    gethomepage.dev/enabled: "true"
+                    gethomepage.dev/name: "Thanos"
+                    gethomepage.dev/group: "Monitoring"
+                    gethomepage.dev/icon: "thanos.png"
+                    gethomepage.dev/ping: "thanos.{{ .Values.ingress.baseDomain }}"
+            alertmanager:
+              pdb:
+                create: true
+                minAvailable: 2
+              replicaCount: 3
+              ingress:
+                enabled: true
+                pathType: Prefix
+                hostname: "alertmanager.{{ .Values.ingress.baseDomain }}"
+                annotations:
+                  gethomepage.dev/enabled: "true"
+                  gethomepage.dev/name: "Alertmanager"
+                  gethomepage.dev/group: "Monitoring"
+                  gethomepage.dev/icon: "alertmanager.png"
+                  gethomepage.dev/ping: "alertmanager.{{ .Values.ingress.baseDomain }}"
+              config:
+                global:
+                  resolve_timeout: 5m
+                route:
+                  receiver: discord
+                  group_by: [ 'job' ]
+                  group_wait: 30s
+                  group_interval: 5m
+                  repeat_interval: 12h
+                  routes:
+                    - match:
+                        alertname: Watchdog
+                      receiver: discord
+                receivers:
+                  - name: discord
+                    discord_configs:
+                      - webhook_url: "<path:kv/data/lab/promstack#DISCORD_WEBHOOK_URL>"
+              persistence:
+                enabled: true
+                annotations:
+                  argocd.argoproj.io/sync-options: Delete=false,Prune=false
+            blackboxExporter:
+              pdb:
+                create: true
+                minAvailable: 2
+              replicaCount: 3
   destination:
     server: {{ .Values.destination.server }}
-    namespace: promstack
+    namespace: monitoring
   syncPolicy:
     syncOptions:
       - ServerSideApply=true

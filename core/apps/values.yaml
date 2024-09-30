@@ -7,5 +7,3 @@ ingress:
   baseDomain: lab.kvd.studio
 
 disableZitadel: true
-
-disablePromstack: true
