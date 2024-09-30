@@ -31,7 +31,7 @@ spec:
                   gethomepage.dev/name: "Prometheus"
                   gethomepage.dev/group: "Monitoring"
                   gethomepage.dev/icon: "prometheus.png"
-                  gethomepage.dev/ping: "prometheus.{{ .Values.ingress.baseDomain }}"
+                  gethomepage.dev/ping: "http://promstack-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090"
                   gethomepage.dev/widget.type: "prometheus"
                   gethomepage.dev/widget.url: "https://prometheus.{{ .Values.ingress.baseDomain }}"
               scrapeInterval: 3m
