@@ -6,6 +6,8 @@ metadata:
   namespace: {{ include "apps.argocdNamespace" . | quote }}
   finalizers:
     {{- include "apps.finalizers" . | nindent 4 }}
+  annotations:
+    argocd.argoproj.io/compare-options: ServerSideDiff=true
 spec:
   project: {{ .Values.project }}
   source:
