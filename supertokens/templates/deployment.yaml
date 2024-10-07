@@ -40,7 +40,7 @@ spec:
             - /bin/sh
             - -c
             - >
-              until pg_isready --host {{ .Release.Name }}-postgresql --username supertokens;
+              until pg_isready --host {{ .Release.Name }}-postgresql --username {{ .Values.postgresql.auth.username }};
               do echo waiting for database;
               sleep 2;
               done;
@@ -67,6 +67,8 @@ spec:
           envFrom:
             - secretRef:
                 name: '{{- include "supertokens.fullname" . }}-secrets'
+            - configMapRef:
+                name: '{{- include "supertokens.fullname" . }}-configmap'
       {{- with .Values.volumes }}
       volumes:
         {{- toYaml . | nindent 8 }}
