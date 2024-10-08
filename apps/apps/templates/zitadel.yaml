@@ -11,30 +11,56 @@ spec:
   sources:
     - repoURL: https://charts.cockroachdb.com/
       chart: cockroachdb
-      targetRevision: 12.0.4
+      targetRevision: 14.0.4
       plugin:
         name: argocd-vault-plugin-helm
         env:
           - name: HELM_VALUES
             value: |
               fullnameOverride: crdb
-              tls:
-                enabled: false
+              store:
+                enabled: true
+                type: empty
+              statefulset:
+                replicas: 3
+                budget:
+                  maxUnavailable: 1
+                resources:
+                  limits:
+                    cpu: 100m
+                    memory: 512Mi
               prometheus:
                 enabled: true
               serviceMonitor:
                 enabled: true
+              tls:
+                enabled: false
     - repoURL: https://charts.zitadel.com
       chart: zitadel
-      targetRevision: 7.12.1
+      targetRevision: 8.5.0
       plugin:
         name: argocd-vault-plugin-helm
         env:
           - name: HELM_VALUES
             value: |
               zitadel:
-                configSecretName: zitadel-secrets
-                masterkeySecretName: zitadel-secrets
+                configMapConfig:
+                  ExternalSecure: true
+                  ExternalPort: 443
+                  ExternalDomain: "zitadel.{{ .Values.ingress.baseDomain }}"
+                  TLS:
+                    Enabled: false
+                  Machine:
+                    Identification:
+                      Hostname:
+                        Enabled: true
+                      Webhook:
+                        Enabled: false
+                  Database:
+                    cockroach:
+                      Host: crdb
+                masterkey: "<path:kv/data/lab/zitadel#MASTER_KEY>"
+              replicaCount: 3
               ingress:
                 enabled: true
                 annotations:
@@ -55,12 +81,7 @@ spec:
                   honorLabels: true
               pdb:
                 enabled: true
-                minAvailable: 1
-    - repoURL: https://git.lab.kvd.studio/r/homelab
-      targetRevision: main
-      path: zitadel
-      plugin:
-        name: argocd-vault-plugin
+                minAvailable: 2
   destination:
     server: {{ .Values.destination.server }}
     namespace: zitadel
