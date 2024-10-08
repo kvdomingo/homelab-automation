@@ -9,35 +9,6 @@ metadata:
 spec:
   project: {{ .Values.project }}
   sources:
-    - repoURL: https://charts.cockroachdb.com/
-      chart: cockroachdb
-      targetRevision: 14.0.4
-      plugin:
-        name: argocd-vault-plugin-helm
-        env:
-          - name: HELM_VALUES
-            value: |
-              fullnameOverride: crdb
-              store:
-                enabled: true
-                type: empty
-              statefulset:
-                replicas: 3
-                budget:
-                  maxUnavailable: 1
-                resources:
-                  limits:
-                    cpu: 100m
-                    memory: 512Mi
-              prometheus:
-                enabled: true
-              serviceMonitor:
-                enabled: true
-              tls:
-                enabled: false
-                certs:
-                  selfSigner:
-                    enabled: false
     - repoURL: https://charts.zitadel.com
       chart: zitadel
       targetRevision: 8.5.0
@@ -85,6 +56,35 @@ spec:
               pdb:
                 enabled: true
                 minAvailable: 2
+    - repoURL: https://charts.cockroachdb.com/
+      chart: cockroachdb
+      targetRevision: 14.0.4
+      plugin:
+        name: argocd-vault-plugin-helm
+        env:
+          - name: HELM_VALUES
+            value: |
+              fullnameOverride: crdb
+              store:
+                enabled: true
+                type: empty
+              statefulset:
+                replicas: 3
+                budget:
+                  maxUnavailable: 1
+                resources:
+                  limits:
+                    cpu: 100m
+                    memory: 512Mi
+              prometheus:
+                enabled: true
+              serviceMonitor:
+                enabled: true
+              tls:
+                enabled: false
+                certs:
+                  selfSigner:
+                    enabled: false
   destination:
     server: {{ .Values.destination.server }}
     namespace: zitadel
