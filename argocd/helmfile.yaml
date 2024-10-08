@@ -3,6 +3,9 @@ repositories:
     url: https://argoproj.github.io/argo-helm
 
 releases:
+  - name: manifests
+    namespace: argocd
+    chart: ./manifests
   - name: argocd
     namespace: argocd
     chart: argo/argo-cd
