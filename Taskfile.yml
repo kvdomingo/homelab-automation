@@ -43,7 +43,6 @@ tasks:
     desc: Initial setup
     cmds:
       - pre-commit install
-      - helm repo add argo https://argoproj.github.io/argo-helm
       - helm repo add bitnami https://charts.bitnami.com/bitnami
       - helm repo add gitlab  https://charts.gitlab.io/
       - helm repo add traefik https://traefik.github.io/charts
@@ -112,11 +111,17 @@ tasks:
   setup-argocd:
     desc: Setup ArgoCD
     dir: argocd
-    cmds:
-      - kubectl apply -f namespace.yaml
-      - kubectl apply -f secrets.yaml
-      - kubectl apply -f cm.yaml
-      - helmfile apply
+    cmd: helmfile apply
+
+  setup-monitoring:
+    desc: Setup monitoring
+    dir: promstack
+    cmd: helmfile apply
+
+  setup-zitadel:
+    desc: Setup Zitadel
+    dir: zitadel
+    cmd: helmfile apply
 
   setup-jellyfin:
     desc: Setup Jellyfin
