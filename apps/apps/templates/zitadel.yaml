@@ -35,6 +35,9 @@ spec:
                 enabled: true
               tls:
                 enabled: false
+                certs:
+                  selfSigner:
+                    enabled: false
     - repoURL: https://charts.zitadel.com
       chart: zitadel
       targetRevision: 8.5.0
