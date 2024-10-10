@@ -7,6 +7,8 @@ zitadel:
     ExternalSecure: true
     ExternalPort: 443
     ExternalDomain: zitadel.lab.kvd.studio
+    Telemetry:
+      Enabled: false
     TLS:
       Enabled: false
     Machine:
@@ -18,6 +20,20 @@ zitadel:
     Database:
       cockroach:
         Host: crdb
+    SecretHasher:
+      Hasher:
+        Algorithm: pbkdf2
+    DefaultInstance:
+      InstanceName: KVD Studio
+      Org:
+        Name: KVD Studio
+        Human:
+          UserName: kvdomingo
+          FirstName: Kenneth
+          LastName: Domingo
+          Email:
+            Address: hello@kvd.studio
+            Verified: true
 
   # The ZITADEL config under secretConfig is written to a Kubernetes Secret
   # See all defaults here:
@@ -28,7 +44,7 @@ zitadel:
   secretConfigAnnotations:
     helm.sh/hook: pre-install,pre-upgrade
     helm.sh/hook-delete-policy: before-hook-creation
-    helm.sh/hook-weight: "0"
+    helm.sh/hook-weight: "-5"
 
   # Reference the name of a secret that contains ZITADEL configuration.
   configSecretName:
