@@ -39,6 +39,7 @@
           - net-tools
           - python3
           - tk-dev
+          - traceroute
           - tmux
           - unzip
           - wget
@@ -60,11 +61,6 @@
         - name: Delete existing .zshrc
           file:
             path: ~/.zshrc
-            state: absent
-            force: true
-        - name: Delete existing .bashrc
-          file:
-            path: ~/.bashrc
             state: absent
             force: true
         - name: Install dotrepo
@@ -138,65 +134,17 @@
             chdir: ~/Downloads
             cmd: ./install-zoxide.sh
 
-    - name: Install essential utilities
+    - name: Install mise
       block:
-        - name: Install yq
-          get_url:
-            url: https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
-            dest: /usr/local/bin/yq
-            mode: "0755"
-        - name: Install jq
-          get_url:
-            url: https://github.com/jqlang/jq/releases/latest/download/jq-linux-amd64
-            dest: /usr/local/bin/jq
-            mode: "0755"
-        - name: Download Taskfile
-          get_url:
-            url: https://taskfile.dev/install.sh
-            dest: ~/Downloads/install-task.sh
-            mode: "0755"
-        - name: Install Taskfile
-          shell:
-            chdir: ~/Downloads
-            cmd: ./install-task.sh -d -b /usr/local/bin
-            creates: /usr/local/bin/task
-
-    - name: Install asdf
-      block:
-        - name: Clone asdf-vm
-          git:
-            repo: https://github.com/asdf-vm/asdf.git
-            dest: ~/.asdf
-            clone: true
-            version: v0.14.1
-        - name: Load asdf
-          shell:
-            cmd: ASDF_DIR=~/.asdf . ~/.asdf/asdf.sh
-        - name: Install asdf-vm plugins
-          shell:
-            cmd: |
-              asdf plugin add adr-tools
-              asdf plugin add dotnet
-              asdf plugin add erlang
-              asdf plugin add gleam
-              asdf plugin add golang
-              asdf plugin add helm
-              asdf plugin add helmfile
-              asdf plugin add java https://github.com/halcyon/asdf-java.git
-              asdf plugin add just
-              asdf plugin add nodejs
-              asdf plugin add opentofu
-              asdf plugin add pipx
-              asdf plugin add poetry
-              asdf plugin add pulumi
-              asdf plugin add python
-              asdf plugin add rebar
-              asdf plugin add rust
-              asdf plugin add terraform
-              asdf plugin add uv
-        - name: Install asdf tools
-          shell:
-            cmd: asdf install
+        - name: Download mise installer
+          get_url: https://mise.run
+          dest: ~/Downloads/install-mise.sh
+          mode: "0755"
+        - name: Install mise
+          chdir: ~/Downloads
+          shell: ./install-mise.sh
+        - name: Install mise plugins/tools
+          shell: mise install
 
     - name: Install/update global Python packages
       pip:
@@ -223,22 +171,6 @@
             name: pnpm
             state: latest
             global: true
-
-    - name: Configure Poetry
-      shell:
-        cmd: poetry config virtualenvs.in-project true
-
-    - name: Setup Bun
-      block:
-        - name: Download Bun
-          get_url:
-            url: https://bun.sh/install
-            dest: ~/Downloads/install-bun.sh
-            mode: "0755"
-        - name: Install Bun
-          shell:
-            chdir: ~/Downloads
-            cmd: ./install-bun.sh
 
     - name: Install/update global Go packages
       shell:
@@ -327,95 +259,6 @@
             cmd: ./jetbrains-toolbox
             creates: ~/.local/share/JetBrains/Toolbox/bin/jetbrains-toolbox
 
-    - name: Install HashiCorp software
-      become: true
-      block:
-        - name: Download HashiCorp gpg key
-          get_url:
-            url: https://apt.releases.hashicorp.com/gpg
-            dest: ~/Downloads/hashicorp.gpg
-            mode: "0440"
-        - name: Add HashiCorp gpg key
-          shell:
-            cmd: gpg --dearmor --yes -o /usr/share/keyrings/hashicorp-archive-keyring.gpg ~/Downloads/hashicorp.gpg
-        - name: Get architecture
-          command:
-            cmd: dpkg --print-architecture
-          register: architecture
-        - name: Get distribution codename
-          command:
-            cmd: lsb_release -cs
-          register: codename
-        - name: Add HashiCorp repo to sources
-          lineinfile:
-            path: /etc/apt/sources.list.d/hashicorp.list
-            line: deb [arch={{ architecture.stdout }} signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com {{ codename.stdout }} main
-            create: true
-        - name: Update apt
-          apt:
-            update_cache: true
-            upgrade: yes
-        - name: Install HashiCorp Vault & Terraform
-          package:
-            name:
-              - vault
-              - terraform
-            state: latest
-
-    - name: Setup AWS CLI
-      become: true
-      block:
-        - name: Download AWS CLI
-          get_url:
-            url: https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip
-            dest: ~/Downloads/awscliv2.zip
-        - name: Unzip AWS CLI
-          unarchive:
-            src: ~/Downloads/awscliv2.zip
-            dest: ~/Downloads
-        - name: Install AWS CLI
-          shell:
-            chdir: ~/Downloads/aws
-            cmd: ./install --update
-
-    - name: Setup Azure CLI
-      become: true
-      block:
-        - name: Download Azure CLI
-          get_url:
-            url: https://aka.ms/InstallAzureCLIDeb
-            dest: ~/Downloads/InstallAzureCLIDeb
-            mode: "0755"
-        - name: Install Azure CLI
-          shell:
-            chdir: ~/Downloads
-            cmd: ./InstallAzureCLIDeb
-
-    - name: Install gcloud CLI
-      become: true
-      block:
-        - name: Download gcloud gpg key
-          get_url:
-            url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
-            dest: ~/Downloads/gcloud-apt-key.gpg
-            mode: "0440"
-        - name: Add gcloud gpg key
-          shell:
-            cmd: gpg --dearmor --yes -o /usr/share/keyrings/cloud.google.gpg ~/Downloads/gcloud-apt-key.gpg
-        - name: Add gcloud repository to sources
-          lineinfile:
-            path: /etc/apt/sources.list.d/google-cloud-sdk.list
-            line: deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main
-            create: true
-        - name: Update apt
-          apt:
-            update_cache: true
-            upgrade: yes
-        - name: Install gcloud CLI
-          package:
-            name: google-cloud-cli
-            state: latest
-
     - name: Install Supabase CLI
       block:
         - name: Download Supabase CLI
@@ -431,28 +274,3 @@
             src: ~/Downloads/supabase
             dest: /usr/local/bin/supabase
             mode: "0755"
-
-    - name: Install Firebase tools
-      block:
-        - name: Download Firebase tools
-          get_url:
-            url: https://firebase.tools
-            dest: ~/Downloads/firebase-tools
-            mode: "0700"
-        - name: Install Firebase tools
-          shell:
-            cmd: ~/Downloads/firebase-tools.sh
-
-    - name: Install Snyk CLI
-      block:
-        - name: Download Snyk CLI
-          get_url:
-            url: https://static.snyk.io/cli/latest/snyk-linux
-            dest: /usr/local/bin/snyk
-            mode: "0755"
-
-    - name: Install Cloudflare CLI
-      get_url:
-        url: https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64
-        dest: /usr/local/bin/cloudflared
-        mode: "0755"
