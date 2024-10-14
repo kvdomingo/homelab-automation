@@ -1,0 +1,26 @@
+{{- if not .Values.disableMetabase }}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: metabase
+  namespace: {{ include "apps.argocdNamespace" . | quote }}
+  finalizers:
+    {{- include "apps.finalizers" . | nindent 4 }}
+spec:
+  project: {{ .Values.project }}
+  source:
+    repoURL: https://git.lab.kvd.studio/r/homelab.git
+    targetRevision: main
+    path: metabase
+    plugin:
+      name: argocd-vault-plugin-helm
+  destination:
+    server: {{ .Values.destination.server }}
+    namespace: metabase
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+    automated:
+      selfHeal: true
+      prune: true
+{{- end }}

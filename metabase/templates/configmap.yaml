@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: '{{ include "metabase.fullname" . }}-configmap'
+  labels:
+    {{- include "metabase.labels" . | nindent 4 }}
+data:
+  MB_DB_TYPE: "postgres"
+  MB_DB_DBNAME: "{{ .Values.postgresql.auth.database }}"
+  MB_DB_PORT: "5432"
+  MB_DB_USER: "{{ .Values.postgresql.auth.username }}"
+  MB_DB_HOST: "{{ .Release.Name }}-postgresql-hl"
