@@ -3,7 +3,7 @@ $TTL 1d
 $ORIGIN lab.kvd.studio.
 
 @               IN      SOA     bind1.ns.lab.kvd.studio. info.lab.kvd.studio. (
-                                2024050400      ; serial
+                                2024101500      ; serial
                                 12h             ; refresh
                                 15m             ; retry
                                 3w              ; expire
@@ -23,3 +23,9 @@ pihole2.ns      IN      A       10.10.2.53
 *               IN      A       10.10.10.110
 *               IN      A       10.10.10.111
 *               IN      A       10.10.10.112
+
+deb.debian.org      IN  CNAME   ftp.tw.debian.org
+security.debian.org IN  A       151.101.194.132
+security.debian.org IN  A       151.101.2.132
+security.debian.org IN  A       151.101.130.132
+security.debian.org IN  A       151.101.66.132
