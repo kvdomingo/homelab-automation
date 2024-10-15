@@ -2,6 +2,7 @@ locals {
   base_domain = "kvd.studio"
   subdomains_to_expose = tomap({
     git = "git.lab.kvd.studio"
+    banyuhay = "banyuhay.lab.kvd.studio"
   })
 }
 
