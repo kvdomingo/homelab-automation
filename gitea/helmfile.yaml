@@ -1,0 +1,23 @@
+repositories:
+  - name: gitea
+    url: https://dl.gitea.com/charts/
+
+releases:
+  - name: manifests
+    namespace: gitea
+    chart: ./manifests
+  - name: gitea
+    namespace: gitea
+    chart: gitea/gitea
+    version: 10.1.4
+    values:
+      - ./values.yaml
+    set:
+      - value: ref+vault://kv/lab/gitea#ADMIN_USERNAME
+        name: gitea.admin.username
+      - value: ref+vault://kv/lab/gitea#ADMIN_PASSWORD
+        name: gitea.admin.password
+      - value: ref+vault://kv/lab/gitea#ADMIN_EMAIL
+        name: gitea.admin.email
+      - value: ref+vault://kv/lab/gitea#POSTGRESQL_PASSWORD
+        name: postgresql.auth.password
