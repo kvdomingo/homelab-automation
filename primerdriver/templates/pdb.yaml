@@ -1,0 +1,12 @@
+{{- if .Values.pdb.enabled }}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "primerdriver.fullname" . }}
+  labels:
+    {{- include "primerdriver.labels" . | nindent 4 }}
+spec:
+  selector:
+    {{- include "primerdriver.selectorLabels" . | nindent 4 }}
+  minAvailable: {{ .Values.pdb.minAvailable }}
+{{- end }}
