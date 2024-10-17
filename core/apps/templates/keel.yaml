@@ -36,6 +36,24 @@ spec:
               limits:
                 cpu: 200m
                 memory: 256Mi
+            basicAuth:
+              enabled: true
+              user: kvdomingo
+              password: "<path:kv/data/lab/keel#ADMIN_PASSWORD>"
+            ingress:
+              enabled: true
+              annotations:
+                gethomepage.dev/enabled: "true"
+                gethomepage.dev/name: "Keel"
+                gethomepage.dev/group: "CI/CD"
+                gethomepage.dev/icon: "si-keepachangelog"
+                gethomepage.dev/ping: "https://keel.lab.kvd.studio"
+              hosts:
+                - host: keel.lab.kvd.studio
+                  paths: [ / ]
+            persistence:
+              enabled: true
+              storageClass: "nfs-client"
   destination:
     server: {{ .Values.destination.server }}
     namespace: kube-system
