@@ -8,7 +8,7 @@ image:
   repository: docker.umami.is/umami-software/umami
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: postgresql-v2.12.1
+  tag: postgresql-v2.13.1
 
 imagePullSecrets: [ ]
 nameOverride: ""
@@ -82,6 +82,10 @@ readinessProbe:
   httpGet:
     path: /
     port: http
+  initialDelaySeconds: 30
+  periodSeconds: 20
+  timeoutSeconds: 5
+  failureThreshold: 3
 
 autoscaling:
   enabled: true
