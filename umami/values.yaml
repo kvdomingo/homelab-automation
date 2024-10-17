@@ -50,7 +50,7 @@ ingress:
     gethomepage.dev/name: "Umami"
     gethomepage.dev/group: "Analytics"
     gethomepage.dev/icon: "umami"
-    gethomepage.dev/ping: "umami.lab.kvd.studio"
+    gethomepage.dev/ping: "https://umami.lab.kvd.studio/api/heartbeat"
   hosts:
     - host: umami.lab.kvd.studio
       paths:
@@ -76,13 +76,13 @@ resources:
 
 livenessProbe:
   httpGet:
-    path: /
+    path: /api/heartbeat
     port: http
   failureThreshold: 3
   periodSeconds: 20
 startupProbe:
   httpGet:
-    path: /
+    path: /api/heartbeat
     port: http
   failureThreshold: 30
   periodSeconds: 10
