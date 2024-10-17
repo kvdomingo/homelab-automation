@@ -67,7 +67,7 @@ spec:
                 name: time-machine-secrets
       initContainers:
         - name: init-wait-db
-          image: "{{ .Values.postgresql.image.repository }}:{{ .Values.postgresql.image.tag }}"
+          image: "{{ .Values.postgresql.image.registry }}/{{ .Values.postgresql.image.repository }}:{{ .Values.postgresql.image.tag }}"
           imagePullPolicy: Always
           envFrom:
             - configMapRef:
