@@ -4,6 +4,8 @@ metadata:
   name: {{ include "time-machine.fullname" . }}
   labels:
     {{- include "time-machine.labels" . | nindent 4 }}
+  annotations:
+    {{ toYaml .Values.annotations | nindent 4 }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
@@ -65,7 +67,8 @@ spec:
                 name: time-machine-secrets
       initContainers:
         - name: init-wait-db
-          image: bitnami/postgresql:16.2.0-debian-12-r16
+          image: "{{ .Values.postgresql.image.repository }}:{{ .Values.postgresql.image.tag }}"
+          imagePullPolicy: Always
           envFrom:
             - configMapRef:
                 name: time-machine-configmap
@@ -79,7 +82,8 @@ spec:
               sleep 2;
               done;
         - name: init-migrate-db
-          image: {{ .Values.migrate.image.repository }}:{{ .Values.migrate.image.tag }}
+          image: "{{ .Values.migrate.image.repository }}:{{ .Values.migrate.image.tag }}"
+          imagePullPolicy: Always
           envFrom:
             - configMapRef:
                 name: time-machine-configmap
