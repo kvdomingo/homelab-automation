@@ -2,7 +2,7 @@ version: 3
 
 vars:
   SHORT_SHA:
-    shell: git rev-parse --short HEAD
+    sh: git rev-parse --short HEAD
 
 dotenv:
   - ./gitea/.env
@@ -73,22 +73,7 @@ tasks:
   setup-gitea:
     desc: Setup Gitea
     dir: gitea
-    cmds:
-      - kubectl apply -f namespace.yaml
-      - kubectl apply -f configmap.yaml
-      - >
-        helm upgrade --install gitea gitea/gitea
-        --version 10.1.4
-        --namespace gitea
-        --create-namespace
-        --values values.yaml
-        --set gitea.admin.username={{.GITEA_ADMIN_USERNAME}}
-        --set gitea.admin.password={{.GITEA_ADMIN_PASSWORD}}
-        --set gitea.admin.email={{.GITEA_ADMIN_EMAIL}}
-        --set postgresql.auth.database={{.GITEA_POSTGRES_DATABASE}}
-        --set postgresql.auth.password={{.GITEA_POSTGRES_PASSWORD}}
-        --set postgresql.auth.username={{.GITEA_POSTGRES_USERNAME}}
-      - kubectl apply -f ingress.yaml
+    cmd: helmfile apply
 
   setup-vaultwarden:
     desc: Setup Vaultwarden
