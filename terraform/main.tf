@@ -3,6 +3,7 @@ locals {
   subdomains_to_expose = tomap({
     banyuhay = "banyuhay.lab.kvd.studio"
     git = "git.lab.kvd.studio"
+    primerdriver = "primerdriver.lab.kvd.studio"
     umami = "umami.lab.kvd.studio"
   })
 }
