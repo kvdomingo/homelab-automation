@@ -9,3 +9,5 @@ ingress:
 disablePaperless: true
 
 disableHannibot: true
+
+disableTimeMachine: true
