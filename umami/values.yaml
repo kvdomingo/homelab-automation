@@ -78,14 +78,14 @@ livenessProbe:
   httpGet:
     path: /
     port: http
-readinessProbe:
+  failureThreshold: 3
+  periodSeconds: 20
+startupProbe:
   httpGet:
     path: /
     port: http
-  initialDelaySeconds: 30
-  periodSeconds: 20
-  timeoutSeconds: 5
-  failureThreshold: 3
+  failureThreshold: 30
+  periodSeconds: 10
 
 autoscaling:
   enabled: true
