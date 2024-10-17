@@ -17,6 +17,8 @@ spec:
       env:
         - name: HELM_VALUES
           value: |
+            image:
+              tag: latest
             helmProvider:
               enabled: true
               version: v3
@@ -36,7 +38,7 @@ spec:
               limits:
                 cpu: 200m
                 memory: 256Mi
-            basicAuth:
+            basicauth:
               enabled: true
               user: kvdomingo
               password: "<path:kv/data/lab/keel#ADMIN_PASSWORD>"
