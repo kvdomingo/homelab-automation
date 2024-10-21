@@ -21,6 +21,7 @@
           - ca-certificates
           - curl
           - direnv
+          - fzf
           - gedit
           - git
           - gnupg
@@ -137,14 +138,16 @@
     - name: Install mise
       block:
         - name: Download mise installer
-          get_url: https://mise.run
-          dest: ~/Downloads/install-mise.sh
-          mode: "0755"
+          get_url:
+            url: https://mise.run
+            dest: ~/Downloads/install-mise.sh
+            mode: "0755"
         - name: Install mise
-          chdir: ~/Downloads
-          shell: ./install-mise.sh
+          shell:
+            chdir: ~/Downloads
+            cmd: ./install-mise.sh
         - name: Install mise plugins/tools
-          shell: mise install
+          shell: mise install --yes
 
     - name: Install/update global Python packages
       pip:
@@ -194,27 +197,6 @@
             src: ~/.kube/config
             dest: ~/.kube/config.yaml
             mode: "0600"
-        - name: Download Helm
-          get_url:
-            url: https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
-            dest: ~/Downloads/install-helm.sh
-            mode: "0755"
-        - name: Install Helm
-          shell:
-            chdir: ~/Downloads
-            cmd: ./install-helm.sh
-        - name: Download Helmfile
-          get_url:
-            url: https://github.com/helmfile/helmfile/releases/download/v1.0.0-rc.4/helmfile_1.0.0-rc.4_linux_amd64.tar.gz
-            dest: ~/Downloads
-        - name: Extract Helmfile
-          unarchive:
-            src: ~/Downloads/helmfile_1.0.0-rc.4_linux_amd64.tar.gz
-            dest: ~/Downloads/helmfile
-        - name: Install Helmfile
-          copy:
-            src: ~/Downloads/helmfile/helmfile
-            dest: /usr/local/bin/helmfile
         - name: Install Krew
           shell:
             cmd: |
@@ -270,6 +252,7 @@
             src: ~/Downloads/supabase_linux_amd64.tar.gz
             dest: ~/Downloads
         - name: Install Supabase CLI
+          become: true
           copy:
             src: ~/Downloads/supabase
             dest: /usr/local/bin/supabase
