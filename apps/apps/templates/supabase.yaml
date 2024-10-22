@@ -1,0 +1,114 @@
+{{- if not .Values.disableSupabase }}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: supabase
+  namespace: {{ include "apps.argocdNamespace" . | quote }}
+  finalizers:
+      {{- include "apps.finalizers" . | nindent 4 }}
+spec:
+  project: {{ .Values.project }}
+  source:
+    repoURL: https://github.com/supabase-community/supabase-kubernetes.git
+    targetRevision: main
+    path: charts/supabase
+    plugin:
+      name: argocd-vault-plugin-helm
+      env:
+        - name: HELM_VALUES
+          value: |
+            secret:
+              jwt:
+                anonKey: "<path:kv/data/lab/supabase#ANON_JWT>"
+                serviceKey: "<path:kv/data/lab/supabase#SERVICE_JWT>"
+                secret: "<path:kv/data/lab/supabase#SECRET_JWT>"
+              smtp:
+                username: "<path:kv/data/lab/supabase#SMTP_USERNAME>"
+                password: "<path:kv/data/lab/supabase#SMTP_PASSWORD>"
+              dashboard:
+                username: "<path:kv/data/lab/supabase#DASHBOARD_USERNAME>"
+                password: "<path:kv/data/lab/supabase#DASHBOARD_PASSWORD>"
+              db:
+                username: postgres
+                password: "<path:kv/data/lab/supabase#POSTGRESQL_PASSWORD>"
+                database: supabase
+            db:
+              persistence:
+                enabled: true
+              autoscaling:
+                enabled: false
+            studio:
+              environment:
+                STUDIO_DEFAULT_ORGANIZATION: KVD Studio
+                STUDIO_DEFAULT_PROJECT: Supabase
+                SUPABASE_PUBLIC_URL: "https://supabase.{{ .Values.ingress.baseDomain }}"
+              autoscaling:
+                enabled: false
+            auth:
+              environment:
+                API_EXTERNAL_URL: "https://supabase.{{ .Values.ingress.baseDomain }}"
+                GOTRUE_SITE_URL: "https://supabase.{{ .Values.ingress.baseDomain }}"
+                GOTRUE_SMTP_ADMIN_EMAIL: "<path:kv/data/lab/supabase#SMTP_USERNAME>"
+                GOTRUE_SMTP_HOST: smtp.gmail.com
+                GOTRUE_SMTP_PORT: "587"
+                GOTRUE_SMTP_SENDER_NAME: "<path:kv/data/lab/supabase#SMTP_USERNAME>"
+              autoscaling:
+                enabled: false
+            rest:
+              autoscaling:
+                enabled: false
+            realtime:
+              autoscaling:
+                enabled: false
+            meta:
+              autoscaling:
+                enabled: false
+            storage:
+              autoscaling:
+                enabled: false
+              persistence:
+                enabled: true
+            imgproxy:
+              autoscaling:
+                enabled: false
+              persistence:
+                enabled: true
+            kong:
+              ingress:
+                enabled: true
+                className: traefik
+                annotations:
+                  gethomepage.dev/enabled: "true"
+                  gethomepage.dev/name: "Supabase"
+                  gethomepage.dev/group: "CI/CD"
+                  gethomepage.dev/icon: "supabase.png"
+                  gethomepage.dev/ping: "https://supabase.{{ .Values.ingress.baseDomain }}"
+                hosts:
+                  - host: "supabase.{{ .Values.ingress.baseDomain }}"
+                    paths:
+                      - path: /
+                        pathType: Prefix
+              autoscaling:
+                enabled: false
+            analytics:
+              enabled: false
+              autoscaling:
+                enabled: false
+            vector:
+              image:
+                tag: latest-alpine
+              autoscaling:
+                enabled: false
+            functions:
+              autoscaling:
+                enabled: false
+  destination:
+    server: {{ .Values.destination.server }}
+    namespace: supabase
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+    automated:
+      selfHeal: true
+      prune: true
+{{- end }}
