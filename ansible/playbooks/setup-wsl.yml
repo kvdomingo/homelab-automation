@@ -37,6 +37,7 @@
           - libxmlsec1-dev
           - libxml2-dev
           - lsb-release
+          - neofetch
           - net-tools
           - python3
           - tk-dev
