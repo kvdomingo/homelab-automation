@@ -28,11 +28,15 @@ spec:
               dashboard:
                 username: "<path:kv/data/lab/supabase#DASHBOARD_USERNAME>"
                 password: "<path:kv/data/lab/supabase#DASHBOARD_PASSWORD>"
+              analytics:
+                apiKey: "<path:kv/data/lab/supabase#ANALYTICS_API_KEY>"
               db:
                 username: postgres
                 password: "<path:kv/data/lab/supabase#POSTGRESQL_PASSWORD>"
                 database: supabase
             db:
+              image:
+                tag: 15.6.1.132
               persistence:
                 enabled: true
               autoscaling:
@@ -45,7 +49,10 @@ spec:
               autoscaling:
                 enabled: false
             auth:
+              image:
+                tag: v2.163.0
               environment:
+                DB_USER: postgres
                 API_EXTERNAL_URL: "https://supabase.{{ .Values.ingress.baseDomain }}"
                 GOTRUE_SITE_URL: "https://supabase.{{ .Values.ingress.baseDomain }}"
                 GOTRUE_SMTP_ADMIN_EMAIL: "<path:kv/data/lab/supabase#SMTP_USERNAME>"
@@ -55,15 +62,25 @@ spec:
               autoscaling:
                 enabled: false
             rest:
+              environment:
+                DB_USER: postgres
               autoscaling:
                 enabled: false
             realtime:
+              environment:
+                DB_USER: postgres
               autoscaling:
                 enabled: false
             meta:
+              environment:
+                DB_USER: postgres
+              image:
+                tag: v0.84.2
               autoscaling:
                 enabled: false
             storage:
+              environment:
+                DB_USER: postgres
               autoscaling:
                 enabled: false
               persistence:
@@ -81,17 +98,20 @@ spec:
                   gethomepage.dev/enabled: "true"
                   gethomepage.dev/name: "Supabase"
                   gethomepage.dev/group: "CI/CD"
-                  gethomepage.dev/icon: "supabase.png"
+                  gethomepage.dev/icon: "si-supabase"
                   gethomepage.dev/ping: "https://supabase.{{ .Values.ingress.baseDomain }}"
                 hosts:
                   - host: "supabase.{{ .Values.ingress.baseDomain }}"
                     paths:
                       - path: /
                         pathType: Prefix
-              autoscaling:
+            environment:
+              KONG_PLUGINS: request-transformer,cors,key-auth,acl
+            autoscaling:
                 enabled: false
             analytics:
-              enabled: false
+              environment:
+                DB_USERNAME: postgres
               autoscaling:
                 enabled: false
             vector:
@@ -100,6 +120,10 @@ spec:
               autoscaling:
                 enabled: false
             functions:
+              image:
+                tag: v1.59.0
+              environment:
+                DB_USERNAME: postgres
               autoscaling:
                 enabled: false
   destination:
