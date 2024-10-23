@@ -5,8 +5,9 @@
   tasks:
     - name: Increase inotify values
       shell: |
-        sysctl fs.inotify.max_user_instances=1280
-        sysctl fs.inotify.max_user_watches=655360
+        sysctl fs.inotify.max_user_instances=2099999999
+        sysctl fs.inotify.max_user_watches=2099999999
+        sysctl fs.inotify.max_queued_events=2099999999
 
     - name: Install K3s
       shell: |
