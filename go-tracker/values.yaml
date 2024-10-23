@@ -43,9 +43,9 @@ ingress:
   annotations:
     gethomepage.dev/enabled: "true"
     gethomepage.dev/name: "GO Tracker"
-    gethomepage.dev/group: "Admin"
+    gethomepage.dev/group: "Apps"
     gethomepage.dev/icon: "si-bookstack"
-    gethomepage.dev/ping: "https://phgo.lab.kvd.studio"
+    gethomepage.dev/ping: "https://phgo.lab.kvd.studio/api"
   hosts:
     - host: phgo.lab.kvd.studio
       paths:
