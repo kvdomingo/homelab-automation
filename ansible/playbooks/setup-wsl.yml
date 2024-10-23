@@ -213,6 +213,9 @@
         - name: Install kubens/kubectx
           shell:
             cmd: kubectl krew install ctx ns
+        - name: Install Helm diff
+          shell:
+            cmd: helm plugin install https://github.com/databus23/helm-diff
 
     - name: Setup wakatime
       block:
