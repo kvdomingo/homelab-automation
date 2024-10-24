@@ -33,7 +33,7 @@ spec:
                   gethomepage.dev/name: "Airbyte"
                   gethomepage.dev/group: "DataOps"
                   gethomepage.dev/icon: "si-airbyte"
-                  gethomepage.dev/ping: "airbyte.{{ .Values.ingress.baseDomain }}"
+                  gethomepage.dev/ping: "https://airbyte.{{ .Values.ingress.baseDomain }}/api/v1/health"
                 hosts:
                   - host: airbyte.{{ .Values.ingress.baseDomain }}
                     paths:
