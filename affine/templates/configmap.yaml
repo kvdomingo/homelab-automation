@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: '{{- include "affine.fullname" . }}-configmap'
+  labels:
+    {{- include "affine.labels" . | nindent 4 }}
+  annotations:
+    helm.sh/hook: pre-install,pre-upgrade
+    helm.sh/hook-weight: "-5"
+    helm.sh/hook-delete-policy: before-hook-creation
+data:
+  NODE_OPTIONS: "--import=./scripts/register.js"
+  AFFINE_CONFIG_PATH: "/root/.affine/config"
+  NODE_ENV: "production"
+  TELEMETRY_ENABLE: "false"

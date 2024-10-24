@@ -1,0 +1,108 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "affine.fullname" . }}
+  labels:
+    {{- include "affine.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "affine.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "affine.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "affine.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      initContainers:
+        - name: init-wait-db
+          image: '{{ .Values.postgresql.image.repository }}:{{ .Values.postgresql.image.tag }}'
+          command:
+            - /bin/sh
+            - -c
+            - >
+              until pg_isready -U {{ .Values.postgresql.auth.username }} -h {{ .Release.Name }}-postgresql-hl; do
+              sleep 2;
+              done;
+        - name: init-wait-redis
+          image: '{{ .Values.redis.image.repository }}:{{ .Values.redis.image.tag }}'
+          command:
+            - /bin/sh
+            - -c
+            - >
+              until redis-cli -h {{ .Release.Name }}-redis-headless ping; do
+              sleep 2;
+              done;
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+          livenessProbe:
+            {{- toYaml .Values.livenessProbe | nindent 12 }}
+          readinessProbe:
+            {{- toYaml .Values.readinessProbe | nindent 12 }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: config
+              mountPath: /root/.affine/config
+            - name: storage
+              mountPath: /root/.affine/storage
+          {{- with .Values.volumeMounts }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          command:
+            - /bin/sh
+            - -c
+            - >
+              node ./scripts/self-host-predeploy &&
+              node ./dist/index.js
+          envFrom:
+            - configMapRef:
+                name: '{{- include "affine.fullname" . }}-configmap'
+            - secretRef:
+                name: '{{- include "affine.fullname" . }}-secrets'
+      volumes:
+        - name: config
+          persistentVolumeClaim:
+            claimName: '{{- include "affine.fullname" . }}-config'
+        - name: storage
+          persistentVolumeClaim:
+            claimName: '{{- include "affine.fullname" . }}-storage'
+      {{- with .Values.volumes }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
