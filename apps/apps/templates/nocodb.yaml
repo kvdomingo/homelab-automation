@@ -27,9 +27,9 @@ spec:
                 annotations:
                   gethomepage.dev/enabled: "true"
                   gethomepage.dev/name: "NocoDB"
-                  gethomepage.dev/group: "Analytics"
+                  gethomepage.dev/group: "Documents"
                   gethomepage.dev/icon: "nocodb.png"
-                  gethomepage.dev/ping: "nocodb.{{ .Values.ingress.baseDomain }}"
+                  gethomepage.dev/ping: "noco.{{ .Values.ingress.baseDomain }}"
                 pathType: Prefix
                 hosts:
                   - host: nocodb.{{ .Values.ingress.baseDomain }}
