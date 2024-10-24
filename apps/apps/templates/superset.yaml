@@ -41,10 +41,10 @@ spec:
                 gethomepage.dev/name: "Superset"
                 gethomepage.dev/group: "Analytics"
                 gethomepage.dev/icon: "apache.png"
-                gethomepage.dev/ping: "superset.{{ .Values.ingress.baseDomain }}/health"
+                gethomepage.dev/ping: "https://superset.{{ .Values.ingress.baseDomain }}/health"
               pathType: Prefix
               hosts:
-                - superset.{{ .Values.ingress.baseDomain }}
+                - 'superset.{{ .Values.ingress.baseDomain }}'
             supersetNode:
               autoscaling:
                 enabled: true
