@@ -31,7 +31,7 @@ spec:
                 name: minio1
                 namespace: minio
                 pools:
-                  - name: pool-1
+                  - name: pool1
                     servers: 4
                     volumesPerServer: 4
                     size: 10Gi
