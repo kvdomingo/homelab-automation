@@ -34,7 +34,7 @@ spec:
                   - name: pool-1
                     servers: 4
                     volumesPerServer: 4
-                    size: 64Gi
+                    size: 10Gi
                     storageAnnotations:
                       argocd.argoproj.io/sync-options: Delete=false,Prune=false
                 configuration:
