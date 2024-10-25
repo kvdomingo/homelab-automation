@@ -8,41 +8,64 @@ metadata:
     {{- include "apps.finalizers" . | nindent 4 }}
 spec:
   project: {{ .Values.project }}
-  source:
-    repoURL: https://operator.min.io
-    chart: minio-operator
-    targetRevision: 4.3.7
-    plugin:
-      name: argocd-vault-plugin-helm
-      env:
-        - name: HELM_VALUES
-          value: |
-            operator:
-              replicaCount: 3
-            console:
-              ingress:
-                enabled: true
-                annotations:
-                  gethomepage.dev/enabled: "true"
-                  gethomepage.dev/name: "MinIO"
-                  gethomepage.dev/group: "Storage"
-                  gethomepage.dev/icon: "minio.png"
-                  gethomepage.dev/ping: "https://minio.lab.kvd.studio"
-                host: minio.lab.kvd.studio
-            tenants:
-              - name: minio1
+  sources:
+    - repoURL: https://operator.min.io
+      chart: operator
+      targetRevision: 6.0.4
+      plugin:
+        name: argocd-vault-plugin-helm
+        env:
+          - name: HELM_VALUES
+            value: |
+              operator:
+                replicaCount: 3
+    - repoURL: https://operator.min.io
+      chart: tenant
+      targetRevision: 6.0.4
+      plugin:
+        name: argocd-vault-plugin-helm
+        env:
+          - name: HELM_VALUES
+            value: |
+              tenant:
+                name: minio1
                 namespace: minio
                 pools:
-                  - servers: 4
+                  - name: pool-1
+                    servers: 4
                     volumesPerServer: 4
                     size: 64Gi
-                secrets:
-                  enabled: true
+                    storageAnnotations:
+                      argocd.argoproj.io/sync-options: Delete=false,Prune=false
+                configuration:
+                  name: minio1-secret
+                configSecret:
                   name: minio1-secret
                   accessKey: "<path:kv/data/lab/minio#ACCESS_KEY>"
                   secretKey: "<path:kv/data/lab/minio#SECRET_KEY>"
                 metrics:
                   enabled: true
+                features:
+                  enableSFTP: true
+              ingress:
+                api:
+                  enabled: true
+                  annotations:
+                    gethomepage.dev/enabled: "true"
+                    gethomepage.dev/name: "MinIO API"
+                    gethomepage.dev/group: "Storage"
+                    gethomepage.dev/icon: "minio.png"
+                    gethomepage.dev/ping: "https://minio-api.lab.kvd.studio"
+                  host: minio-api.lab.kvd.studio
+                console:
+                  enabled: true
+                  annotations:
+                    gethomepage.dev/enabled: "true"
+                    gethomepage.dev/name: "MinIO Console"
+                    gethomepage.dev/group: "Storage"
+                    gethomepage.dev/icon: "minio.png"
+                    gethomepage.dev/ping: "https://minio.lab.kvd.studio"
+                  host: minio.lab.kvd.studio
   destination:
     server: {{ .Values.destination.server }}
     namespace: minio
