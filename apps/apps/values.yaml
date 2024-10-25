@@ -12,4 +12,4 @@ disableHannibot: true
 
 disableSupabase: true
 
-disableMinio: false
+disableMinio: true
