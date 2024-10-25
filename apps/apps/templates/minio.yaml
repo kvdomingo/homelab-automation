@@ -10,8 +10,8 @@ spec:
   project: {{ .Values.project }}
   source:
     repoURL: https://operator.min.io
-    chart: operator
-    targetRevision: 5.0.11
+    chart: minio-operator
+    targetRevision: 4.3.7
     plugin:
       name: argocd-vault-plugin-helm
       env:
@@ -27,8 +27,22 @@ spec:
                   gethomepage.dev/name: "MinIO"
                   gethomepage.dev/group: "Storage"
                   gethomepage.dev/icon: "minio.png"
-                  gethomepage.dev/ping: "minio.lab.kvd.studio"
+                  gethomepage.dev/ping: "https://minio.lab.kvd.studio"
                 host: minio.lab.kvd.studio
+            tenants:
+              - name: minio1
+                namespace: minio
+                pools:
+                  - servers: 4
+                    volumesPerServer: 4
+                    size: 64Gi
+                secrets:
+                  enabled: true
+                  name: minio1-secret
+                  accessKey: "<path:kv/data/lab/minio#ACCESS_KEY>"
+                  secretKey: "<path:kv/data/lab/minio#SECRET_KEY>"
+                metrics:
+                  enabled: true
   destination:
     server: {{ .Values.destination.server }}
     namespace: minio
