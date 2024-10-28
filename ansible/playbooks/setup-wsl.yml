@@ -24,10 +24,12 @@
           - curl
           - direnv
           - fzf
+          - gcc
           - gedit
           - git
           - gnupg
           - gpg
+          - g++
           - libbz2-dev
           - libffi-dev
           - libfuse2
@@ -49,6 +51,7 @@
           - wget
           - xsel
           - xz-utils
+          - yacc
           - zlib1g-dev
           - zsh
           - zsh-syntax-highlighting
