@@ -17,6 +17,8 @@
           - apache2-utils
           - apt-transport-https
           - asciinema
+          - automake
+          - autotools-dev
           - build-essential
           - ca-certificates
           - curl
@@ -116,6 +118,11 @@
               git:
                 repo: https://github.com/zsh-users/zsh-history-substring-search
                 dest: ~/.oh-my-zsh/custom/plugins/zsh-history-substring-search
+                clone: true
+            - name: Install zsh-tmux-auto-title
+              git:
+                repo: https://github.com/mbenford/zsh-tmux-auto-title
+                dest: ~/.oh-my-zsh/custom/plugins/zsh-tmux-auto-title
                 clone: true
         - name: Download starship.rs
           get_url:
