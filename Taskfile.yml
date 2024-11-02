@@ -106,41 +106,6 @@ tasks:
     dir: zitadel
     cmd: helmfile apply
 
-  setup-jellyfin:
-    desc: Setup Jellyfin
-    dir: arrstack
-    cmds:
-      - kubectl apply -f namespace.yaml
-      - helm upgrade --install jellyfin ./jellyfin --namespace arrstack
-
-  setup-calibre:
-    desc: Setup Calibre
-    dir: arrstack
-    cmds:
-      - kubectl apply -f namespace.yaml
-      - helm upgrade --install calibre ./calibre --namespace arrstack
-
-  setup-navidrome:
-    desc: Setup Navidrome
-    dir: arrstack
-    cmds:
-      - kubectl apply -f namespace.yaml
-      - helm upgrade --install navidrome ./navidrome --namespace arrstack
-
-  setup-arrstack:
-    desc: Setup Arrstack
-    dir: arrstack
-    cmds:
-      - kubectl apply -f namespace.yaml
-      - helm upgrade --install flaresolverr ./flaresolverr --namespace arrstack
-      - helm upgrade --install qbittorrent ./qbittorrent --namespace arrstack
-      - helm upgrade --install prowlarr ./prowlarr --namespace arrstack
-      - helm upgrade --install sonarr ./sonarr --namespace arrstack
-      - helm upgrade --install radarr ./radarr --namespace arrstack
-      - helm upgrade --install readarr ./readarr --namespace arrstack
-      - helm upgrade --install lidarr ./lidarr --namespace arrstack
-      - helm upgrade --install jellyseerr ./jellyseerr --namespace arrstack
-
   setup-core:
     desc: Setup core infra
     dir: core

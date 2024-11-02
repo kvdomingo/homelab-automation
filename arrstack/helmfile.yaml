@@ -1,0 +1,27 @@
+x-namespace: &namespace arrstack
+
+releases:
+  - name: prowlarr
+    chart: ./prowlarr
+    namespace: *namespace
+  - name: flaresolverr
+    chart: ./flaresolverr
+    namespace: *namespace
+  - name: sonarr
+    chart: ./sonarr
+    namespace: *namespace
+  - name: radarr
+    chart: ./radarr
+    namespace: *namespace
+  - name: lidarr
+    chart: ./lidarr
+    namespace: *namespace
+  - name: qbittorrent
+    chart: ./qbittorrent
+    namespace: *namespace
+  - name: jellyfin
+    chart: ./jellyfin
+    namespace: *namespace
+  - name: jellyseer
+    chart: ./jellyseer
+    namespace: *namespace
