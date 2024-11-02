@@ -19,6 +19,8 @@
           - asciinema
           - automake
           - autotools-dev
+          - bind9-dnsutils
+          - btop
           - build-essential
           - ca-certificates
           - curl
@@ -30,9 +32,12 @@
           - gnupg
           - gpg
           - g++
+          - htop
           - libbz2-dev
           - libffi-dev
           - libfuse2
+          - libgl1
+          - libglib2.0-0
           - liblzma-dev
           - libncursesw5-dev
           - libreadline-dev
