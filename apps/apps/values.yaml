@@ -11,3 +11,5 @@ disablePaperless: true
 disableHannibot: true
 
 disableSupabase: true
+
+disableMinio: true
