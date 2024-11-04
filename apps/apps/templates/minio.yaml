@@ -25,7 +25,7 @@ spec:
               rootPassword: '<path:kv/data/lab/minio#ROOT_PASSWORD>'
             statefulset:
               replicaCount: 4
-              zones: 4
+              zones: 1
               drivesPerNode: 4
             livenessProbe:
               enabled: true
