@@ -19,7 +19,7 @@ spec:
           value: |
             image:
               repository: ghcr.io/gethomepage/homepage
-              tag: v0.9.9
+              tag: v0.9.11
             enableRbac: true
             serviceAccount:
               create: true
@@ -31,7 +31,6 @@ spec:
                   gethomepage.dev/name: "Homepage"
                   gethomepage.dev/group: "Admin"
                   gethomepage.dev/icon: "homepage.png"
-                  gethomepage.dev/ping: "home.{{ .Values.ingress.baseDomain }}"
                 hosts:
                   - host: home.{{ .Values.ingress.baseDomain }}
                     paths:
@@ -91,6 +90,62 @@ spec:
                           url: https://truenas.dev.kvd.studio
                           key: <path:kv/data/lab/homepage#TRUENAS_KEY>
                 - Media:
+                    - Prowlarr:
+                        icon: prowlarr.png
+                        href: https://prowlarr.dev.kvd.studio
+                        ping: https://prowlarr.dev.kvd.studio
+                        widget:
+                          type: prowlarr
+                          url: https://prowlarr.dev.kvd.studio
+                          key: <path:kv/data/lab/homepage#PROWLARR_API_KEY>
+                    - qBittorrent:
+                        icon: qbittorrent.png
+                        href: https://qbittorrent.dev.kvd.studio
+                        ping: https://qbittorrent.dev.kvd.studio
+                        widget:
+                          type: qbittorrent
+                          url: https://qbittorrent.dev.kvd.studio
+                          username: <path:kv/data/lab/homepage#QBITTORRENT_USERNAME>
+                          password: <path:kv/data/lab/homepage#QBITTORRENT_PASSWORD>
+                    - Sonarr:
+                        icon: sonarr.png
+                        href: https://sonarr.dev.kvd.studio
+                        ping: https://sonarr.dev.kvd.studio
+                        widget:
+                          type: sonarr
+                          url: https://sonarr.dev.kvd.studio
+                          key: <path:kv/data/lab/homepage#SONARR_API_KEY>
+                          enableQueue: true
+                    - Radarr:
+                        icon: radarr.png
+                        href: https://radarr.dev.kvd.studio
+                        ping: https://radarr.dev.kvd.studio
+                        widget:
+                          type: radarr
+                          url: https://radarr.dev.kvd.studio
+                          key: <path:kv/data/lab/homepage#RADARR_API_KEY>
+                          enableQueue: true
+                    - Jellyfin:
+                        icon: jellyfin.png
+                        href: https://jellyfin.dev.kvd.studio
+                        ping: https://jellyfin.dev.kvd.studio
+                        widget:
+                          type: jellyfin
+                          url: https://jellyfin.dev.kvd.studio
+                          key: <path:kv/data/lab/homepage#JELLYFIN_API_KEY>
+                          enableBlocks: true
+                          enableNowPlaying: true
+                          enableUser: true
+                          showEpisodeNumber: true
+                          expandOneStreamToTwoRows: true
+                    - Jellyseerr:
+                        icon: jellyseerr.png
+                        href: https://jellyseerr.dev.kvd.studio
+                        ping: https://jellyseerr.dev.kvd.studio
+                        widget:
+                          type: jellyseerr
+                          url: https://jellyseerr.dev.kvd.studio
+                          key: <path:kv/data/lab/homepage#JELLYSEERR_API_KEY>
                     - Calendar:
                         widget:
                           type: calendar
@@ -107,10 +162,6 @@ spec:
                             - type: radarr
                               service_group: Media
                               service_name: Radarr
-                              unmonitored: true
-                            - type: readarr
-                              service_group: Media
-                              service_name: Readarr
                               unmonitored: true
               widgets:
                 - logo:
