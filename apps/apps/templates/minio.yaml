@@ -8,64 +8,64 @@ metadata:
     {{- include "apps.finalizers" . | nindent 4 }}
 spec:
   project: {{ .Values.project }}
-  sources:
-    - repoURL: https://operator.min.io
-      chart: operator
-      targetRevision: 6.0.4
-      plugin:
-        name: argocd-vault-plugin-helm
-        env:
-          - name: HELM_VALUES
-            value: |
-              operator:
-                replicaCount: 3
-    - repoURL: https://operator.min.io
-      chart: tenant
-      targetRevision: 6.0.4
-      plugin:
-        name: argocd-vault-plugin-helm
-        env:
-          - name: HELM_VALUES
-            value: |
-              tenant:
-                name: minio1
-                namespace: minio
-                pools:
-                  - name: pool1
-                    servers: 4
-                    volumesPerServer: 4
-                    size: 10Gi
-                    storageAnnotations:
-                      argocd.argoproj.io/sync-options: Delete=false,Prune=false
-                configuration:
-                  name: minio1-secret
-                configSecret:
-                  name: minio1-secret
-                  accessKey: "<path:kv/data/lab/minio#ACCESS_KEY>"
-                  secretKey: "<path:kv/data/lab/minio#SECRET_KEY>"
-                metrics:
-                  enabled: true
-                features:
-                  enableSFTP: true
-              ingress:
-                api:
-                  enabled: true
-                  annotations:
-                    gethomepage.dev/enabled: "true"
-                    gethomepage.dev/name: "MinIO API"
-                    gethomepage.dev/group: "Storage"
-                    gethomepage.dev/icon: "minio.png"
-                    gethomepage.dev/ping: "https://minio-api.lab.kvd.studio"
-                  host: minio-api.lab.kvd.studio
-                console:
-                  enabled: true
-                  annotations:
-                    gethomepage.dev/enabled: "true"
-                    gethomepage.dev/name: "MinIO Console"
-                    gethomepage.dev/group: "Storage"
-                    gethomepage.dev/icon: "minio.png"
-                    gethomepage.dev/ping: "https://minio.lab.kvd.studio"
-                  host: minio.lab.kvd.studio
+  source:
+    repoURL: https://charts.bitnami.com/bitnami
+    chart: minio
+    targetRevision: 14.7.0
+    plugin:
+      name: argocd-vault-plugin-helm
+      env:
+        - name: HELM_VALUES
+          value: |
+            image:
+              tag: 2024.10.13-debian-12-r0
+            mode: distributed
+            auth:
+              rootUser: '<path:kv/data/lab/minio#ROOT_USERNAME>'
+              rootPassword: '<path:kv/data/lab/minio#ROOT_PASSWORD>'
+            statefulset:
+              replicaCount: 4
+              zones: 4
+              drivesPerNode: 4
+            livenessProbe:
+              enabled: true
+              initialDelaySeconds: 20
+              periodSeconds: 20
+              timeoutSeconds: 3
+              failureThreshold: 3
+            readinessProbe:
+              enabled: false
+            startupProbe:
+              initialDelaySeconds: 30
+              periodSeconds: 10
+              timeoutSeconds: 3
+              failureThreshold: 60
+            ingress:
+              enabled: true
+              hostname: 'minio.{{ .Values.ingress.baseDomain }}'
+              path: /
+              pathType: Prefix
+              annotations:
+                gethomepage.dev/enabled: "true"
+                gethomepage.dev/name: "MinIO"
+                gethomepage.dev/group: "Storage"
+                gethomepage.dev/icon: "minio.png"
+                gethomepage.dev/ping: "https://minio.{{ .Values.ingress.baseDomain }}"
+            apiIngress:
+              enabled: true
+              hostname: 'api-minio.{{ .Values.ingress.baseDomain }}'
+              path: /
+              pathType: Prefix
+            persistence:
+              enabled: true
+              annotations:
+                argocd.argoproj.io/sync-options: Delete=false,Prune=false
+            volumePermissions:
+              enabled: true
+            metrics:
+              enabled: true
+              serviceMonitor:
+                enabled: true
   destination:
     server: {{ .Values.destination.server }}
     namespace: minio
