@@ -41,3 +41,47 @@ spec:
           {{- end }}
     {{- end }}
 {{- end }}
+---
+{{- if .Values.docs.ingress.enabled -}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: '{{ include "primerdriver.fullname" . }}-docs'
+  labels:
+    {{- include "primerdriver.labels" . | nindent 4 }}
+  {{- with .Values.docs.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- with .Values.docs.ingress.className }}
+  ingressClassName: {{ . }}
+  {{- end }}
+  {{- if .Values.docs.ingress.tls }}
+  tls:
+    {{- range .Values.docs.ingress.tls }}
+    - hosts:
+        {{- range .hosts }}
+        - {{ . | quote }}
+        {{- end }}
+      secretName: {{ .secretName }}
+    {{- end }}
+  {{- end }}
+  rules:
+    {{- range .Values.docs.ingress.hosts }}
+    - host: {{ .host | quote }}
+      http:
+        paths:
+          {{- range .paths }}
+          - path: {{ .path }}
+            {{- with .pathType }}
+            pathType: {{ . }}
+            {{- end }}
+            backend:
+              service:
+                name: '{{ include "primerdriver.fullname" $ }}-docs'
+                port:
+                  number: {{ $.Values.docs.service.port }}
+          {{- end }}
+    {{- end }}
+{{- end }}

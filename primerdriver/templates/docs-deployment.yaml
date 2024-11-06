@@ -1,10 +1,10 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "primerdriver.fullname" . }}
+  name: '{{ include "primerdriver.fullname" . }}-docs'
   labels:
     {{- include "primerdriver.labels" . | nindent 4 }}
-  {{- with .Values.annotations }}
+  {{- with .Values.docs.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
   {{- end }}
@@ -35,28 +35,25 @@ spec:
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
-        - name: {{ .Chart.Name }}
+        - name: '{{ .Chart.Name }}-docs'
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          image: "{{ .Values.docs.image.repository }}:{{ .Values.docs.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
-              containerPort: {{ .Values.service.port }}
+              containerPort: {{ .Values.docs.service.port }}
               protocol: TCP
           livenessProbe:
-            {{- toYaml .Values.livenessProbe | nindent 12 }}
+            {{- toYaml .Values.docs.livenessProbe | nindent 12 }}
           readinessProbe:
-            {{- toYaml .Values.readinessProbe | nindent 12 }}
+            {{- toYaml .Values.docs.readinessProbe | nindent 12 }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           {{- with .Values.volumeMounts }}
           volumeMounts:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          envFrom:
-            - configMapRef:
-                name: "{{ include "primerdriver.fullname" . }}-configmap"
       {{- with .Values.volumes }}
       volumes:
         {{- toYaml . | nindent 8 }}
