@@ -13,3 +13,19 @@ spec:
       name: http
   selector:
     {{- include "primerdriver.selectorLabels" . | nindent 4 }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: '{{ include "primerdriver.fullname" . }}-docs'
+  labels:
+    {{- include "primerdriver.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.docs.service.type }}
+  ports:
+    - port: {{ .Values.docs.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "primerdriver.selectorLabels" . | nindent 4 }}
