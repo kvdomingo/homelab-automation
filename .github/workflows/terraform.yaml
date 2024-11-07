@@ -1,9 +1,6 @@
 name: Apply Terraform infrastructure
 
-on:
-  push:
-    branches: [ "main" ]
-    paths: [ "terraform/**" ]
+on: { }
 
 jobs:
   terraform-infra:
