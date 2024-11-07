@@ -48,7 +48,7 @@ kind: Ingress
 metadata:
   name: '{{ include "primerdriver.fullname" . }}-docs'
   labels:
-    {{- include "primerdriver.labels" . | nindent 4 }}
+    {{- include "primerdriver-docs.labels" . | nindent 4 }}
   {{- with .Values.docs.ingress.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
