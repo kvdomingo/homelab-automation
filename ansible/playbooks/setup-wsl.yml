@@ -53,6 +53,7 @@
           - traceroute
           - tmux
           - unzip
+          - upx-ucl
           - wget
           - xsel
           - xz-utils
