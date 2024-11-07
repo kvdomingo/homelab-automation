@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: '{{ include "primerdriver.fullname" . }}-docs'
   labels:
-    {{- include "primerdriver.labels" . | nindent 4 }}
+    {{- include "primerdriver-docs.labels" . | nindent 4 }}
   {{- with .Values.docs.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
@@ -14,7 +14,7 @@ spec:
   {{- end }}
   selector:
     matchLabels:
-      {{- include "primerdriver.selectorLabels" . | nindent 6 }}
+      {{- include "primerdriver-docs.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -22,7 +22,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "primerdriver.labels" . | nindent 8 }}
+        {{- include "primerdriver-docs.labels" . | nindent 8 }}
         {{- with .Values.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}

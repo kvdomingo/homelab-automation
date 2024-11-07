@@ -42,11 +42,25 @@ app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end }}
 
+{{- define "primerdriver-docs.labels" -}}
+helm.sh/chart: {{ include "primerdriver.chart" . }}
+{{ include "primerdriver-docs.selectorLabels" . }}
+{{- if .Chart.AppVersion }}
+app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{- end }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- end }}
+
 {{/*
 Selector labels
 */}}
 {{- define "primerdriver.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "primerdriver.name" . }}
+app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}
+
+{{- define "primerdriver-docs.selectorLabels" -}}
+app.kubernetes.io/name: '{{ include "primerdriver.name" . }}-docs'
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
