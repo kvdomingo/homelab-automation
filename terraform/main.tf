@@ -6,6 +6,18 @@ locals {
     primerdriver = "primerdriver.lab.kvd.studio"
     umami        = "umami.lab.kvd.studio"
   })
+  github_pages_ipv4 = tomap({
+    1 = "185.199.108.153"
+    2 = "185.199.109.153"
+    3 = "185.199.110.153"
+    4 = "185.199.111.153"
+  })
+  github_pages_ipv6 = tomap({
+    1 = "2606:50c0:8000::153"
+    2 = "2606:50c0:8001::153"
+    3 = "2606:50c0:8002::153"
+    4 = "2606:50c0:8003::153"
+  })
 }
 
 data "cloudflare_zone" "kvd_studio" {
@@ -55,5 +67,25 @@ resource "cloudflare_record" "lab" {
   type    = "CNAME"
   zone_id = data.cloudflare_zone.kvd_studio.id
   content = "${cloudflare_tunnel.lab.id}.cfargotunnel.com"
+  proxied = true
+}
+
+resource "cloudflare_record" "primerdriver-docs-ipv4" {
+  for_each = local.github_pages_ipv4
+
+  name    = "primerdriver-docs"
+  type    = "A"
+  zone_id = data.cloudflare_zone.kvd_studio.id
+  content = each.value
+  proxied = true
+}
+
+resource "cloudflare_record" "primerdriver-docs-ipv6" {
+  for_each = local.github_pages_ipv6
+
+  name    = "primerdriver-docs"
+  type    = "AAAA"
+  zone_id = data.cloudflare_zone.kvd_studio.id
+  content = each.value
   proxied = true
 }
