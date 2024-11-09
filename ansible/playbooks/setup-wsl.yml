@@ -33,6 +33,7 @@
           - gpg
           - g++
           - htop
+          - libayatana-appindicator3-dev
           - libbz2-dev
           - libffi-dev
           - libfuse2
@@ -41,8 +42,11 @@
           - liblzma-dev
           - libncursesw5-dev
           - libreadline-dev
+          - librsvg2-dev
           - libsqlite3-dev
           - libssl-dev
+          - libwebkit2gtk-4.1-dev
+          - libxdo-dev
           - libxmlsec1-dev
           - libxml2-dev
           - lsb-release
