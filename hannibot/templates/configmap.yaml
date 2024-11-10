@@ -10,5 +10,5 @@ metadata:
     helm.sh/hook-delete-policy: before-hook-creation
 data:
   BOT_PREFIX: "!"
-  POSTGRESQL_HOST: '{{- include "postgresql.v1.primary.svc.headless" . }}'
+  POSTGRESQL_HOST: 'hannibot-postgresql-hl'
   POSTGRESQL_PORT: "5432"
