@@ -7,10 +7,6 @@ metadata:
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
-  strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxSurge: 1
   {{- end }}
   selector:
     matchLabels:
@@ -23,7 +19,7 @@ spec:
       {{- end }}
       labels:
         {{- include "hannibot.labels" . | nindent 8 }}
- {{- with .Values.podLabels }}
+        {{- with .Values.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
     spec:
@@ -34,24 +30,40 @@ spec:
       serviceAccountName: {{ include "hannibot.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      initContainers:
+        - name: '{{ .Chart.Name }}-init-wait-db'
+          image: '{{ .Values.postgresql.image.repository }}:{{ .Values.postgresql.image.tag }}'
+          imagePullPolicy: {{ .Values.postgresql.image.pullPolicy }}
+          command:
+            - /bin/sh
+            - -c
+            - >
+              until pg_isready -h $POSTGRESQL_HOST -U $POSTGRESQL_USERNAME -d $POSTGRESQL_DATABASE; do
+              sleep 3;
+              done;
+          envFrom:
+            - secretRef:
+                name: '{{- include "hannibot.fullname" . }}-secrets'
+            - configMapRef:
+                name: '{{- include "hannibot.fullname" . }}-configmap'
+        - name: '{{ .Chart.Name }}-init-migrations'
+          image: '{{ .Values.image.repository }}:{{ .Values.image.tag }}'
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command:
+            - alembic
+            - upgrade
+            - head
+          envFrom:
+            - secretRef:
+                name: '{{- include "hannibot.fullname" . }}-secrets'
+            - configMapRef:
+                name: '{{- include "hannibot.fullname" . }}-configmap'
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          ports:
-            - name: http
-              containerPort: {{ .Values.service.port }}
-              protocol: TCP
-          livenessProbe:
-            httpGet:
-              path: /api/health
-              port: http
-          readinessProbe:
-            httpGet:
-              path: /api/health
-              port: http
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           {{- with .Values.volumeMounts }}
@@ -59,36 +71,10 @@ spec:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           envFrom:
-            - configMapRef:
-                name: hannibot-configmap
             - secretRef:
-                name: hannibot-secrets
-      initContainers:
-        - name: init-wait-db
-          image: {{ .Values.postgresql.image.repository }}:{{ .Values.postgresql.image.tag }}
-          envFrom:
+                name: '{{- include "hannibot.fullname" . }}-secrets'
             - configMapRef:
-                name: hannibot-configmap
-            - secretRef:
-                name: hannibot-secrets
-          command:
-            - /bin/sh
-            - -c
-            - >
-              until pg_isready -h $POSTGRESQL_HOST -U $POSTGRESQL_USERNAME -d $POSTGRESQL_DATABASE; do
-              sleep 2;
-              done;
-        - name: init-migrate-db
-          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
-          envFrom:
-            - configMapRef:
-                name: hannibot-configmap
-            - secretRef:
-                name: hannibot-secrets
-          command:
-            - /bin/sh
-            - -c
-            - python manage.py migrate
+                name: '{{- include "hannibot.fullname" . }}-configmap'
       {{- with .Values.volumes }}
       volumes:
         {{- toYaml . | nindent 8 }}
@@ -99,14 +85,6 @@ spec:
       {{- end }}
       {{- with .Values.affinity }}
       affinity:
-        podAntiAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-            - podAffinityTerm:
-                topologyKey: kubernetes.io/hostname
-                labelSelector:
-                  matchLabels:
-                    {{- include "hannibot.selectorLabels" . | nindent 20 }}
-              weight: 100
         {{- toYaml . | nindent 8 }}
       {{- end }}
       {{- with .Values.tolerations }}

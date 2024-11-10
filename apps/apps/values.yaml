@@ -8,6 +8,4 @@ ingress:
 
 disablePaperless: true
 
-disableHannibot: true
-
 disableSupabase: true
