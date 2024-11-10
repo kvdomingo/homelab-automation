@@ -18,6 +18,15 @@ locals {
     3 = "2606:50c0:8002::153"
     4 = "2606:50c0:8003::153"
   })
+
+  records = tomap({
+    hannibot = {
+      type    = "CNAME"
+      name    = "hannibot"
+      content = "cname.vercel-dns.com."
+      proxied = true
+    }
+  })
 }
 
 data "cloudflare_zone" "kvd_studio" {
@@ -88,4 +97,14 @@ resource "cloudflare_record" "primerdriver-docs-ipv6" {
   zone_id = data.cloudflare_zone.kvd_studio.id
   content = each.value
   proxied = true
+}
+
+resource "cloudflare_record" "kvdstudio" {
+  for_each = local.records
+
+  name    = each.value.name
+  type    = each.value.type
+  zone_id = data.cloudflare_zone.kvd_studio.id
+  content = each.value.content
+  proxied = each.value.proxied
 }
