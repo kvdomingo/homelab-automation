@@ -12,3 +12,5 @@ data:
   BOT_PREFIX: "!"
   POSTGRESQL_HOST: 'hannibot-postgresql-hl'
   POSTGRESQL_PORT: "5432"
+  POSTGRESQL_USERNAME: "{{ .Values.postgresql.auth.username }}"
+  POSTGRESQL_DATABASE: "{{ .Values.postgresql.auth.database }}"
