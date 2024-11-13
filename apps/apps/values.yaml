@@ -9,3 +9,5 @@ ingress:
 disablePaperless: true
 
 disableSupabase: true
+
+disableFirefly: true
