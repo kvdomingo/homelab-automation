@@ -20,6 +20,18 @@ locals {
   })
 
   records = tomap({
+    douglas_crawler_api = {
+      type    = "CNAME"
+      name    = "douglas-cr-api"
+      content = "ghs.googlehosted.com."
+      proxied = true
+    }
+    gcp_domain_verification = {
+      type    = "TXT"
+      name    = "@"
+      content = "google-site-verification=tIAe-0kYQ5fk42kI2nw2HGh50tUB-SDRf44JyxvSaFc"
+      proxied = false
+    }
     hannibot = {
       type    = "CNAME"
       name    = "hannibot"
