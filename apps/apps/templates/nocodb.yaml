@@ -11,14 +11,14 @@ spec:
   source:
     repoURL: https://zekker6.github.io/helm-charts/
     chart: nocodb
-    targetRevision: 0.41.0
+    targetRevision: 0.46.0
     plugin:
       name: argocd-vault-plugin-helm
       env:
         - name: HELM_VALUES
           value: |
             image:
-              tag: 0.258.0
+              tag: 0.258.2
             env:
               NC_DB: 'pg://nocodb-postgresql:5432?u=nocodb&p=<path:kv/data/lab/nocodb#POSTGRESQL_PASSWORD>&d=nocodb'
             ingress:
@@ -46,10 +46,25 @@ spec:
               primary:
                 persistence:
                   enabled: true
+                  annotations:
+                    argocd.argoproj.io/sync-options: Delete=false,Prune=false
                 livenessProbe:
-                  enabled: false
+                  enabled: true
+                  periodSeconds: 20
+                  timeoutSeconds: 3
+                  successThreshold: 1
+                  failureThreshold: 3
+                  initialDelaySeconds: 30
                 readinessProbe:
                   enabled: false
+                startupProbe:
+                  enabled: true
+                  periodSeconds: 10
+                  timeoutSeconds: 3
+                  successThreshold: 1
+                  failureThreshold: 60
+                  initialDelaySeconds: 30
+
   destination:
     server: {{ .Values.destination.server }}
     namespace: nocodb
