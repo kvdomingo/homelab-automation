@@ -24,7 +24,7 @@ locals {
       type    = "CNAME"
       name    = "douglas-cr-api"
       content = "ghs.googlehosted.com."
-      proxied = true
+      proxied = false
     }
     gcp_domain_verification = {
       type    = "TXT"
