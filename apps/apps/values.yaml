@@ -10,6 +10,7 @@ disableAffine: true
 disableAirbyte: true
 disableFirefly: true
 disableMetabase: true
+disableNextcloud: true
 disablePaperless: true
 disableSonarqube: true
 disableSupabase: true
