@@ -6,8 +6,11 @@ destination:
 ingress:
   baseDomain: lab.kvd.studio
 
-disablePaperless: true
-
-disableSupabase: true
-
+disableAffine: true
+disableAirbyte: true
 disableFirefly: true
+disableMetabase: true
+disablePaperless: true
+disableSonarqube: true
+disableSupabase: true
+disableSupertokens: true
