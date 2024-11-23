@@ -1,11 +1,13 @@
 locals {
   base_domain = "kvd.studio"
+
   subdomains_to_expose = tomap({
     banyuhay     = "banyuhay.lab.kvd.studio"
     git          = "git.lab.kvd.studio"
     primerdriver = "primerdriver.lab.kvd.studio"
     umami        = "umami.lab.kvd.studio"
   })
+
   github_pages_ipv4 = tomap({
     1 = "185.199.108.153"
     2 = "185.199.109.153"
@@ -20,6 +22,12 @@ locals {
   })
 
   records = tomap({
+    bluesky_verification = {
+      type    = "TXT"
+      name    = "_atproto"
+      content = "did=did:plc:f3p5jcwsxjdhgippakojyyak"
+      proxied = false
+    }
     douglas_crawler_api = {
       type    = "CNAME"
       name    = "douglas-cr-api"
