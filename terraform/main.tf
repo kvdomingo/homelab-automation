@@ -6,6 +6,7 @@ locals {
     git          = "git.lab.kvd.studio"
     primerdriver = "primerdriver.lab.kvd.studio"
     umami        = "umami.lab.kvd.studio"
+    unreceiptify = "unreceiptify.lab.kvd.studio"
   })
 
   github_pages_ipv4 = tomap({
