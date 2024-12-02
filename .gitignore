@@ -10,7 +10,7 @@ secrets.yaml
 
 ### Terraform template
 # Local .terraform directories
-**/.terraform/*
+terraform/prod/.terraform/*
 
 # .tfstate files
 *.tfstate
