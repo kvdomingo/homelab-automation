@@ -109,11 +109,24 @@ tasks:
   setup-core:
     desc: Setup core infra
     dir: core
-    cmds:
-      - kubectl apply -f application.yaml
+    cmd: kubectl apply -f application.yaml
 
   setup-apps:
     desc: Setup prod apps
     dir: apps
-    cmds:
-      - kubectl apply -f application.yaml
+    cmd: kubectl apply -f application.yaml
+
+  tf-init:
+    desc: Initialize Terraform
+    dir: terraform/prod
+    cmd: terraform init
+
+  tf-plan:
+    desc: Generate Terraform plan
+    dir: terraform/prod
+    cmd: terraform plan -out=.tfplan
+
+  tf-apply:
+    desc: Apply Terraform plan
+    dir: terraform/prod
+    cmd: terraform apply .tfplan

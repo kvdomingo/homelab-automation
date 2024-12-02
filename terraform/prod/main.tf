@@ -70,12 +70,6 @@ module "kvdstudio" {
         content = "did=did:plc:f3p5jcwsxjdhgippakojyyak"
         proxied = false
       }
-      douglas_crawler_api = {
-        type    = "CNAME"
-        name    = "douglas-cr-api"
-        content = "ghs.googlehosted.com."
-        proxied = false
-      }
       gcp_domain_verification = {
         type    = "TXT"
         name    = "@"
