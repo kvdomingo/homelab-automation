@@ -1,7 +1,7 @@
 - name: Initial WSL setup
   hosts: local
   vars:
-    JETBRAINS_TOOLBOX_VERSION: jetbrains-toolbox-2.1.3.18901
+    JETBRAINS_TOOLBOX_VERSION: jetbrains-toolbox-2.5.2.35332
 
   tasks:
     - name: Update apt
@@ -23,6 +23,8 @@
           - btop
           - build-essential
           - ca-certificates
+          - cmake
+          - cowsay
           - curl
           - direnv
           - fzf
@@ -49,10 +51,15 @@
           - libxdo-dev
           - libxmlsec1-dev
           - libxml2-dev
+          - lolcat
           - lsb-release
+          - mesa-utils
           - neofetch
+          - nvidia-container-toolkit
           - net-tools
           - python3
+          - ripgrep
+          - tesseract-ocr
           - tk-dev
           - traceroute
           - tmux
@@ -61,6 +68,7 @@
           - wget
           - xsel
           - xz-utils
+          - x11-apps
           - yacc
           - zlib1g-dev
           - zsh
@@ -85,12 +93,6 @@
             chdir: ~/dotrepo
             cmd: ./install
           ignore_errors: true
-
-    - name: Download & install neovim
-      get_url:
-        url: https://github.com/neovim/neovim/releases/latest/download/nvim.appimage
-        dest: ~/.local/bin/nvim
-        mode: "0755"
 
     - name: Install tmux plugin manager
       git:
@@ -204,7 +206,6 @@
           go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
           go install github.com/jesseduffield/lazygit@latest
           go install github.com/jesseduffield/lazydocker@latest
-          go install github.com/owenrumney/lazytrivy@latest
 
     - name: Setup k8s development environment
       block:
