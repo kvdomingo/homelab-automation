@@ -5,3 +5,6 @@ metadata:
 spec:
   defaultCertificate:
     secretName: lab-kvd-studio-tls
+  certificates:
+    - secretName: dev-kvd-studio-tls
+    - secretName: banyuh-ai-tls

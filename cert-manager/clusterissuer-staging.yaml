@@ -18,3 +18,4 @@ spec:
         selector:
           dnsZones:
             - kvd.studio
+            - banyuh.ai
