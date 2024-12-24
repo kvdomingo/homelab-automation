@@ -2,12 +2,15 @@ locals {
   kvdstudio_domain = "kvd.studio"
   banyuhai_domain  = "banyuh.ai"
 
-  homelab_subdomains_to_expose = toset([
-    "banyuhay",
+  lab_kvd_studio_subdomains = toset([
     "git",
     "primerdriver",
     "umami",
     "unreceiptify",
+  ])
+
+  banyuh_ai_subdomains = toset([
+    "@",
   ])
 
   github_pages_ipv4 = tomap({
@@ -45,8 +48,13 @@ resource "cloudflare_tunnel_config" "lab" {
       enabled = true
     }
 
+    ingress_rule {
+      hostname = "banyuh.ai"
+      service  = "http://banyuhay.banyuhay.svc.cluster.local:8000"
+    }
+
     dynamic "ingress_rule" {
-      for_each = local.homelab_subdomains_to_expose
+      for_each = local.lab_kvd_studio_subdomains
 
       content {
         hostname = "${ingress_rule.value}.${local.kvdstudio_domain}"
@@ -103,14 +111,30 @@ module "kvdstudio" {
       }
     },
     {
-      for i, v in local.homelab_subdomains_to_expose : "cftunnel-${v}" =>
+      for i, v in local.lab_kvd_studio_subdomains : "cftunnel-${v}" =>
       {
         name    = v
         type    = "CNAME"
         content = "${cloudflare_tunnel.lab.id}.cfargotunnel.com"
         proxied = true
       }
-    }
+    },
+  )
+}
+
+module "banyuh_ai" {
+  source      = "../modules/dns_records"
+  base_domain = "banyuh.ai"
+  records = merge(
+    {
+      for i, v in local.banyuh_ai_subdomains : "cftunnel-${v}" =>
+      {
+        name    = v
+        type    = "CNAME"
+        content = "${cloudflare_tunnel.lab.id}.cfargotunnel.com"
+        proxied = true
+      }
+    },
   )
 }
 
