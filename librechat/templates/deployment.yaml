@@ -47,7 +47,7 @@ spec:
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
-            - name: '{{ include "librechat.fullname" . }}-config-yaml'
+            - name: config-yaml
               mountPath: /config
               readOnly: true
           {{- with .Values.volumeMounts }}
@@ -61,7 +61,7 @@ spec:
       volumes:
         - configMap:
             name: '{{ include "librechat.fullname" . }}-config-yaml'
-            defaultMode: 0644
+          name: config-yaml
       {{- with .Values.volumes }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
