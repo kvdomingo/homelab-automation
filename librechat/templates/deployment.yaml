@@ -61,7 +61,7 @@ spec:
       volumes:
         - configMap:
             name: '{{ include "librechat.fullname" . }}-config-yaml'
-            defaultMode: 644
+            defaultMode: 0644
       {{- with .Values.volumes }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
