@@ -46,8 +46,11 @@ spec:
             {{- toYaml .Values.readinessProbe | nindent 12 }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-          {{- with .Values.volumeMounts }}
           volumeMounts:
+            - name: '{{ include "librechat.fullname" . }}-config-yaml'
+              mountPath: /config
+              readOnly: true
+          {{- with .Values.volumeMounts }}
             {{- toYaml . | nindent 12 }}
           {{- end }}
           envFrom:
@@ -55,8 +58,11 @@ spec:
                 name: '{{ include "librechat.fullname" . }}-configmap'
             - secretRef:
                 name: '{{ include "librechat.fullname" . }}-secrets'
-      {{- with .Values.volumes }}
       volumes:
+        - configMap:
+            name: '{{ include "librechat.fullname" . }}-config-yaml'
+            defaultMode: 644
+      {{- with .Values.volumes }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
       {{- with .Values.nodeSelector }}

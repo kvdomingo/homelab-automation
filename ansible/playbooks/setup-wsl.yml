@@ -34,7 +34,9 @@
           - gnupg
           - gpg
           - g++
+          - hping3
           - htop
+          - iperf3
           - libayatana-appindicator3-dev
           - libbz2-dev
           - libffi-dev
@@ -56,9 +58,11 @@
           - mesa-utils
           - neofetch
           - nvidia-container-toolkit
+          - ncat
           - net-tools
           - python3
           - ripgrep
+          - sshpass
           - tesseract-ocr
           - tk-dev
           - traceroute
