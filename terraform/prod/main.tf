@@ -1,5 +1,6 @@
 locals {
   kvdstudio_domain = "kvd.studio"
+  banyuhai_domain  = "banyuh.ai"
 
   homelab_subdomains_to_expose = toset([
     "banyuhay",

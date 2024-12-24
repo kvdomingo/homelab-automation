@@ -23,7 +23,7 @@ spec:
             nameservers:
               - 1.1.1.1
               - 1.0.0.1
-          replicaCount: 4
+          replicaCount: 3
           strategy:
             type: RollingUpdate
             rollingUpdate:
