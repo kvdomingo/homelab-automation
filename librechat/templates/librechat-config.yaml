@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: '{{- include "librechat.fullname" . }}-config-yaml'
+  labels:
+    {{- include "librechat.labels" . | nindent 4 }}
+  annotations:
+    helm.sh/hook: pre-install,pre-upgrade
+    helm.sh/hook-weight: "-5"
+    helm.sh/hook-delete-policy: before-hook-creation
+data:
+  librechat.yaml: |-
+    {{- toYaml .Values.librechatConfig | nindent 4 }}
