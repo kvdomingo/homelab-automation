@@ -142,6 +142,12 @@ module "story_of_us" {
   source      = "../modules/dns_records"
   base_domain = "storyof.us.kg"
   records = {
+    _2024_with_daf = {
+      type    = "CNAME"
+      name    = "2024-with-daf"
+      content = "cname.vercel-dns.com."
+      proxied = true
+    }
     zoho_verification = {
       type    = "TXT"
       name    = "@"
