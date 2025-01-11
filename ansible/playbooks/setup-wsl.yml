@@ -23,6 +23,7 @@
           - btop
           - build-essential
           - ca-certificates
+          - clang
           - cmake
           - cowsay
           - curl
@@ -53,6 +54,7 @@
           - libxdo-dev
           - libxmlsec1-dev
           - libxml2-dev
+          - libyaml-dev
           - lolcat
           - lsb-release
           - mesa-utils
