@@ -148,6 +148,12 @@ module "story_of_us" {
       content = "cname.vercel-dns.com."
       proxied = true
     }
+    _2025_with_daf = {
+      type    = "CNAME"
+      name    = "2025-with-daf"
+      content = "cname.vercel-dns.com."
+      proxied = true
+    }
     zoho_verification = {
       type    = "TXT"
       name    = "@"
