@@ -163,6 +163,12 @@
           shell:
             chdir: ~/Downloads
             cmd: ./install-zoxide.sh
+        - name: Install scram-sha-256
+          become: true
+          get_url:
+            url: https://github.com/supercaracal/scram-sha-256/releases/download/latest/scram-sha-256-linux-amd64
+            dest: /usr/local/bin/scram-sha-256
+            mode: "0755"
 
     - name: Install mise
       block:
