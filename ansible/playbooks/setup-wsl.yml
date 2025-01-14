@@ -221,6 +221,12 @@
 
     - name: Setup k8s development environment
       block:
+        - name: Install kind
+          shell:
+            cmd: |
+              go install sigs.k8s.io/kind@v0.26.0
+              go install sigs.k8s.io/cloud-provider-kind@latest
+
         - name: Ensure kubeconfig is not world-readable
           file:
             path: ~/.kube/config
