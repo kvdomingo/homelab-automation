@@ -20,6 +20,7 @@
           - automake
           - autotools-dev
           - bind9-dnsutils
+          - bison
           - btop
           - build-essential
           - ca-certificates
@@ -28,6 +29,7 @@
           - cowsay
           - curl
           - direnv
+          - flex
           - fzf
           - gcc
           - gedit
@@ -37,13 +39,16 @@
           - g++
           - hping3
           - htop
+          - icu-devtools
           - iperf3
           - libayatana-appindicator3-dev
           - libbz2-dev
+          - libcurl4-openssl-dev
           - libffi-dev
           - libfuse2
           - libgl1
           - libglib2.0-0
+          - libicu-dev
           - liblzma-dev
           - libncursesw5-dev
           - libreadline-dev
@@ -71,6 +76,7 @@
           - tmux
           - unzip
           - upx-ucl
+          - uuid-dev
           - wget
           - xsel
           - xz-utils
