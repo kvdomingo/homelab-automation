@@ -2,12 +2,19 @@
 127.0.0.1
 
 [k8s_master]
-srv-k8s-01.lab
+srv-k8s-01
 
 [k8s_workers]
-srv-k8s-02.lab
-srv-k8s-03.lab
-rpi5-01.lab
+srv-k8s-02
+srv-k8s-03
+rpi5-01
 
 [rpi5]
-rpi5-01.lab
+rpi5-01
+
+[swarm_master]
+srv-dev-01
+
+[swarm_workers]
+srv-dev-02
+srv-dev-03
