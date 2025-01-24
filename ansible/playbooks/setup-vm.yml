@@ -1,5 +1,5 @@
 - name: Initial setup of VMs
-  hosts: "*"
+  hosts: '*'
   become: true
 
   tasks:
@@ -16,10 +16,14 @@
           - gnupg
           - ca-certificates
           - apt-transport-https
+          - btop
+          - htop
+          - neofetch
           - neovim
           - nfs-common
           - policycoreutils
           - open-iscsi
+          - vim
         state: latest
 
     - name: Remove conflicting Docker packages
