@@ -1,0 +1,29 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRouteTCP
+metadata:
+  name: pg
+spec:
+  entryPoints:
+    - pg
+  routes:
+    - match: HostSNI(`*`)
+      services:
+        - name: pg-postgresql-ha-postgresql
+          port: 5432
+          weight: 10
+          terminationDelay: -1
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRouteTCP
+metadata:
+  name: pgpool
+spec:
+  entryPoints:
+    - pgpool
+  routes:
+    - match: HostSNI(`*`)
+      services:
+        - name: pg-postgresql-ha-pgpool
+          port: 5432
+          weight: 10
+          terminationDelay: -1
