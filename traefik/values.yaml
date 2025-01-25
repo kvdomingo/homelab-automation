@@ -549,11 +549,11 @@ tracing:
       headers: { }
       ## Defines the TLS configuration used by the reporter to send metrics to the OpenTelemetry Collector.
       tls: { }
-        # -- The path to the certificate authority, it defaults to the system bundle.
-        # ca:
-        # -- The path to the public certificate. When using this option, setting the key option is required.
-        # cert:
-        # -- The path to the private key. When using this option, setting the cert option is required.
+      # -- The path to the certificate authority, it defaults to the system bundle.
+      # ca:
+      # -- The path to the public certificate. When using this option, setting the key option is required.
+      # cert:
+      # -- The path to the private key. When using this option, setting the cert option is required.
       #key:
       # -- When set to true, the TLS connection accepts any certificate presented by the server regardless of the hostnames it covers.
       # insecureSkipVerify:
