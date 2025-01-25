@@ -11,7 +11,7 @@ spec:
   source:
     repoURL: https://charts.bitnami.com/bitnami
     chart: postgresql-ha
-    targetRevision: 15.1.4
+    targetRevision: 15.1.6
     plugin:
       name: argocd-vault-plugin-helm
       env:
