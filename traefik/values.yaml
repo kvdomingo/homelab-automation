@@ -782,6 +782,18 @@ ports:
       default: true
     exposedPort: 3322
     protocol: TCP
+  pg:
+    port: 5432
+    exposedPort: 5432
+    expose:
+      default: false
+    protocol: TCP
+  pgpool:
+    port: 6543
+    exposedPort: 6543
+    expose:
+      default: false
+    protocol: TCP
 
 # -- TLS Options are created as TLSOption CRDs
 # https://doc.traefik.io/traefik/https/tls/#tls-options
