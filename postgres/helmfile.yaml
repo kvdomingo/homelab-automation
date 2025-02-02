@@ -14,8 +14,12 @@ releases:
       - values.yaml
     set:
       - value: ref+vault://kv/lab/postgres#POSTGRESQL_PASSWORD
-        name: global.postgresql.password
+        name: postgresql.password
       - value: ref+vault://kv/lab/postgres#REPMGR_PASSWORD
-        name: global.postgresql.repmgrPassword
+        name: postgresql.repmgrPassword
       - value: ref+vault://kv/lab/postgres#PGPOOL_PASSWORD
-        name: global.pgpool.adminPassword
+        name: pgpool.adminPassword
+      - value: ref+vault://kv/lab/postgres#PGPOOL_CUSTOM_USERNAMES
+        name: pgpool.customUsers.usernames
+      - value: ref+vault://kv/lab/postgres#PGPOOL_CUSTOM_PASSWORDS
+        name: pgpool.customUsers.passwords
