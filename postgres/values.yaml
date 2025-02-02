@@ -1158,8 +1158,8 @@ pgpool:
   ##      usernames: "user01;user02"
   ##      passwords: "pass01;pass02"
   customUsers:
-    usernames: ""
-    passwords: ""
+    usernames: "dagster"
+    passwords: "<path:kv/data/lab/dagster#POSTGRESQL_PASSWORD>"
   ## @param pgpool.automountServiceAccountToken Mount Service Account token in pod
   ##
   automountServiceAccountToken: false
@@ -1902,7 +1902,7 @@ metrics:
   serviceMonitor:
     ## @param metrics.serviceMonitor.enabled if `true`, creates a Prometheus Operator ServiceMonitor (also requires `metrics.enabled` to be `true`)
     ##
-    enabled: false
+    enabled: true
     ## @param metrics.serviceMonitor.namespace Optional namespace which Prometheus is running in
     ## Fallback to the prometheus default unless specified
     ##
