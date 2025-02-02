@@ -22,7 +22,7 @@ spec:
                 workspace:
                   enabled: true
                   servers: [ ]
-                enableReadOnly: true
+                enableReadOnly: false
               dagster-user-deployments:
                 enableSubchart: false
               postgresql:
