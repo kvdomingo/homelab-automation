@@ -35,6 +35,7 @@ spec:
               enabled: true
             ingress:
               enabled: true
+              ingressClassName: traefik
               annotations:
                 gethomepage.dev/enabled: "true"
                 gethomepage.dev/name: "Dagster"
