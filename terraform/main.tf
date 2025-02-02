@@ -69,7 +69,7 @@ resource "cloudflare_tunnel_config" "lab" {
 }
 
 module "kvdstudio" {
-  source      = "../modules/dns_records"
+  source      = "./modules/dns_records"
   base_domain = "kvd.studio"
   records = merge(
     {
@@ -123,7 +123,7 @@ module "kvdstudio" {
 }
 
 module "banyuh_ai" {
-  source      = "../modules/dns_records"
+  source      = "./modules/dns_records"
   base_domain = "banyuh.ai"
   records = merge(
     {
@@ -139,7 +139,7 @@ module "banyuh_ai" {
 }
 
 module "story_of_us" {
-  source      = "../modules/dns_records"
+  source      = "./modules/dns_records"
   base_domain = "storyof.us.kg"
   records = {
     _2024_with_daf = {
