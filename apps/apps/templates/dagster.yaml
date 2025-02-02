@@ -8,54 +8,59 @@ metadata:
     {{- include "apps.finalizers" . | nindent 4 }}
 spec:
   project: {{ .Values.project }}
-  source:
-    repoURL: https://dagster-io.github.io/helm
-    chart: dagster
-    targetRevision: 1.9.11
-    plugin:
-      name: argocd-vault-plugin-helm
-      env:
-        - name: HELM_VALUES
-          value: |
-            dagsterWebserver:
-              replicaCount: 3
-              workspace:
-                enabled: true
-                servers: [ ]
-              enableReadOnly: true
-            dagster-user-deployments:
-              enableSubchart: false
-            postgresql:
-              enabled: false
-              postgresqlHost: pg-postgresql-ha-pgpool.postgres.svc.cluster.local
-              postgresqlUsername: dagster
-              postgresqlPassword: "<path:kv/data/lab/dagster#POSTGRESQL_PASSWORD>"
-              postgresqlDatabase: dagster
-            flower:
-              enabled: true
-            ingress:
-              enabled: true
-              ingressClassName: traefik
-              annotations:
-                gethomepage.dev/enabled: "true"
-                gethomepage.dev/name: "Dagster"
-                gethomepage.dev/group: "DataOps"
-                gethomepage.dev/icon: "https://dagster.io/images/brand/logos/dagster-primary-mark.png"
-                gethomepage.dev/ping: "https://dagster.{{ .Values.ingress.baseDomain }}/server_info"
+  sources:
+    - repoURL: https://dagster-io.github.io/helm
+      chart: dagster
+      targetRevision: 1.9.11
+      plugin:
+        name: argocd-vault-plugin-helm
+        env:
+          - name: HELM_VALUES
+            value: |
               dagsterWebserver:
-                host: "dagster.{{ .Values.ingress.baseDomain }}"
-                pathType: Prefix
-              readOnlyDagsterWebserver:
-                host: "dagster-ro.{{ .Values.ingress.baseDomain }}"
-                pathType: Prefix
+                replicaCount: 3
+                workspace:
+                  enabled: true
+                  servers: [ ]
+                enableReadOnly: true
+              dagster-user-deployments:
+                enableSubchart: false
+              postgresql:
+                enabled: false
+                postgresqlHost: pg-postgresql-ha-pgpool.postgres.svc.cluster.local
+                postgresqlUsername: dagster
+                postgresqlPassword: "<path:kv/data/lab/dagster#POSTGRESQL_PASSWORD>"
+                postgresqlDatabase: dagster
               flower:
-                host: "dagster-flower.{{ .Values.ingress.baseDomain }}"
-                pathType: Prefix
-            dagsterDaemon:
-              runCoordinator:
-                config:
-                  queuedRunCoordinator:
-                    maxConcurrentRuns: 4
+                enabled: true
+              ingress:
+                enabled: false
+                ingressClassName: traefik
+                annotations:
+                  gethomepage.dev/enabled: "true"
+                  gethomepage.dev/name: "Dagster"
+                  gethomepage.dev/group: "DataOps"
+                  gethomepage.dev/icon: "https://dagster.io/images/brand/logos/dagster-primary-mark.png"
+                  gethomepage.dev/ping: "https://dagster.{{ .Values.ingress.baseDomain }}/server_info"
+                dagsterWebserver:
+                  host: "dagster.{{ .Values.ingress.baseDomain }}"
+                  pathType: Prefix
+                readOnlyDagsterWebserver:
+                  host: "dagster-ro.{{ .Values.ingress.baseDomain }}"
+                  pathType: Prefix
+                flower:
+                  host: "dagster-flower.{{ .Values.ingress.baseDomain }}"
+                  pathType: Prefix
+              dagsterDaemon:
+                runCoordinator:
+                  config:
+                    queuedRunCoordinator:
+                      maxConcurrentRuns: 4
+    - repoURL: https://git.lab.kvd.studio/r/homelab.git
+      targetRevision: main
+      path: dagster
+      plugin:
+        name: argocd-vault-plugin
   destination:
     server: {{ .Values.destination.server }}
     namespace: dagster
