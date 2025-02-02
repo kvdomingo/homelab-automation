@@ -50,7 +50,7 @@ ingress:
     gethomepage.dev/enabled: "true"
     gethomepage.dev/name: "pgAdmin"
     gethomepage.dev/group: "Admin"
-    gethomepage.dev/icon: "si-adminer"
+    gethomepage.dev/icon: "si-adminer-#34567C"
     gethomepage.dev/ping: "pgadmin.lab.kvd.studio"
   hosts:
     - host: pgadmin.lab.kvd.studio
