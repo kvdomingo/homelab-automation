@@ -1158,8 +1158,8 @@ pgpool:
   ##      usernames: "user01;user02"
   ##      passwords: "pass01;pass02"
   customUsers:
-    usernames: "dagster"
-    passwords: "<path:kv/data/lab/dagster#POSTGRESQL_PASSWORD>"
+    usernames: ""
+    passwords: ""
   ## @param pgpool.automountServiceAccountToken Mount Service Account token in pod
   ##
   automountServiceAccountToken: false
