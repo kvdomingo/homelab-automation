@@ -1,5 +1,10 @@
 version: 3
 
+set:
+  - e
+  - u
+  - pipefail
+
 vars:
   SHORT_SHA:
     sh: git rev-parse --short HEAD
@@ -113,15 +118,15 @@ tasks:
 
   tf-init:
     desc: Initialize Terraform
-    dir: terraform/prod
+    dir: terraform
     cmd: terraform init {{.CLI_ARGS}}
 
   tf-plan:
     desc: Generate Terraform plan
-    dir: terraform/prod
+    dir: terraform
     cmd: terraform plan -out=.tfplan {{.CLI_ARGS}}
 
   tf-apply:
     desc: Apply Terraform plan
-    dir: terraform/prod
+    dir: terraform
     cmd: terraform apply .tfplan {{.CLI_ARGS}}
