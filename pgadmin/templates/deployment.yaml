@@ -42,17 +42,24 @@ spec:
               protocol: TCP
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-          {{- with .Values.volumeMounts }}
           volumeMounts:
+            - name: data
+              mountPath: /var/lib/pgadmin
+              readOnly: false
+          {{- with .Values.volumeMounts }}
             {{- toYaml . | nindent 12 }}
           {{- end }}
           envFrom:
             - configMapRef:
-                name: {{ include "pgadmin.fullname" . }}-configmap
+                name: '{{ include "pgadmin.fullname" . }}-configmap'
             - secretRef:
-                name: {{ include "pgadmin.fullname" . }}-secrets
-      {{- with .Values.volumes }}
+                name: '{{ include "pgadmin.fullname" . }}-secrets'
       volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: '{{ include "pgadmin.fullname" . }}-data'
+            readOnly: false
+      {{- with .Values.volumes }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
       {{- with .Values.nodeSelector }}
