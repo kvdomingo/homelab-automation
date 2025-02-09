@@ -1,5 +1,5 @@
 - name: Initial setup of VMs
-  hosts: '*'
+  hosts: rpi5
   become: true
 
   tasks:
