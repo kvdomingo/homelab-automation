@@ -19,6 +19,7 @@
           - asciinema
           - automake
           - autotools-dev
+          - bat
           - bind9-dnsutils
           - bison
           - btop
