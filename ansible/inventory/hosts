@@ -7,7 +7,9 @@ srv-k8s-01
 [k8s_workers]
 srv-k8s-02
 srv-k8s-03
-rpi5-01
+srv-pi5-01
+srv-pi5-02
+srv-pi5-03
 
 [rpi5]
 srv-pi5-01
