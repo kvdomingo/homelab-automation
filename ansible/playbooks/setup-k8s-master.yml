@@ -1,6 +1,8 @@
 - name: Setup K3s master node
   hosts: k8s_master
   become: true
+  vars:
+    K8S_VERSION: 1.30
 
   tasks:
     - name: Increase inotify values
@@ -10,8 +12,14 @@
         sysctl fs.inotify.max_queued_events=2099999999
 
     - name: Install K3s
-      shell:
-        curl -sfL https://get.k3s.io | INSTALL_K3S_CHANNEL=v1.30 sh -s - server --cluster-init --write-kubeconfig-mode 644 --disable traefik --docker
+      shell: >
+        curl -sfL https://get.k3s.io |
+        INSTALL_K3S_CHANNEL=v{{ K8S_VERSION }}
+        sh -s - server
+        --cluster-init
+        --write-kubeconfig-mode 644
+        --disable traefik
+        --docker
 
     - name: Get kubeconfig
       fetch:
