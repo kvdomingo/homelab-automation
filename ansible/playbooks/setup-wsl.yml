@@ -1,18 +1,18 @@
 - name: Initial WSL setup
   hosts: local
   vars:
-    JETBRAINS_TOOLBOX_VERSION: jetbrains-toolbox-2.5.2.35332
+    jetbrains_toolbox_version: jetbrains-toolbox-2.5.2.35332
 
   tasks:
     - name: Update apt
       become: true
-      apt:
+      ansible.builtin.apt:
         update_cache: true
-        upgrade: yes
+        upgrade: true
 
     - name: Install basics
       become: true
-      package:
+      ansible.builtin.package:
         name:
           - apache2-utils
           - apt-transport-https
@@ -92,24 +92,25 @@
     - name: Setup dotfiles
       block:
         - name: Clone dotrepo
-          git:
+          ansible.builtin.git:
             repo: https://github.com/kvdomingo/dotrepo.git
             dest: ~/dotrepo
             clone: true
             force: true
         - name: Delete existing .zshrc
-          file:
+          ansible.builtin.file:
             path: ~/.zshrc
             state: absent
             force: true
         - name: Install dotrepo
-          shell:
+          ansible.builtin.shell:
             chdir: ~/dotrepo
             cmd: ./install
           ignore_errors: true
+          changed_when: false
 
     - name: Install tmux plugin manager
-      git:
+      ansible.builtin.git:
         repo: https://github.com/tmux-plugins/tpm
         dest: ~/.tmux/plugins/tpm
         clone: true
@@ -117,63 +118,65 @@
     - name: Install shell utilities
       block:
         - name: Delete existing oh-my-zsh directory
-          file:
+          ansible.builtin.file:
             path: ~/.oh-my-zsh
             state: absent
             force: true
         - name: Download oh-my-zsh
-          get_url:
+          ansible.builtin.get_url:
             url: https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh
             dest: ~/Downloads/install-oh-my-zsh.sh
             mode: "0755"
         - name: Install oh-my-zsh
-          shell:
+          ansible.builtin.shell:
             chdir: ~/Downloads
             cmd: sh install-oh-my-zsh.sh --unattended --keep-zshrc
             creates: ~/.oh-my-zsh
         - name: Install oh-my-zsh plugins
           block:
             - name: Install wakatime plugin
-              git:
+              ansible.builtin.git:
                 repo: https://github.com/sobolevn/wakatime-zsh-plugin.git
                 dest: ~/.oh-my-zsh/custom/plugins/wakatime
                 clone: true
             - name: Install zsh-autosuggestions plugin
-              git:
+              ansible.builtin.git:
                 repo: https://github.com/zsh-users/zsh-autosuggestions
                 dest: ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions
                 clone: true
             - name: Install zsh-history-substring-search plugin
-              git:
+              ansible.builtin.git:
                 repo: https://github.com/zsh-users/zsh-history-substring-search
                 dest: ~/.oh-my-zsh/custom/plugins/zsh-history-substring-search
                 clone: true
             - name: Install zsh-tmux-auto-title
-              git:
+              ansible.builtin.git:
                 repo: https://github.com/mbenford/zsh-tmux-auto-title
                 dest: ~/.oh-my-zsh/custom/plugins/zsh-tmux-auto-title
                 clone: true
         - name: Download starship.rs
-          get_url:
+          ansible.builtin.get_url:
             url: https://starship.rs/install.sh
             dest: ~/Downloads/install-starship.sh
             mode: "0755"
         - name: Install starship.rs
-          shell:
+          ansible.builtin.shell:
             chdir: ~/Downloads
             cmd: ./install-starship.sh -y
+          changed_when: false
         - name: Download zoxide
-          get_url:
+          ansible.builtin.get_url:
             url: https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh
             dest: ~/Downloads/install-zoxide.sh
             mode: "0755"
         - name: Install zoxide
-          shell:
+          ansible.builtin.shell:
             chdir: ~/Downloads
             cmd: ./install-zoxide.sh
+          changed_when: false
         - name: Install scram-sha-256
           become: true
-          get_url:
+          ansible.builtin.get_url:
             url: https://github.com/supercaracal/scram-sha-256/releases/download/latest/scram-sha-256-linux-amd64
             dest: /usr/local/bin/scram-sha-256
             mode: "0755"
@@ -181,23 +184,24 @@
     - name: Install mise
       block:
         - name: Download mise installer
-          get_url:
+          ansible.builtin.get_url:
             url: https://mise.run
             dest: ~/Downloads/install-mise.sh
             mode: "0755"
         - name: Install mise
-          shell:
+          ansible.builtin.shell:
             chdir: ~/Downloads
             cmd: ./install-mise.sh
+          changed_when: false
         - name: Add custom mise registries
-          shell:
-            cmd: |
-              mise plugin add supabase-cli https://github.com/gavinying/asdf-supabase-cli.git
+          ansible.builtin.command: mise plugin add supabase-cli https://github.com/gavinying/asdf-supabase-cli.git
+          changed_when: false
         - name: Install mise plugins/tools
-          shell: mise install --yes
+          ansible.builtin.command: mise install --yes
+          changed_when: false
 
     - name: Install/update global Python packages
-      pip:
+      ansible.builtin.pip:
         name:
           - pip
           - pre-commit
@@ -207,108 +211,110 @@
     - name: Install/update global Node.js package managers
       block:
         - name: Install npm
-          npm:
+          community.general.npm:
             name: npm
             state: latest
             global: true
         - name: Install yarn
-          npm:
+          community.general.npm:
             name: yarn
             state: latest
             global: true
         - name: Install pnpm
-          npm:
+          community.general.npm:
             name: pnpm
             state: latest
             global: true
 
     - name: Install/update global Go packages
-      shell:
-        cmd: |
-          go install github.com/cosmtrek/air@latest
-          go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
-          go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
-          go install github.com/jesseduffield/lazygit@latest
-          go install github.com/jesseduffield/lazydocker@latest
+      ansible.builtin.shell: |
+        go install github.com/cosmtrek/air@latest
+        go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
+        go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
+        go install github.com/jesseduffield/lazygit@latest
+        go install github.com/jesseduffield/lazydocker@latest
+      changed_when: false
 
     - name: Setup k8s development environment
       block:
         - name: Install kind
-          shell:
-            cmd: |
-              go install sigs.k8s.io/kind@v0.26.0
-              go install sigs.k8s.io/cloud-provider-kind@latest
+          ansible.builtin.shell: |
+            go install sigs.k8s.io/kind@v0.26.0
+            go install sigs.k8s.io/cloud-provider-kind@latest
+          changed_when: false
 
         - name: Ensure kubeconfig is not world-readable
-          file:
+          ansible.builtin.file:
             path: ~/.kube/config
             state: file
             mode: "0600"
         - name: Copy kubeconfig
-          copy:
+          ansible.builtin.copy:
             src: ~/.kube/config
             dest: ~/.kube/config.yaml
             mode: "0600"
         - name: Install Krew
-          shell:
-            cmd: |
-              (
-                set -x; cd "$(mktemp -d)" &&
-                OS="$(uname | tr '[:upper:]' '[:lower:]')" &&
-                ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')" &&
-                KREW="krew-${OS}_${ARCH}" &&
-                curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/latest/download/${KREW}.tar.gz" &&
-                tar zxvf "${KREW}.tar.gz" &&
-                ./"${KREW}" install krew
-              )
+          ansible.builtin.shell: |
+            (
+              set -euxo pipefail; cd "$(mktemp -d)" &&
+              OS="$(uname | tr '[:upper:]' '[:lower:]')" &&
+              ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')" &&
+              KREW="krew-${OS}_${ARCH}" &&
+              curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/latest/download/${KREW}.tar.gz" &&
+              tar zxvf "${KREW}.tar.gz" &&
+              ./"${KREW}" install krew
+            )
+          changed_when: false
         - name: Install kubens/kubectx
-          shell:
-            cmd: kubectl krew install ctx ns
+          ansible.builtin.command: kubectl krew install ctx ns
+          changed_when: false
         - name: Install Helm diff
-          shell:
-            cmd: helm plugin install https://github.com/databus23/helm-diff
+          ansible.builtin.command: helm plugin install https://github.com/databus23/helm-diff
+          changed_when: false
 
     - name: Setup wakatime
       block:
         - name: Download wakatime
-          get_url:
+          ansible.builtin.get_url:
             url: https://raw.githubusercontent.com/wakatime/vim-wakatime/master/scripts/install_cli.py
             dest: ~/Downloads/install_wakatime.py
             mode: "0755"
         - name: Install wakatime
-          script: ~/Downloads/install_wakatime.py
+          ansible.builtin.script: ~/Downloads/install_wakatime.py
           args:
             executable: python
 
     - name: Setup JetBrains Toolbox
       block:
         - name: Download JetBrains Toolbox
-          get_url:
-            url: https://download.jetbrains.com/toolbox/{{ JETBRAINS_TOOLBOX_VERSION }}.tar.gz
-            dest: ~/Downloads/{{ JETBRAINS_TOOLBOX_VERSION }}.tar.gz
+          ansible.builtin.get_url:
+            url: https://download.jetbrains.com/toolbox/{{ jetbrains_toolbox_version }}.tar.gz
+            dest: ~/Downloads/{{ jetbrains_toolbox_version }}.tar.gz
+            mode: '644'
         - name: Untar JetBrains Toolbox
-          unarchive:
-            src: ~/Downloads/{{ JETBRAINS_TOOLBOX_VERSION }}.tar.gz
+          ansible.builtin.unarchive:
+            src: ~/Downloads/{{ jetbrains_toolbox_version }}.tar.gz
             dest: ~/Downloads
         - name: Install JetBrains Toolbox
-          shell:
-            chdir: ~/Downloads/{{ JETBRAINS_TOOLBOX_VERSION }}
+          ansible.builtin.shell:
+            chdir: ~/Downloads/{{ jetbrains_toolbox_version }}
             cmd: ./jetbrains-toolbox
             creates: ~/.local/share/JetBrains/Toolbox/bin/jetbrains-toolbox
 
     - name: Install Supabase CLI
       block:
         - name: Download Supabase CLI
-          get_url:
+          ansible.builtin.get_url:
             url: https://github.com/supabase/cli/releases/latest/download/supabase_linux_amd64.tar.gz
             dest: ~/Downloads/supabase_linux_amd64.tar.gz
+            mode: '644'
         - name: Extract Supabase CLI
-          unarchive:
+          ansible.builtin.unarchive:
             src: ~/Downloads/supabase_linux_amd64.tar.gz
             dest: ~/Downloads
         - name: Install Supabase CLI
           become: true
-          copy:
+          ansible.builtin.copy:
             src: ~/Downloads/supabase
             dest: /usr/local/bin/supabase
             mode: "0755"
