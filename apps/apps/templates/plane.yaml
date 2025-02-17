@@ -11,7 +11,7 @@ spec:
   source:
     repoURL: https://helm.plane.so/
     chart: plane-ce
-    targetRevision: 1.0.21
+    targetRevision: 1.0.28
     plugin:
       name: argocd-vault-plugin-helm
       env:
@@ -25,21 +25,22 @@ spec:
               ingress_annotations:
                 gethomepage.dev/enabled: "true"
                 gethomepage.dev/name: "Plane"
-                gethomepage.dev/group: "Analytics"
-                gethomepage.dev/icon: "si-strapi"
+                gethomepage.dev/group: "Admin"
+                gethomepage.dev/icon: "plane.png"
                 gethomepage.dev/ping: "plane.{{ .Values.ingress.baseDomain }}"
             redis:
               storageClass: nfs-client
             postgres:
-              storageClass: nfs-client
+              local_setup: false
             minio:
-              storageClass: nfs-client
-              root_user: "<path:kv/data/lab/plane#MINIO_ROOT_USER>"
-              root_password: "<path:kv/data/lab/plane#MINIO_ROOT_PASSWORD>"
+              local_setup: false
             env:
-              pgdb_username: plane
-              pgdb_password: "<path:kv/data/lab/plane#POSTGRESQL_PASSWORD>"
-              pgdb_name: plane
+              pgdb_remote_url: "postgres://plane:<path:kv/data/lab/plane#POSTGRESQL_PASSWORD>@pg-postgresql-ha-pgpool.postgres.svc.cluster.local:5432/plane"
+              aws_access_key: "<path:kv/data/lab/plane#MINIO_ROOT_USER>"
+              aws_secret_access_key: "<path:kv/data/lab/plane#MINIO_ROOT_PASSWORD>"
+              aws_s3_endpoint_url: "http://minio.minio.svc.cluster.local:9000"
+              docstore_bucket: "plane"
+              doc_upload_size_limit: "10485760"
               secret_key: "<path:kv/data/lab/plane#SECRET_KEY>"
   destination:
     server: {{ .Values.destination.server }}
