@@ -12,7 +12,6 @@ disableFirefly: true
 disableMetabase: true
 disableNextcloud: true
 disablePaperless: true
-disablePlane: true
 disableSonarqube: true
 disableSupabase: true
 disableSupertokens: true
