@@ -1,22 +1,39 @@
 - name: Setup K3s worker nodes
-  hosts: k8s_workers
+  hosts: rpi5_workers
   become: true
   vars:
-    K8S_VERSION: 1.30
+    k8s_version: v1.32
 
   tasks:
     - name: Increase inotify values
-      shell: |
-        sysctl fs.inotify.max_user_instances=2099999999
-        sysctl fs.inotify.max_user_watches=2099999999
-        sysctl fs.inotify.max_queued_events=2099999999
+      loop:
+        - fs.inotify.max_user_instances
+        - fs.inotify.max_user_watches
+        - fs.inotify.max_queued_events
+      ansible.posix.sysctl:
+        name: '{{ item }}'
+        value: 524288
+        state: present
 
-    - name: Install K3s
-      shell: >
-        curl -sfL https://get.k3s.io |
-        INSTALL_K3S_CHANNEL=v{{ K8S_VERSION }}
-        K3S_TOKEN={{ lookup('ansible.builtin.env', 'K3S_NODE_TOKEN') }}
-        sh -s - server
-        --server https://srv-k8s-01.lab:6443
-        --disable traefik
-        --docker
+    - name: Ensure Downloads directory exists
+      ansible.builtin.file:
+        path: ~/Downloads
+        state: directory
+        mode: '755'
+
+    - name: Setup K3s
+      block:
+        - name: Download K3s installer
+          ansible.builtin.get_url:
+            url: https://get.k3s.io
+            dest: ~/Downloads/install-k3s.sh
+            mode: '755'
+
+        - name: Install K3s
+          environment:
+            INSTALL_K3S_CHANNEL: '{{ k8s_version }}'
+            K3S_TOKEN: "{{ lookup('file', '../outputs/rpi5-node-token') }}"
+            K3S_URL: https://srv-pi5-01.lab:6443
+          ansible.builtin.shell: >
+            ~/Downloads/install-k3s.sh --docker
+          changed_when: false

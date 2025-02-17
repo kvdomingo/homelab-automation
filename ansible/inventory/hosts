@@ -16,6 +16,13 @@ srv-pi5-01
 srv-pi5-02
 srv-pi5-03
 
+[rpi5_master]
+srv-pi5-01
+
+[rpi5_workers]
+srv-pi5-02
+srv-pi5-03
+
 [swarm_master]
 srv-dev-01
 

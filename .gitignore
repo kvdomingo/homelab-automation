@@ -3,6 +3,7 @@
 *.env
 .envrc
 
+.ansible/
 ansible/outputs/
 secrets.yaml
 
