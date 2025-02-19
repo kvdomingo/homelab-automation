@@ -1,4 +1,7 @@
 {
+  "features": {
+    "containerd-snapshotter": true
+  },
   "log-driver": "json-file",
   "log-opts": {
     "max-size": "20m",
