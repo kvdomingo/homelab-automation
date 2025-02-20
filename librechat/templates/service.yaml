@@ -19,7 +19,7 @@ kind: Service
 metadata:
   name: '{{ include "librechat.fullname" . }}-rag-api'
   labels:
-    {{- include "librechat.labels" . | nindent 4 }}
+    {{- include "librechatRag.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.rag.service.type }}
   ports:
@@ -35,7 +35,7 @@ kind: Service
 metadata:
   name: '{{ include "librechat.fullname" . }}-meilisearch'
   labels:
-    {{- include "librechat.labels" . | nindent 4 }}
+    {{- include "librechatMeilisearch.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.meilisearch.service.type }}
   ports:

@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: '{{ include "librechat.fullname" . }}-meilisearch'
   labels:
-    {{- include "librechat.labels" . | nindent 4 }}
+    {{- include "librechatMeilisearch.labels" . | nindent 4 }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
@@ -18,7 +18,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "librechat.labels" . | nindent 8 }}
+        {{- include "librechatMeilisearch.labels" . | nindent 8 }}
         {{- with .Values.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
