@@ -48,7 +48,7 @@ kind: PersistentVolumeClaim
 metadata:
   name: '{{ include "librechat.fullname" . }}-meilisearch-data'
   labels:
-    {{- include "librechat.labels" . | nindent 4 }}
+    {{- include "librechatMeilisearch.labels" . | nindent 4 }}
   annotations:
     helm.sh/resource-policy: keep
 spec:

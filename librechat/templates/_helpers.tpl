@@ -43,6 +43,30 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end }}
 
 {{/*
+RAG labels
+*/}}
+{{- define "librechatRag.labels" -}}
+helm.sh/chart: {{ include "librechat.chart" . }}
+{{ include "librechatRag.selectorLabels" . }}
+{{- if .Chart.AppVersion }}
+app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{- end }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- end }}
+
+{{/*
+Meilisearch labels
+*/}}
+{{- define "librechatMeilisearch.labels" -}}
+helm.sh/chart: {{ include "librechat.chart" . }}
+{{ include "librechatMeilisearch.selectorLabels" . }}
+{{- if .Chart.AppVersion }}
+app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{- end }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- end }}
+
+{{/*
 Selector labels
 */}}
 {{- define "librechat.selectorLabels" -}}
