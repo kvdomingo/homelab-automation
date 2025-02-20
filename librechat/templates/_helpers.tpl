@@ -51,6 +51,22 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
+RAG Selector labels
+*/}}
+{{- define "librechatRag.selectorLabels" -}}
+app.kubernetes.io/name: '{{ include "librechat.name" . }}-rag-api'
+app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}
+
+{{/*
+Meilisearch Selector labels
+*/}}
+{{- define "librechatMeilisearch.selectorLabels" -}}
+app.kubernetes.io/name: '{{ include "librechat.name" . }}-meilisearch'
+app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}
+
+{{/*
 Create the name of the service account to use
 */}}
 {{- define "librechat.serviceAccountName" -}}

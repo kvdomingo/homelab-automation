@@ -13,3 +13,35 @@ spec:
       name: http
   selector:
     {{- include "librechat.selectorLabels" . | nindent 4 }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: '{{ include "librechat.fullname" . }}-rag-api'
+  labels:
+    {{- include "librechat.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.rag.service.type }}
+  ports:
+    - port: {{ .Values.rag.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "librechatRag.selectorLabels" . | nindent 4 }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: '{{ include "librechat.fullname" . }}-meilisearch'
+  labels:
+    {{- include "librechat.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.meilisearch.service.type }}
+  ports:
+    - port: {{ .Values.meilisearch.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "librechatMeilisearch.selectorLabels" . | nindent 4 }}

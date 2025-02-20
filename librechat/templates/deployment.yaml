@@ -50,6 +50,12 @@ spec:
             - name: config-yaml
               mountPath: /config
               readOnly: true
+            - name: images
+              mountPath: /app/client/public/images
+            - name: uploads
+              mountPath: /app/uploads
+            - name: logs
+              mountPath: /app/api/logs
           {{- with .Values.volumeMounts }}
             {{- toYaml . | nindent 12 }}
           {{- end }}
@@ -62,6 +68,15 @@ spec:
         - configMap:
             name: '{{ include "librechat.fullname" . }}-config-yaml'
           name: config-yaml
+        - name: images
+          persistentVolumeClaim:
+            claimName: '{{ include "librechat.fullname" . }}-images-data'
+        - name: uploads
+          persistentVolumeClaim:
+            claimName: '{{ include "librechat.fullname" . }}-uploads-data'
+        - name: logs
+          persistentVolumeClaim:
+            claimName: '{{ include "librechat.fullname" . }}-logs-data'
       {{- with .Values.volumes }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
