@@ -1,0 +1,51 @@
+{{- if not .Values.disableFocalboard }}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: focalboard
+  namespace: {{ include "apps.argocdNamespace" . | quote }}
+  finalizers:
+    {{- include "apps.finalizers" . | nindent 4 }}
+spec:
+  project: {{ .Values.project }}
+  source:
+    repoURL: https://helm.mattermost.com
+    chart: focalboard
+    targetRevision: 0.5.0
+    plugin:
+      name: argocd-vault-plugin-helm
+      env:
+        - name: HELM_VALUES
+          value: |
+            image:
+              tag: 7.11.4
+            ingress:
+              enabled: true
+              annotations:
+                gethomepage.dev/enabled: "true"
+                gethomepage.dev/name: "Focalboard"
+                gethomepage.dev/group: "Admin"
+                gethomepage.dev/icon: "focalboard.png"
+                gethomepage.dev/ping: "focalboard.{{ .Values.ingress.baseDomain }}"
+              hosts:
+                - host: focalboard.{{ .Values.ingress.baseDomain }}
+                  paths:
+                    - path: /
+                      backend:
+                        serviceName: focalboard
+                        servicePort: 80
+            persistence:
+              enabled: true
+              storageClass: nfs-client
+              accessMode: ReadWriteOnce
+              size: 8Gi
+  destination:
+    server: {{ .Values.destination.server }}
+    namespace: focalboard
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+    automated:
+      selfHeal: true
+      prune: true
+{{- end }}
