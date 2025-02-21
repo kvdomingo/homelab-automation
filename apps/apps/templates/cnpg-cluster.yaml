@@ -1,0 +1,74 @@
+{{- if not .Values.disableCnpgCluster }}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cnpg-cluster
+  namespace: {{ include "apps.argocdNamespace" . | quote }}
+  finalizers:
+    {{- include "apps.finalizers" . | nindent 4 }}
+spec:
+  project: {{ .Values.project }}
+  source:
+    repoURL: https://cloudnative-pg.github.io/charts
+    chart: cluster
+    targetRevision: 0.2.1
+    plugin:
+      name: argocd-vault-plugin-helm
+      env:
+        - name: HELM_VALUES
+          value: |
+            type: postgresql
+            version:
+              postgresql: "17"
+            mode: standalone
+            cluster:
+              instances: 3
+              storage:
+                size: 10Gi
+              walStorage:
+                size: 4Gi
+              resources:
+                limits:
+                  cpu: 1000m
+                  memory: 2Gi
+                requests:
+                  cpu: 1000m
+                  memory: 2Gi
+              monitoring:
+                enabled: true
+                podMonitor:
+                  enabled: true
+              postgresql:
+                shared_preload_libraries:
+                  - pgaudit
+                  - pg_stat_statements
+              backups:
+                enabled: false  # TODO
+                scheduledBackups:
+                  - name: daily-backup
+                    schedule: "0 20 * * *"
+                    backupOwnerReference: self
+                    method: barmanObjectStore
+                retentionPolicy: 15d
+              poolers:
+                - name: rw
+                  type: rw
+                  poolMode: transaction
+                  instances: 3
+                  parameters:
+                    max_client_conn: 1000
+                    default_pool_size: 25
+                  monitoring:
+                    enabled: true
+                    podMonitor:
+                      enabled: true
+  destination:
+    server: {{ .Values.destination.server }}
+    namespace: cnpg-cluster
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+    automated:
+      selfHeal: true
+      prune: true
+{{- end }}
