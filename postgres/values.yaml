@@ -1508,7 +1508,7 @@ pgpool:
   ## @param pgpool.logPerNodeStatement Log every SQL statement for each DB node separately (PGPOOL_ENABLE_LOG_PER_NODE_STATEMENT)
   ## ref: https://github.com/bitnami/containers/tree/main/bitnami/pgpool#configuration
   ##
-  logPerNodeStatement: false
+  logPerNodeStatement: true
   ## @param pgpool.logLinePrefix Format of the log entry lines (PGPOOL_LOG_LINE_PREFIX)
   ## ref: https://github.com/bitnami/containers/tree/main/bitnami/pgpool#configuration
   ## ref: https://www.pgpool.net/docs/latest/en/html/runtime-config-logging.html
@@ -1537,19 +1537,19 @@ pgpool:
   ## @param pgpool.childMaxConnections The maximum number of client connections in each child process (PGPOOL_CHILD_MAX_CONNECTIONS)
   ## ref: https://github.com/bitnami/containers/tree/main/bitnami/pgpool#configuration
   ##
-  childMaxConnections: ""
+  childMaxConnections: 200
   ## @param pgpool.childLifeTime The time in seconds to terminate a Pgpool-II child process if it remains idle (PGPOOL_CHILD_LIFE_TIME)
   ## ref: https://github.com/bitnami/containers/tree/main/bitnami/pgpool#configuration
   ##
-  childLifeTime: ""
+  childLifeTime: 180
   ## @param pgpool.clientIdleLimit The time in seconds to disconnect a client if it remains idle since the last query (PGPOOL_CLIENT_IDLE_LIMIT)
   ## ref: https://github.com/bitnami/containers/tree/main/bitnami/pgpool#configuration
   ##
-  clientIdleLimit: ""
+  clientIdleLimit: 180
   ## @param pgpool.connectionLifeTime The time in seconds to terminate the cached connections to the PostgreSQL backend (PGPOOL_CONNECTION_LIFE_TIME)
   ## ref: https://github.com/bitnami/containers/tree/main/bitnami/pgpool#configuration
   ##
-  connectionLifeTime: ""
+  connectionLifeTime: 180
   ## @param pgpool.useLoadBalancing Use Pgpool Load-Balancing
   ##
   useLoadBalancing: true
