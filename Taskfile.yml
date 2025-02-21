@@ -8,6 +8,8 @@ set:
 vars:
   SHORT_SHA:
     sh: git rev-parse --short HEAD
+  CLOUDNATIVE_PG_VERSION_MINOR: 1.25
+  CLOUDNATIVE_PG_VERSION_PATCH: '{{ .CLOUDNATIVE_PG_VERSION_MINOR }}.0'
 
 dotenv:
   - ./gitea/.env
