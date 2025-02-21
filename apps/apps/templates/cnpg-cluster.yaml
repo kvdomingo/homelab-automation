@@ -50,18 +50,18 @@ spec:
                     backupOwnerReference: self
                     method: barmanObjectStore
                 retentionPolicy: 15d
-              poolers:
-                - name: rw
-                  type: rw
-                  poolMode: transaction
-                  instances: 3
-                  parameters:
-                    max_client_conn: 1000
-                    default_pool_size: 25
-                  monitoring:
+            poolers:
+              - name: rw
+                type: rw
+                poolMode: transaction
+                instances: 3
+                parameters:
+                  max_client_conn: "1000"
+                  default_pool_size: "25"
+                monitoring:
+                  enabled: true
+                  podMonitor:
                     enabled: true
-                    podMonitor:
-                      enabled: true
   destination:
     server: {{ .Values.destination.server }}
     namespace: cnpg-cluster
