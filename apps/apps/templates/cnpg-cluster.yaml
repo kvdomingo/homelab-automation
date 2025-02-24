@@ -29,10 +29,10 @@ spec:
                 size: 4Gi
               resources:
                 limits:
-                  cpu: 1000m
+                  cpu: "1"
                   memory: 2Gi
                 requests:
-                  cpu: 1000m
+                  cpu: "1"
                   memory: 2Gi
               monitoring:
                 enabled: true
