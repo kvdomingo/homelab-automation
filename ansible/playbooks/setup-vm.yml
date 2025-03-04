@@ -65,7 +65,7 @@
         src: ../files/daemon.json
         dest: /etc/docker
         force: true
-        mode: '644'
+        mode: "644"
 
     - name: Restart Docker daemon
       ansible.builtin.service:
