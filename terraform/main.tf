@@ -72,19 +72,7 @@ module "kvdstudio" {
   source      = "./modules/dns_records"
   base_domain = "kvd.studio"
   records = merge(
-      {
-        _2024_with_daf = {
-        type    = "CNAME"
-        name    = "2024-with-daf"
-        content = "cname.vercel-dns.com."
-        proxied = false
-      }
-      _2025_with_daf = {
-        type    = "CNAME"
-        name    = "2025-with-daf"
-        content = "cname.vercel-dns.com."
-        proxied = false
-      }
+    {
       bluesky_verification = {
         type    = "TXT"
         name    = "_atproto"
