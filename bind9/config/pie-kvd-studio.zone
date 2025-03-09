@@ -1,0 +1,26 @@
+$TTL 1d
+
+$ORIGIN pie.kvd.studio.
+
+@               IN      SOA     bind1.ns.pie.kvd.studio. info.pie.kvd.studio. (
+                                2025030901      ; serial
+                                12h             ; refresh
+                                15m             ; retry
+                                3w              ; expire
+                                1d              ; min ttl
+                                )
+
+                IN      NS      bind1.ns.pie.kvd.studio.
+                IN      NS      bind2.ns.pie.kvd.studio.
+
+bind1.ns        IN      A       10.10.1.54
+bind2.ns        IN      A       10.10.2.54
+pihole1.ns      IN      A       10.10.1.53
+pihole2.ns      IN      A       10.10.2.53
+
+; --
+
+*               IN      A       10.10.10.151
+*               IN      A       10.10.10.152
+*               IN      A       10.10.10.153
+*               IN      A       10.10.10.154
