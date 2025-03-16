@@ -1,0 +1,6 @@
+- name: Setup K3s worker nodes
+  hosts: k8s_workers
+  become: true
+  roles:
+    - docker
+    - kubernetes-server-agent
