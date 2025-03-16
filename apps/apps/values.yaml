@@ -8,7 +8,10 @@ ingress:
 
 disableAffine: true
 disableAirbyte: true
+disableDocmost: true
 disableFirefly: true
+disableKestra: true
+disableMaybe: true
 disableMetabase: true
 disableNextcloud: true
 disablePaperless: true
