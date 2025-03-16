@@ -1,0 +1,14 @@
+global_python_packages:
+  - pip
+  - pre-commit
+  - ansible
+global_node_packages:
+  - npm
+  - yarn
+  - pnpm
+global_go_packages:
+  - github.com/cosmtrek/air@latest
+  - github.com/sqlc-dev/sqlc/cmd/sqlc@latest
+  - github.com/golang-migrate/migrate/v4/cmd/migrate@latest
+  - github.com/jesseduffield/lazygit@latest
+  - github.com/jesseduffield/lazydocker@latest

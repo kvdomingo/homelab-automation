@@ -1,0 +1,94 @@
+- name: Install tmux plugin manager
+  ansible.builtin.git:
+    repo: https://github.com/tmux-plugins/tpm
+    dest: ~/.tmux/plugins/tpm
+    clone: true
+    version: "{{ tpm_version }}"
+
+- name: Setup wakatime
+  block:
+    - name: Download wakatime
+      ansible.builtin.get_url:
+        url: https://raw.githubusercontent.com/wakatime/vim-wakatime/master/scripts/install_cli.py
+        dest: ~/Downloads/install_wakatime.py
+        mode: "0755"
+    - name: Install wakatime
+      ansible.builtin.script: ~/Downloads/install_wakatime.py
+      args:
+        executable: python
+
+- name: Install oh-my-zsh
+  block:
+    - name: Delete existing oh-my-zsh directory
+      ansible.builtin.file:
+        path: ~/.oh-my-zsh
+        state: absent
+        force: true
+    - name: Download oh-my-zsh
+      ansible.builtin.get_url:
+        url: https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh
+        dest: ~/Downloads/install-oh-my-zsh.sh
+        mode: "0755"
+    - name: Install oh-my-zsh
+      ansible.builtin.command:
+        chdir: ~/Downloads
+        cmd: sh install-oh-my-zsh.sh --unattended --keep-zshrc
+        creates: ~/.oh-my-zsh
+
+- name: Install oh-my-zsh plugins
+  block:
+    - name: Install wakatime plugin
+      ansible.builtin.git:
+        repo: https://github.com/sobolevn/wakatime-zsh-plugin.git
+        dest: ~/.oh-my-zsh/custom/plugins/wakatime
+        clone: true
+        version: "{{ wakatime_zsh_plugin_version }}"
+    - name: Install zsh-autosuggestions plugin
+      ansible.builtin.git:
+        repo: https://github.com/zsh-users/zsh-autosuggestions
+        dest: ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions
+        clone: true
+        version: "{{ zsh_autosuggestions_plugin_version }}"
+    - name: Install zsh-history-substring-search plugin
+      ansible.builtin.git:
+        repo: https://github.com/zsh-users/zsh-history-substring-search
+        dest: ~/.oh-my-zsh/custom/plugins/zsh-history-substring-search
+        clone: true
+        version: "{{ zsh_history_substring_search_plugin_version }}"
+    - name: Install zsh-tmux-auto-title
+      ansible.builtin.git:
+        repo: https://github.com/mbenford/zsh-tmux-auto-title
+        dest: ~/.oh-my-zsh/custom/plugins/zsh-tmux-auto-title
+        clone: true
+        version: "{{ zsh_tmux_auto_title_plugin_version }}"
+
+- name: Download starship.rs
+  ansible.builtin.get_url:
+    url: https://starship.rs/install.sh
+    dest: ~/Downloads/install-starship.sh
+    mode: "0755"
+
+- name: Install starship.rs
+  ansible.builtin.command:
+    chdir: ~/Downloads
+    cmd: ./install-starship.sh -y
+  changed_when: false
+
+- name: Download zoxide
+  ansible.builtin.get_url:
+    url: https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh
+    dest: ~/Downloads/install-zoxide.sh
+    mode: "0755"
+
+- name: Install zoxide
+  ansible.builtin.command:
+    chdir: ~/Downloads
+    cmd: ./install-zoxide.sh
+  changed_when: false
+
+- name: Install scram-sha-256
+  become: true
+  ansible.builtin.get_url:
+    url: https://github.com/supercaracal/scram-sha-256/releases/download/latest/scram-sha-256-linux-amd64
+    dest: /usr/local/bin/scram-sha-256
+    mode: "0755"

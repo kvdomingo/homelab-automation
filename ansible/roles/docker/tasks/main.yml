@@ -1,0 +1,92 @@
+- name: Add Docker GPG key and repository
+  block:
+    - name: Ensure keyrings directory exists
+      ansible.builtin.file:
+        path: /etc/apt/keyrings
+        state: directory
+        mode: '0755'
+    - name: Download Docker GPG key
+      ansible.builtin.get_url:
+        url: https://download.docker.com/linux/debian/gpg
+        dest: /tmp/docker.gpg
+        mode: "0644"
+    - name: Import Docker GPG key
+      ansible.builtin.command:
+        cmd: gpg --dearmor --yes -o /etc/apt/keyrings/docker.gpg /tmp/docker.gpg
+      register: gpg_import
+      changed_when: gpg_import.rc == 0
+    - name: Set permissions for Docker GPG key
+      ansible.builtin.file:
+        path: /etc/apt/keyrings/docker.gpg
+        mode: "0644"
+    - name: Get OS architecture
+      ansible.builtin.command: dpkg --print-architecture
+      register: dpkg_arch
+      changed_when: false
+    - name: Get OS codename
+      ansible.builtin.shell: . /etc/os-release && echo "$VERSION_CODENAME"
+      register: os_codename
+      changed_when: false
+    - name: Add Docker repository
+      ansible.builtin.copy:
+        content: |
+          deb [arch={{ dpkg_arch.stdout }} signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian {{ os_codename.stdout }} stable
+        dest: /etc/apt/sources.list.d/docker.list
+        mode: "0644"
+
+- name: Remove conflicting Docker packages
+  ansible.builtin.package:
+    name:
+      - docker.io
+      - docker-doc
+      - docker-compose
+      - podman-docker
+      - containerd
+      - runc
+    state: absent
+
+- name: Update default Docker daemon.json
+  ansible.builtin.copy:
+    src: ./files/daemon.json
+    dest: /etc/docker
+    force: true
+    mode: "644"
+
+- name: Update apt
+  ansible.builtin.apt:
+    update_cache: true
+    upgrade: true
+
+- name: Install basics
+  ansible.builtin.package:
+    name:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-buildx-plugin
+      - docker-compose-plugin
+      - gnupg
+      - htop
+      - neofetch
+      - neovim
+      - nfs-common
+      - open-iscsi
+      - policycoreutils
+      - vim
+      - wget
+    state: latest
+
+- name: Create Docker group
+  ansible.builtin.group:
+    name: docker
+    state: present
+
+- name: Add user to Docker group
+  ansible.builtin.user:
+    name: kvdomingo
+    append: true
+    groups:
+      - docker
