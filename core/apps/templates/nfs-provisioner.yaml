@@ -26,7 +26,7 @@ spec:
           accessModes: ReadWriteMany
         podDisruptionBudget:
           enabled: true
-          minAvailable: 1
+          minAvailable: 2
   destination:
     server: {{ .Values.destination.server }}
     namespace: kube-system
