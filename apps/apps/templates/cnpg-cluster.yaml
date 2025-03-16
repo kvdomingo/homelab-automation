@@ -23,6 +23,7 @@ spec:
             mode: standalone
             cluster:
               instances: 3
+              imageName: ghcr.io/kvdomingo/postgresql-pig:17-cnpg
               storage:
                 size: 10Gi
               walStorage:
