@@ -11,7 +11,7 @@ spec:
   source:
     repoURL: https://cloudflare.github.io/helm-charts
     chart: cloudflare-tunnel
-    targetRevision: 0.3.0
+    targetRevision: 0.3.2
     plugin:
       name: argocd-vault-plugin-helm
       env:
@@ -24,7 +24,7 @@ spec:
               secret: "<path:kv/data/lab/cloudflare#CLOUDFLARE_TUNNEL_SECRET>"
               enableWarp: true
             image:
-              tag: "2024.8.2"
+              tag: "2025.2.1"
   destination:
     server: {{ .Values.destination.server }}
     namespace: cloudflare
