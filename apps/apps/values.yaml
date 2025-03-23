@@ -8,6 +8,7 @@ ingress:
 
 disableAffine: true
 disableAirbyte: true
+disableCnpgCluster: true
 disableDocmost: true
 disableFirefly: true
 disableKestra: true
