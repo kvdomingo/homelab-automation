@@ -1,5 +1,5 @@
 - name: Initial setup of VMs
-  hosts: local
+  hosts: '*'
   become: true
   roles:
     - docker

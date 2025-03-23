@@ -1,3 +1,22 @@
+- name: Update apt
+  ansible.builtin.apt:
+    update_cache: true
+
+- name: Install basics
+  ansible.builtin.package:
+    name:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - gnupg
+      - htop
+      - neofetch
+      - neovim
+      - nfs-common
+      - vim
+      - wget
+    state: latest
+
 - name: Add Docker GPG key and repository
   block:
     - name: Ensure keyrings directory exists
@@ -55,28 +74,15 @@
 - name: Update apt
   ansible.builtin.apt:
     update_cache: true
-    upgrade: true
 
-- name: Install basics
+- name: Install Docker
   ansible.builtin.package:
     name:
-      - apt-transport-https
-      - ca-certificates
-      - curl
       - docker-ce
       - docker-ce-cli
       - containerd.io
       - docker-buildx-plugin
       - docker-compose-plugin
-      - gnupg
-      - htop
-      - neofetch
-      - neovim
-      - nfs-common
-      - open-iscsi
-      - policycoreutils
-      - vim
-      - wget
     state: latest
 
 - name: Create Docker group
