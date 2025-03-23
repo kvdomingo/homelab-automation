@@ -11,11 +11,13 @@ spec:
   sources:
     - repoURL: https://charts.jetstack.io
       chart: cert-manager
-      targetRevision: v1.16.2
+      targetRevision: v1.17.1
       helm:
         releaseName: cert-manager
         valuesObject:
           installCRDs: true
+          image:
+            tag: v1.17.1
           dns01RecursiveNameservers: "1.1.1.1:53,1.0.0.1:53"
           dns01RecursiveNameserversOnly: true
           podDnsPolicy: None
@@ -30,10 +32,10 @@ spec:
               maxUnavailable: 1
           podDisruptionBudget:
             enabled: true
-            maxUnavailable: 1
+            maxUnavailable: 2
           prometheus:
             enabled: true
-            serviceMonitor:
+            servicemonitor:
               enabled: true
     - repoURL: https://git.lab.kvd.studio/r/homelab
       targetRevision: main
