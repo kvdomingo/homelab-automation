@@ -11,7 +11,7 @@ spec:
   source:
     repoURL: https://helm.plane.so/
     chart: plane-ce
-    targetRevision: 1.0.28
+    targetRevision: 1.0.29
     plugin:
       name: argocd-vault-plugin-helm
       env:
@@ -20,7 +20,6 @@ spec:
             ingress:
               enabled: true
               appHost: plane.{{ .Values.ingress.baseDomain }}
-              minioHost: plane-minio.{{ .Values.ingress.baseDomain }}
               ingressClass: traefik
               ingress_annotations:
                 gethomepage.dev/enabled: "true"
@@ -34,7 +33,12 @@ spec:
               local_setup: false
             minio:
               local_setup: false
+            rabbitmq:
+              storageClass: nfs-client
             env:
+              pgdb_username: plane
+              pgdb_password: <path:kv/data/lab/plane#POSTGRESQL_PASSWORD>
+              pgdb_name: plane
               pgdb_remote_url: "postgres://plane:<path:kv/data/lab/plane#POSTGRESQL_PASSWORD>@srv-pg-01.lab:5432/plane"
               aws_access_key: "<path:kv/data/lab/plane#MINIO_ROOT_USER>"
               aws_secret_access_key: "<path:kv/data/lab/plane#MINIO_ROOT_PASSWORD>"
