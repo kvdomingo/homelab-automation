@@ -1,0 +1,12 @@
+{{- if .Values.pdb.enabled }}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "plausible.fullname" . }}
+  labels:
+    {{- include "plausible.labels" . | nindent 4 }}
+spec:
+  selector:
+    {{- include "plausible.selectorLabels" . | nindent 4 }}
+  minAvailable: {{ .Values.pdb.minAvailable }}
+{{- end }}
