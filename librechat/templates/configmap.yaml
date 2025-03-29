@@ -63,7 +63,7 @@ metadata:
     helm.sh/hook-weight: "-5"
     helm.sh/hook-delete-policy: before-hook-creation
 data:
-  DB_HOST: "pg-postgresql-ha-pgpool.postgres.svc.cluster.local"
+  DB_HOST: "srv-pg-01.lab"
   DB_PORT: "5432"
   POSTGRES_USER: "librechat"
   POSTGRES_DATABASE: "librechat"
