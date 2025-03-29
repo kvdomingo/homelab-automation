@@ -14,6 +14,12 @@ imagePullSecrets: [ ]
 nameOverride: ""
 fullnameOverride: ""
 
+annotations:
+  keel.sh/policy: "force"
+  keel.sh/match-tag: "true"
+  keel.sh/trigger: "poll"
+  keel.sh/pollSchedule: "@every 5m"
+
 serviceAccount:
   # Specifies whether a service account should be created
   create: true

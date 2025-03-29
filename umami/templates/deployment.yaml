@@ -56,12 +56,12 @@ spec:
       initContainers:
         - name: {{ .Chart.Name }}-init-wait-db
           image: {{ .Values.postgresql.image.repository }}:{{ .Values.postgresql.image.tag }}
-          imagePullPolicy: {{ .Values.postgresql.image.pullPolicy }}
+          imagePullPolicy: Always
           command:
             - /bin/sh
             - -c
             - |
-              until pg_isready -h {{ .Chart.Name }}-postgresql -U {{ .Values.postgresql.auth.username }} -d {{ .Values.postgresql.auth.database }}; do
+              until pg_isready -h srv-pg-01.lab -U {{ .Values.postgresql.auth.username }} -d {{ .Values.postgresql.auth.database }}; do
                 echo "Waiting for PostgreSQL to be ready..."
                 sleep 2
               done
