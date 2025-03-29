@@ -124,19 +124,3 @@ postgresql:
   auth:
     username: umami
     database: umami
-    existingSecret: umami-secrets
-    secretKeys:
-      userPasswordKey: POSTGRESQL_PASSWORD
-      replicationPasswordKey: POSTGRESQL_PASSWORD
-      adminPasswordKey: POSTGRESQL_PASSWORD
-  primary:
-    readinessProbe:
-      enabled: false
-    livenessProbe:
-      enabled: false
-    persistence:
-      enabled: true
-      annotations:
-        argocd.argoproj.io/sync-options: Delete=false,Prune=false
-  volumePermissions:
-    enabled: true
