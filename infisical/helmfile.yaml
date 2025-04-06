@@ -1,0 +1,14 @@
+repositories:
+  - name: infisical
+    url: https://dl.cloudsmith.io/public/infisical/helm-charts/helm/charts/
+
+releases:
+  - name: manifests
+    namespace: infisical
+    chart: ./manifests
+  - name: infisical
+    chart: infisical/infisical-standalone
+    version: 1.4.0
+    namespace: infisical
+    values:
+      - values.yaml
