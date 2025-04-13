@@ -1,4 +1,4 @@
-system_packages:
+base_system_packages:
   - apache2-utils
   - apt-transport-https
   - asciinema
@@ -52,7 +52,6 @@ system_packages:
   - lsb-release
   - mesa-utils
   - neofetch
-  - nvidia-container-toolkit
   - ncat
   - net-tools
   - python3

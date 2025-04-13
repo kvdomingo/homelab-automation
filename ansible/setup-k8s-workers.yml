@@ -2,5 +2,4 @@
   hosts: rpi5_workers
   become: true
   roles:
-    - docker
     - kubernetes-server-agent

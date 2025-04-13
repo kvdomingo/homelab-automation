@@ -2,5 +2,4 @@
   hosts: k8s_master
   become: true
   roles:
-    - docker
     - kubernetes-server-master
