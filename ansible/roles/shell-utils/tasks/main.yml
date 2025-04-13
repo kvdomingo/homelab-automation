@@ -99,3 +99,15 @@
     url: https://github.com/supercaracal/scram-sha-256/releases/latest/download/scram-sha-256-linux-amd64
     dest: /usr/local/bin/scram-sha-256
     mode: "0755"
+
+- name: Install nvtop
+  block:
+    - name: Download nvtop
+      ansible.builtin.get_url:
+        url: https://github.com/Syllo/nvtop/releases/download/{{ shell_utils_nvtop_version }}/nvtop-{{ shell_utils_nvtop_version }}-x86_64.AppImage
+        dest: "{{ USER_HOME }}/Downloads/nvtop-{{ shell_utils_nvtop_version }}-x86_64.AppImage"
+    - name: Install nvtop
+      ansible.builtin.copy:
+        src: "{{ USER_HOME }}/Downloads/nvtop-{{ shell_utils_nvtop_version }}-x86_64.AppImage"
+        dest: /usr/local/bin/nvtop
+        mode: "0755"
