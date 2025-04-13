@@ -22,6 +22,7 @@ base_system_packages:
   - git
   - gnome-keyring
   - gnupg
+  - gnupg2
   - gpg
   - g++
   - hping3

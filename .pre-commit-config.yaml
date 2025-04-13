@@ -16,7 +16,7 @@ repos:
       - id: check-toml
       - id: check-xml
   - repo: https://github.com/zricethezav/gitleaks
-    rev: v8.21.1
+    rev: v8.24.3
     hooks:
       - id: gitleaks
         args: [ '--verbose' ]
