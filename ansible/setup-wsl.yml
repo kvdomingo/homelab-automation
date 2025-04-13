@@ -1,10 +1,10 @@
 - name: Initial WSL setup
-  hosts: rpi5
-  become: true
+  hosts: local
   roles:
     - base
     - dotfiles
     - shell-utils
     - mise
+    - docker
     - kubernetes-client
     - jetbrains

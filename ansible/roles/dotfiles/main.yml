@@ -1,20 +1,20 @@
 - name: Clone dotrepo
   ansible.builtin.git:
     repo: https://github.com/kvdomingo/dotrepo.git
-    dest: ~/dotrepo
+    dest: "{{ USER_HOME }}/dotrepo"
     clone: true
     force: true
     version: master
 
 - name: Delete existing .zshrc
   ansible.builtin.file:
-    path: ~/.zshrc
+    path: "{{ USER_HOME }}/.zshrc"
     state: absent
     force: true
 
 - name: Install dotrepo
   ansible.builtin.shell:
-    chdir: ~/dotrepo
+    chdir: "{{ USER_HOME }}/dotrepo"
     cmd: ./install
   ignore_errors: true
   changed_when: false

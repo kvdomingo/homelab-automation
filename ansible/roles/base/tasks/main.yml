@@ -7,5 +7,5 @@
 - name: Install basics
   become: true
   ansible.builtin.package:
-    name: "{{ base_packages }}"
+    name: "{{ base_system_packages }}"
     state: latest

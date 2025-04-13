@@ -3,35 +3,32 @@
     - name: Download mise installer
       ansible.builtin.get_url:
         url: https://mise.run
-        dest: ~/Downloads/install-mise.sh
+        dest: "{{ USER_HOME }}/Downloads/install-mise.sh"
         mode: "0755"
     - name: Install mise
       ansible.builtin.command:
-        chdir: ~/Downloads
+        chdir: "{{ USER_HOME }}/Downloads"
         cmd: ./install-mise.sh
-      changed_when: false
-    - name: Add custom mise registries
-      ansible.builtin.command: mise plugin add supabase-cli https://github.com/gavinying/asdf-supabase-cli.git
       changed_when: false
     - name: Install mise plugins/tools
       ansible.builtin.command: mise install --yes
       changed_when: false
 
 - name: Install/update global Python packages
-  loop: "{{ global_python_packages }}"
+  loop: "{{ mise_global_python_packages }}"
   ansible.builtin.pip:
     name: "{{ item }}"
     state: latest
 
 - name: Install/update global Node.js packages
-  loop: "{{ global_node_packages }}"
+  loop: "{{ mise_global_node_packages }}"
   community.general.npm:
     name: "{{ item }}"
     state: latest
     global: true
 
 - name: Install/update global Go packages
-  loop: "{{ global_go_packages }}"
-  ansible.builtin.shell: |
-    {{ item }}
+  loop: "{{ mise_global_go_packages }}"
+  ansible.builtin.command: |
+    go install {{ item }}
   changed_when: false

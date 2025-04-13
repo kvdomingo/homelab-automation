@@ -30,7 +30,6 @@
         --cluster-init
         --write-kubeconfig-mode 644
         --disable=traefik,coredns,metrics-server
-        --docker
       changed_when: false
 
 - name: Get kubeconfig

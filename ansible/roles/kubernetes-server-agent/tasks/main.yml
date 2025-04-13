@@ -28,5 +28,5 @@
         K3S_TOKEN: "{{ lookup('file', './outputs/rpi5-node-token') }}"
         K3S_URL: https://srv-pi5-01.lab:6443
       ansible.builtin.shell: >
-        ~/Downloads/install-k3s.sh --docker
+        ~/Downloads/install-k3s.sh
       changed_when: false

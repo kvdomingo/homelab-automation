@@ -1,16 +1,16 @@
 - name: Download JetBrains Toolbox
   ansible.builtin.get_url:
     url: https://download.jetbrains.com/toolbox/{{ jetbrains_toolbox_version }}.tar.gz
-    dest: ~/Downloads/{{ jetbrains_toolbox_version }}.tar.gz
+    dest: "{{ USER_HOME }}/Downloads/{{ jetbrains_toolbox_version }}.tar.gz"
     mode: '644'
 
 - name: Untar JetBrains Toolbox
   ansible.builtin.unarchive:
-    src: ~/Downloads/{{ jetbrains_toolbox_version }}.tar.gz
-    dest: ~/Downloads
+    src: "{{ USER_HOME }}/Downloads/{{ jetbrains_toolbox_version }}.tar.gz"
+    dest: "{{ USER_HOME }}/Downloads"
 
 - name: Install JetBrains Toolbox
   ansible.builtin.command:
-    chdir: ~/Downloads/{{ jetbrains_toolbox_version }}
+    chdir: "{{ USER_HOME }}/Downloads/{{ jetbrains_toolbox_version }}"
     cmd: ./jetbrains-toolbox
-    creates: ~/.local/share/JetBrains/Toolbox/bin/jetbrains-toolbox
+    creates: "{{ USER_HOME }}/.local/share/JetBrains/Toolbox/bin/jetbrains-toolbox"
