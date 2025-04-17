@@ -134,11 +134,11 @@ redis:
     enabled: false
 
   # -- Requires a password for Redis authentication
-  usePassword: false
+  usePassword: true
 
   auth:
     # -- Redis password
-    password: ""
+    password: "infisical"
 
   # -- Redis deployment type (e.g., standalone or cluster)
   architecture: standalone
