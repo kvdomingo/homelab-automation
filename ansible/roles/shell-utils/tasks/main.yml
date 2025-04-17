@@ -111,3 +111,23 @@
         src: "{{ USER_HOME }}/Downloads/nvtop-{{ shell_utils_nvtop_version }}-x86_64.AppImage"
         dest: /usr/local/bin/nvtop
         mode: "0755"
+
+- name: Install Infisical
+  block:
+    - name: Download Infisical setup
+      ansible.builtin.get_url:
+        url: https://artifacts-cli.infisical.com/setup.deb.sh
+        dest: "{{ USER_HOME }}/Downloads/setup-infisical.sh"
+        mode: "0755"
+    - name: Install Infisical setup
+      ansible.builtin.command:
+        chdir: "{{ USER_HOME }}/Downloads"
+        cmd: ./setup-infisical.sh
+      changed_when: false
+    - name: Update apt
+      ansible.builtin.apt:
+        update_cache: true
+    - name: Install Infisical
+      ansible.builtin.package:
+        name: infisical
+        state: latest
