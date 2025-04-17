@@ -14,3 +14,4 @@ data:
   POSTGRESQL_USERNAME: "discai"
   POSTGRESQL_DATABASE: "discai"
   CHAT_MODEL: "claude-3-5-sonnet-latest"
+  AGNO_MONITOR: "true"
