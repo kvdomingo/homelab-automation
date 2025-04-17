@@ -4,11 +4,11 @@ repositories:
 
 releases:
   - name: manifests
-    namespace: infisical
+    namespace: infisical2
     chart: ./manifests
   - name: infisical
     chart: infisical/infisical-standalone
-    version: 1.4.0
-    namespace: infisical
+    version: 1.5.0
+    namespace: infisical2
     values:
       - values.yaml
