@@ -9,8 +9,8 @@ metadata:
     helm.sh/hook-weight: "-5"
     helm.sh/hook-delete-policy: before-hook-creation
 data:
-  DB_HOST: "pg-postgresql-ha-pgpool.postgres.svc.cluster.local"
+  DB_HOST: "10.10.10.103"
   DB_PORT: "5432"
   POSTGRESQL_USERNAME: "discai"
   POSTGRESQL_DATABASE: "discai"
-  CHAT_MODEL: "claude-3-5-haiku-latest"
+  CHAT_MODEL: "claude-3-5-sonnet-latest"
