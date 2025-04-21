@@ -15,6 +15,7 @@ base_system_packages:
   - cowsay
   - curl
   - direnv
+  - dvipng
   - flex
   - fzf
   - gcc
