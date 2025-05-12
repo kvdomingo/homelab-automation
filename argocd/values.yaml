@@ -56,7 +56,7 @@ global:
     # -- If defined, a repository applied to all Argo CD deployments
     repository: quay.io/argoproj/argocd
     # -- Overrides the global Argo CD image tag whose default is the chart appVersion
-    tag: ""
+    tag: v3.0.0
     # -- If defined, a imagePullPolicy applied to all Argo CD deployments
     imagePullPolicy: IfNotPresent
 
@@ -116,7 +116,8 @@ global:
   priorityClassName: ""
 
   # -- Default node selector for all components
-  nodeSelector: { }
+  nodeSelector:
+    kubernetes.io/os: linux
 
   # -- Default tolerations for all components
   tolerations: [ ]
@@ -138,7 +139,7 @@ global:
       #    - antarctica-west1
 
   # -- Default [TopologySpreadConstraints] rules for all components
-  ## Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/
+  ## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/
   ## If labelSelector is left out, it will default to the labelSelector of the component
   topologySpreadConstraints: [ ]
   # - maxSkew: 1
@@ -160,7 +161,7 @@ global:
 
 ## Argo Configs
 configs:
-  # General Argo CD configuration
+  # General Argo CD configuration. Any values you put under `.configs.cm` are passed to argocd-cm ConfigMap.
   ## Ref: https://github.com/argoproj/argo-cd/blob/master/docs/operator-manual/argocd-cm.yaml
   cm:
     # -- Create the argocd-cm configmap for [declarative setup]
@@ -171,6 +172,10 @@ configs:
 
     # -- The name of tracking label used by Argo CD for resource pruning
     application.instanceLabelKey: argocd.argoproj.io/instance
+
+    # -- Enable control of the service account used for the sync operation (alpha)
+    ## Ref: https://argo-cd.readthedocs.io/en/stable/operator-manual/app-sync-using-impersonation/
+    application.sync.impersonation.enabled: false
 
     # -- Enable logs RBAC enforcement
     ## Ref: https://argo-cd.readthedocs.io/en/latest/operator-manual/upgrading/2.3-2.4/#enable-logs-rbac-enforcement
@@ -225,6 +230,150 @@ configs:
     #     - profile
     #     - email
 
+    # Extension Configuration
+    ## Ref: https://argo-cd.readthedocs.io/en/latest/developer-guide/extensions/proxy-extensions/
+    # extension.config: |
+    #   extensions:
+    #   - name: httpbin
+    #     backend:
+    #       connectionTimeout: 2s
+    #       keepAlive: 15s
+    #       idleConnectionTimeout: 60s
+    #       maxIdleConnections: 30
+    #       services:
+    #       - url: http://httpbin.org
+    #         headers:
+    #         - name: some-header
+    #           value: '$some.argocd.secret.key'
+    #         cluster:
+    #           name: some-cluster
+    #           server: https://some-cluster
+
+    ## Default configuration for ignoreResourceUpdates.
+    ## The ignoreResourceUpdates list contains K8s resource's properties that are known to be frequently updated
+    ## by controllers and operators. These resources, when watched by argo, will cause many unnecessary updates.
+
+    # -- Ignoring status for all resources. An update will still be sent if the status update causes the health to change.
+    # @default -- See [values.yaml]
+    resource.customizations.ignoreResourceUpdates.all: |
+      jsonPointers:
+        - /status
+    # -- Some Application fields are generated and not related to the application updates itself
+    ## The Application itself is already watched by the controller lister, but this configuration is applied for apps of apps
+    # @default -- See [values.yaml]
+    resource.customizations.ignoreResourceUpdates.argoproj.io_Application: |
+      jqPathExpressions:
+        - '.metadata.annotations."notified.notifications.argoproj.io"'
+        - '.metadata.annotations."argocd.argoproj.io/refresh"'
+        - '.metadata.annotations."argocd.argoproj.io/hydrate"'
+        - '.operation'
+    # -- Ignore Argo Rollouts generated fields
+    # @default -- See [values.yaml]
+    resource.customizations.ignoreResourceUpdates.argoproj.io_Rollout: |
+      jqPathExpressions:
+        - '.metadata.annotations."notified.notifications.argoproj.io"'
+    # -- Legacy annotations used on HPA autoscaling/v1
+    # @default -- See [values.yaml]
+    resource.customizations.ignoreResourceUpdates.autoscaling_HorizontalPodAutoscaler: |
+      jqPathExpressions:
+        - '.metadata.annotations."autoscaling.alpha.kubernetes.io/behavior"'
+        - '.metadata.annotations."autoscaling.alpha.kubernetes.io/conditions"'
+        - '.metadata.annotations."autoscaling.alpha.kubernetes.io/metrics"'
+        - '.metadata.annotations."autoscaling.alpha.kubernetes.io/current-metrics"'
+    # -- Ignore the cluster-autoscaler status
+    # @default -- See [values.yaml]
+    resource.customizations.ignoreResourceUpdates.ConfigMap: |
+      jqPathExpressions:
+        # Ignore the cluster-autoscaler status
+        - '.metadata.annotations."cluster-autoscaler.kubernetes.io/last-updated"'
+        # Ignore the annotation of the legacy Leases election
+        - '.metadata.annotations."control-plane.alpha.kubernetes.io/leader"'
+    # -- Ignore the common scaling annotations
+    # @default -- See [values.yaml]
+    resource.customizations.ignoreResourceUpdates.apps_ReplicaSet: |
+      jqPathExpressions:
+        - '.metadata.annotations."deployment.kubernetes.io/desired-replicas"'
+        - '.metadata.annotations."deployment.kubernetes.io/max-replicas"'
+        - '.metadata.annotations."rollout.argoproj.io/desired-replicas"'
+    # -- Ignores update if EndpointSlice is not excluded globally
+    # @default -- See [values.yaml]
+    resource.customizations.ignoreResourceUpdates.discovery.k8s.io_EndpointSlice: |
+      jsonPointers:
+        - /metadata
+        - /endpoints
+        - /ports
+    # -- Ignores update if Endpoints is not excluded globally
+    # @default -- See [values.yaml]
+    resource.customizations.ignoreResourceUpdates.Endpoints: |
+      jsonPointers:
+        - /metadata
+        - /subsets
+
+    ## Default configuration for exclusions.
+    ## The exclusion list are K8s resources that we assume will never be declared in Git,
+    ## and are never child objects of managed resources that need to be presented in the resource tree.
+    ## This list contains high volume and  high churn metadata objects which we exclude for performance
+    ## reasons, reducing connections and load to the K8s API servers of managed clusters.
+
+    # -- Resource Exclusion/Inclusion
+    # @default -- See [values.yaml]
+    resource.exclusions: |
+      ### Network resources created by the Kubernetes control plane and excluded to reduce the number of watched events and UI clutter
+      - apiGroups:
+        - ''
+        - discovery.k8s.io
+        kinds:
+        - Endpoints
+        - EndpointSlice
+      ### Internal Kubernetes resources excluded reduce the number of watched events
+      - apiGroups:
+        - coordination.k8s.io
+        kinds:
+        - Lease
+      ### Internal Kubernetes Authz/Authn resources excluded reduce the number of watched events
+      - apiGroups:
+        - authentication.k8s.io
+        - authorization.k8s.io
+        kinds:
+        - SelfSubjectReview
+        - TokenReview
+        - LocalSubjectAccessReview
+        - SelfSubjectAccessReview
+        - SelfSubjectRulesReview
+        - SubjectAccessReview
+      ### Intermediate Certificate Request excluded reduce the number of watched events
+      - apiGroups:
+        - certificates.k8s.io
+        kinds:
+        - CertificateSigningRequest
+      - apiGroups:
+        - cert-manager.io
+        kinds:
+        - CertificateRequest
+      ### Cilium internal resources excluded reduce the number of watched events and UI Clutter
+      - apiGroups:
+        - cilium.io
+        kinds:
+        - CiliumIdentity
+        - CiliumEndpoint
+        - CiliumEndpointSlice
+      ### Kyverno intermediate and reporting resources excluded reduce the number of watched events and improve performance
+      - apiGroups:
+        - kyverno.io
+        - reports.kyverno.io
+        - wgpolicyk8s.io
+        kinds:
+        - PolicyReport
+        - ClusterPolicyReport
+        - EphemeralReport
+        - ClusterEphemeralReport
+        - AdmissionReport
+        - ClusterAdmissionReport
+        - BackgroundScanReport
+        - ClusterBackgroundScanReport
+        - UpdateRequest
+
+
   # Argo CD configuration parameters
   ## Ref: https://github.com/argoproj/argo-cd/blob/master/docs/operator-manual/argocd-cmd-params-cm.yaml
   params:
@@ -248,6 +397,8 @@ configs:
     controller.self.heal.timeout.seconds: 5
     # -- Repo server RPC call timeout seconds.
     controller.repo.server.timeout.seconds: 60
+    # -- Specifies the timeout after which a sync would be terminated. 0 means no timeout
+    controller.sync.timeout.seconds: 0
 
     ## Server properties
     # -- Run server without TLS
@@ -263,6 +414,8 @@ configs:
     server.disable.auth: false
     # -- Enable GZIP compression
     server.enable.gzip: true
+    # -- Enable proxy extension feature. (proxy extension is in Alpha phase)
+    server.enable.proxy.extension: false
     # -- Set X-Frame-Options header in HTTP responses to value. To disable, set to "".
     server.x.frame.options: sameorigin
 
@@ -275,7 +428,9 @@ configs:
     applicationsetcontroller.policy: sync
     # -- Enables use of the Progressive Syncs capability
     applicationsetcontroller.enable.progressive.syncs: false
-    # -- A list of glob patterns specifying where to look for ApplicationSet resources. (e.g. `"namespace1, namespace2"`)
+    # -- A list of glob patterns specifying where to look for ApplicationSet resources. (e.g. `"argocd,argocd-appsets-*"`)
+    # @default -- `""` (default is only the ns where the controller is installed)
+    ## For more information: https://argo-cd.readthedocs.io/en/stable/operator-manual/applicationset/Appset-Any-Namespace/
     applicationsetcontroller.namespaces: ""
 
     # -- Enables [Applications in any namespace]
@@ -345,6 +500,9 @@ configs:
   # SSH known hosts for Git repositories
   ## Ref: https://argo-cd.readthedocs.io/en/stable/operator-manual/declarative-setup/#ssh-known-host-public-keys
   ssh:
+    # -- Specifies if the argocd-ssh-known-hosts-cm configmap should be created by Helm.
+    create: true
+
     # -- Annotations to be added to argocd-ssh-known-hosts-cm configmap
     annotations: { }
 
@@ -384,6 +542,9 @@ configs:
     #   ...
     #   -----END CERTIFICATE-----
 
+    # -- Specifies if the argocd-tls-certs-cm configmap should be created by Helm.
+    create: true
+
   # ConfigMap for Config Management Plugins
   # Ref: https://argo-cd.readthedocs.io/en/stable/operator-manual/config-management-plugins/
   cmp:
@@ -413,12 +574,12 @@ configs:
 
       # --- Second plugin
       # my-plugin2:
-    #   init:
-    #     command: [sh]
-    #     args: [-c, 'echo "Initializing..."']
-    #   generate:
-    #     command: [sh, -c]
-    #     args:
+      #   init:
+      #     command: [sh]
+      #     args: [-c, 'echo "Initializing..."']
+      #   generate:
+      #     command: [sh, -c]
+      #     args:
     #       - |
     #         echo "{\"kind\": \"ConfigMap\", \"apiVersion\": \"v1\", \"metadata\": { \"name\": \"$ARGOCD_APP_NAME\", \"namespace\": \"$ARGOCD_APP_NAMESPACE\", \"annotations\": {\"Foo\": \"$ARGOCD_ENV_FOO\", \"KubeVersion\": \"$KUBE_VERSION\", \"KubeApiVersion\": \"$KUBE_API_VERSIONS\",\"Bar\": \"baz\"}}}"
     #   discover:
@@ -461,12 +622,12 @@ configs:
     #   project: my-project1
     #   config:
     #     bearerToken: "<authentication token>"
-  #     tlsClientConfig:
-  #       insecure: false
-  #       caData: "<base64 encoded certificate>"
-  # mycluster4-sharded:
-  #   shard: 1
-  #   server: https://mycluster4.example.com
+    #     tlsClientConfig:
+    #       insecure: false
+    #       caData: "<base64 encoded certificate>"
+    # mycluster4-sharded:
+    #   shard: 1
+    #   server: https://mycluster4.example.com
   #   labels: {}
   #   annotations: {}
   #   config:
@@ -484,12 +645,12 @@ configs:
     #   githubAppInstallationID: 2
     #   githubAppEnterpriseBaseUrl: https://ghe.example.com/api/v3
     #   githubAppPrivateKey: |
-  #     -----BEGIN OPENSSH PRIVATE KEY-----
-  #     ...
-  #     -----END OPENSSH PRIVATE KEY-----
-  # https-creds:
-  #   url: https://github.com/argoproj
-  #   password: my-password
+    #     -----BEGIN OPENSSH PRIVATE KEY-----
+    #     ...
+    #     -----END OPENSSH PRIVATE KEY-----
+    # https-creds:
+    #   url: https://github.com/argoproj
+    #   password: my-password
   #   username: my-username
   # ssh-creds:
   #  url: git@github.com:argoproj-labs
@@ -505,11 +666,11 @@ configs:
   ## Creates a secret for each key/value specified below to create repositories
   ## Note: the last example in the list would use a repository credential template, configured under "configs.credentialTemplates".
   repositories: { }
-  # istio-helm-repo:
-  #   url: https://storage.googleapis.com/istio-prerelease/daily-build/master-latest-daily/charts
-  #   name: istio.io
-  #   type: helm
-  # private-helm-repo:
+    # istio-helm-repo:
+    #   url: https://storage.googleapis.com/istio-prerelease/daily-build/master-latest-daily/charts
+    #   name: istio.io
+    #   type: helm
+    # private-helm-repo:
   #   url: https://my-private-chart-repo.internal
   #   name: private-repo
   #   type: helm
@@ -589,12 +750,12 @@ extraObjects: [ ]
   #           objectType: "secretsmanager"
   #           jmesPath:
   #               - path: "client_id"
-#                 objectAlias: "client_id"
-#               - path: "client_secret"
-#                 objectAlias: "client_secret"
-#     secretObjects:
-#     - data:
-#       - key: client_id
+  #                 objectAlias: "client_id"
+  #               - path: "client_secret"
+  #                 objectAlias: "client_secret"
+  #     secretObjects:
+  #     - data:
+  #       - key: client_id
 #         objectName: client_id
 #       - key: client_secret
 #         objectName: client_secret
@@ -693,8 +854,9 @@ controller:
   #    image: alpine:3
   #    command: [sh, -c]
   #    args:
-  #      - wget -qO kubelogin.zip https://github.com/Azure/kubelogin/releases/download/v0.0.25/kubelogin-linux-amd64.zip &&
-  #        unzip kubelogin.zip && mv bin/linux_amd64/kubelogin /custom-tools/
+  #      - wget -qO /custom-tools/kubelogin.zip https://github.com/Azure/kubelogin/releases/download/v0.2.7/kubelogin-linux-amd64.zip &&
+  #        mkdir /custom-tools/tmp && unzip -d /custom-tools/tmp /custom-tools/kubelogin.zip  &&
+  #        mv /custom-tools/tmp/bin/linux_amd64/kubelogin /custom-tools/ && rm -rf custom-tools/tmp && rm /custom-tools/kubelogin.zip
   #    volumeMounts:
   #      - mountPath: /custom-tools
   #        name: custom-tools
@@ -764,7 +926,7 @@ controller:
         - ALL
 
   # Readiness probe for application controller
-  ## Ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/
+  ## Ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
   readinessProbe:
     # -- Minimum consecutive failures for the [probe] to be considered failed after having succeeded
     failureThreshold: 3
@@ -798,7 +960,7 @@ controller:
 
   # -- Assign custom [TopologySpreadConstraints] rules to the application controller
   # @default -- `[]` (defaults to global.topologySpreadConstraints)
-  ## Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/
+  ## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/
   ## If labelSelector is left out, it will default to the labelSelector configuration of the deployment
   topologySpreadConstraints: [ ]
   # - maxSkew: 1
@@ -849,6 +1011,8 @@ controller:
       enabled: true
       # -- Prometheus ServiceMonitor interval
       interval: 30s
+      # -- When true, honorLabels preserves the metric’s labels when they collide with the target’s labels.
+      honorLabels: false
       # -- Prometheus [RelabelConfigs] to apply to samples before scraping
       relabelings: [ ]
       # -- Prometheus [MetricRelabelConfigs] to apply to samples before ingestion
@@ -945,6 +1109,8 @@ dex:
       enabled: true
       # -- Prometheus ServiceMonitor interval
       interval: 30s
+      # -- When true, honorLabels preserves the metric’s labels when they collide with the target’s labels.
+      honorLabels: false
       # -- Prometheus [RelabelConfigs] to apply to samples before scraping
       relabelings: [ ]
       # -- Prometheus [MetricRelabelConfigs] to apply to samples before ingestion
@@ -985,7 +1151,7 @@ dex:
     # -- Dex image repository
     repository: ghcr.io/dexidp/dex
     # -- Dex image tag
-    tag: v2.38.0
+    tag: v2.42.1
     # -- Dex imagePullPolicy
     # @default -- `""` (defaults to global.image.imagePullPolicy)
     imagePullPolicy: ""
@@ -1196,7 +1362,7 @@ dex:
 
   # -- Assign custom [TopologySpreadConstraints] rules to dex
   # @default -- `[]` (defaults to global.topologySpreadConstraints)
-  ## Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/
+  ## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/
   ## If labelSelector is left out, it will default to the labelSelector configuration of the deployment
   topologySpreadConstraints: [ ]
   # - maxSkew: 1
@@ -1210,12 +1376,13 @@ dex:
   #   maxSurge: 25%
   #   maxUnavailable: 25%
 
+  # DEPRECATED - Use configs.params to override
   # -- Dex log format. Either `text` or `json`
   # @default -- `""` (defaults to global.logging.format)
-  logFormat: ""
+  # logFormat: ""
   # -- Dex log level. One of: `debug`, `info`, `warn`, `error`
   # @default -- `""` (defaults to global.logging.level)
-  logLevel: ""
+  # logLevel: ""
 
 ## Redis
 redis:
@@ -1249,7 +1416,8 @@ redis:
     # -- Redis repository
     repository: public.ecr.aws/docker/library/redis
     # -- Redis tag
-    tag: 7.2.4-alpine
+    ## Do not upgrade to >= 7.4.0, otherwise you are no longer using an open source version of Redis
+    tag: 7.2.8-alpine
     # -- Redis image pull policy
     # @default -- `""` (defaults to global.image.imagePullPolicy)
     imagePullPolicy: ""
@@ -1263,9 +1431,9 @@ redis:
     ## Prometheus redis-exporter image
     image:
       # -- Repository to use for the redis-exporter
-      repository: public.ecr.aws/bitnami/redis-exporter
+      repository: ghcr.io/oliver006/redis_exporter
       # -- Tag to use for the redis-exporter
-      tag: 1.58.0
+      tag: v1.71.0
       # -- Image pull policy for the redis-exporter
       # @default -- `""` (defaults to global.image.imagePullPolicy)
       imagePullPolicy: ""
@@ -1283,7 +1451,7 @@ redis:
           - ALL
 
     ## Probes for Redis exporter (optional)
-    ## Ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/
+    ## Ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
     readinessProbe:
       # -- Enable Kubernetes liveness probe for Redis exporter (optional)
       enabled: false
@@ -1341,7 +1509,7 @@ redis:
   #     name: secret-name
 
   ## Probes for Redis server (optional)
-  ## Ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/
+  ## Ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
   readinessProbe:
     # -- Enable Kubernetes liveness probe for Redis server
     enabled: false
@@ -1451,7 +1619,7 @@ redis:
 
   # -- Assign custom [TopologySpreadConstraints] rules to redis
   # @default -- `[]` (defaults to global.topologySpreadConstraints)
-  ## Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/
+  ## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/
   ## If labelSelector is left out, it will default to the labelSelector configuration of the deployment
   topologySpreadConstraints: [ ]
   # - maxSkew: 1
@@ -1504,6 +1672,8 @@ redis:
       enabled: true
       # -- Interval at which metrics should be scraped
       interval: 30s
+      # -- When true, honorLabels preserves the metric’s labels when they collide with the target’s labels.
+      honorLabels: false
       # -- Prometheus [RelabelConfigs] to apply to samples before scraping
       relabelings: [ ]
       # -- Prometheus [MetricRelabelConfigs] to apply to samples before ingestion
@@ -1533,15 +1703,16 @@ redis-ha:
     # -- Redis repository
     repository: public.ecr.aws/docker/library/redis
     # -- Redis tag
-    tag: 7.2.4-alpine
+    ## Do not upgrade to >= 7.4.0, otherwise you are no longer using an open source version of Redis
+    tag: 7.2.8-alpine
   ## Prometheus redis-exporter sidecar
   exporter:
     # -- Enable Prometheus redis-exporter sidecar
     enabled: false
     # -- Repository to use for the redis-exporter
-    image: public.ecr.aws/bitnami/redis-exporter
+    image: ghcr.io/oliver006/redis_exporter
     # -- Tag to use for the redis-exporter
-    tag: 1.58.0
+    tag: v1.69.0
   persistentVolume:
     # -- Configures persistence on Redis nodes
     enabled: false
@@ -1598,7 +1769,7 @@ redis-ha:
   tolerations: [ ]
 
   # -- Assign custom [TopologySpreadConstraints] rules to the Redis pods.
-  ## https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/
+  ## https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/
   topologySpreadConstraints:
     # -- Enable Redis HA topology spread constraints
     enabled: false
@@ -1700,6 +1871,9 @@ redisSecretInit:
   # @default -- `""` (defaults to global.priorityClassName)
   priorityClassName: ""
 
+  # -- Assign custom [affinity] rules to the Redis secret-init Job
+  affinity: { }
+
   # -- Node selector to be added to the Redis secret-init Job
   # @default -- `{}` (defaults to global.nodeSelector)
   nodeSelector: { }
@@ -1716,6 +1890,10 @@ server:
   # -- The number of server pods to run
   replicas: 3
 
+  # -- Runtime class name for the Argo CD server
+  # @default -- `""` (defaults to global.runtimeClassName)
+  runtimeClassName: ""
+
   ## Argo CD server Horizontal Pod Autoscaler
   autoscaling:
     # -- Enable Horizontal Pod Autoscaler ([HPA]) for the Argo CD server
@@ -1730,11 +1908,11 @@ server:
     targetMemoryUtilizationPercentage: 80
     # -- Configures the scaling behavior of the target in both Up and Down directions.
     behavior: { }
-    # scaleDown:
-    #  stabilizationWindowSeconds: 300
-    #  policies:
-    #   - type: Pods
-    #     value: 1
+      # scaleDown:
+      #  stabilizationWindowSeconds: 300
+      #  policies:
+      #   - type: Pods
+      #     value: 1
     #     periodSeconds: 180
     # scaleUp:
     #   stabilizationWindowSeconds: 300
@@ -1809,7 +1987,7 @@ server:
       # -- Repository to use for extension installer image
       repository: "quay.io/argoprojlabs/argocd-extension-installer"
       # -- Tag to use for extension installer image
-      tag: "v0.0.5"
+      tag: "v0.0.8"
       # -- Image pull policy for extensions
       # @default -- `""` (defaults to global.image.imagePullPolicy)
       imagePullPolicy: ""
@@ -1880,8 +2058,9 @@ server:
   #    image: alpine:3
   #    command: [sh, -c]
   #    args:
-  #      - wget -qO kubelogin.zip https://github.com/Azure/kubelogin/releases/download/v0.0.25/kubelogin-linux-amd64.zip &&
-  #        unzip kubelogin.zip && mv bin/linux_amd64/kubelogin /custom-tools/
+  #      - wget -qO /custom-tools/kubelogin.zip https://github.com/Azure/kubelogin/releases/download/v0.2.7/kubelogin-linux-amd64.zip &&
+  #        mkdir /custom-tools/tmp && unzip -d /custom-tools/tmp /custom-tools/kubelogin.zip  &&
+  #        mv /custom-tools/tmp/bin/linux_amd64/kubelogin /custom-tools/ && rm -rf custom-tools/tmp && rm /custom-tools/kubelogin.zip
   #    volumeMounts:
   #      - mountPath: /custom-tools
   #        name: custom-tools
@@ -1950,7 +2129,7 @@ server:
         - ALL
 
   ## Readiness and liveness probes for default backend
-  ## Ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/
+  ## Ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
   readinessProbe:
     # -- Minimum consecutive failures for the [probe] to be considered failed after having succeeded
     failureThreshold: 3
@@ -1996,7 +2175,7 @@ server:
 
   # -- Assign custom [TopologySpreadConstraints] rules to the Argo CD server
   # @default -- `[]` (defaults to global.topologySpreadConstraints)
-  ## Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/
+  ## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/
   ## If labelSelector is left out, it will default to the labelSelector configuration of the deployment
   topologySpreadConstraints: [ ]
   # - maxSkew: 1
@@ -2097,7 +2276,8 @@ server:
     # -- LoadBalancer will get created with the IP specified in this field
     loadBalancerIP: ""
     # -- Source IP ranges to allow access to service from
-    ## Ref: https://kubernetes.io/docs/tasks/access-application-cluster/configure-cloud-provider-firewall/#restrict-access-for-loadbalancer-service
+    ## EKS Ref: https://repost.aws/knowledge-center/eks-cidr-ip-address-loadbalancer
+    ## GKE Ref: https://cloud.google.com/kubernetes-engine/docs/concepts/network-overview#limit-connectivity-ext-lb
     loadBalancerSourceRanges: [ ]
     # -- Server service external IPs
     externalIPs: [ ]
@@ -2132,6 +2312,8 @@ server:
       interval: 30s
       # -- Prometheus ServiceMonitor scrapeTimeout. If empty, Prometheus uses the global scrape timeout unless it is less than the target's scrape interval value in which the latter is used.
       scrapeTimeout: ""
+      # -- When true, honorLabels preserves the metric’s labels when they collide with the target’s labels.
+      honorLabels: false
       # -- Prometheus [RelabelConfigs] to apply to samples before scraping
       relabelings: [ ]
       # -- Prometheus [MetricRelabelConfigs] to apply to samples before ingestion
@@ -2221,8 +2403,8 @@ server:
     # @default -- `[]` (See [values.yaml])
     ## Note: Supports use of custom Helm templates
     extraRules: [ ]
-    # - http:
-    #     paths:
+      # - http:
+      #     paths:
     #     - path: /
     #       pathType: Prefix
     #       backend:
@@ -2330,8 +2512,8 @@ server:
     # @default -- `[]` (See [values.yaml])
     ## Note: Supports use of custom Helm templates
     extraRules: [ ]
-    # - http:
-    #     paths:
+      # - http:
+      #     paths:
     #     - path: /
     #       pathType: Prefix
     #       backend:
@@ -2397,11 +2579,11 @@ repoServer:
     targetMemoryUtilizationPercentage: 80
     # -- Configures the scaling behavior of the target in both Up and Down directions.
     behavior: { }
-    # scaleDown:
-    #  stabilizationWindowSeconds: 300
-    #  policies:
-    #   - type: Pods
-    #     value: 1
+      # scaleDown:
+      #  stabilizationWindowSeconds: 300
+      #  policies:
+      #   - type: Pods
+      #     value: 1
     #     periodSeconds: 180
     # scaleUp:
     #   stabilizationWindowSeconds: 300
@@ -2469,7 +2651,7 @@ repoServer:
     # argocd-vault-plugin with plain YAML
     - name: avp
       command: [ /var/run/argocd/argocd-cmp-server ]
-      image: quay.io/argoproj/argocd:v2.12.4
+      image: quay.io/argoproj/argocd:v3.0.0
       securityContext:
         runAsNonRoot: true
         runAsUser: 999
@@ -2493,7 +2675,7 @@ repoServer:
 
     - name: avp-helm
       command: [ /var/run/argocd/argocd-cmp-server ]
-      image: quay.io/argoproj/argocd:v2.12.4
+      image: quay.io/argoproj/argocd:v3.0.0
       securityContext:
         runAsNonRoot: true
         runAsUser: 999
@@ -2613,7 +2795,7 @@ repoServer:
         - ALL
 
   ## Readiness and liveness probes for default backend
-  ## Ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/
+  ## Ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
   readinessProbe:
     # -- Minimum consecutive failures for the [probe] to be considered failed after having succeeded
     failureThreshold: 3
@@ -2655,7 +2837,7 @@ repoServer:
 
   # -- Assign custom [TopologySpreadConstraints] rules to the repo server
   # @default -- `[]` (defaults to global.topologySpreadConstraints)
-  ## Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/
+  ## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/
   ## If labelSelector is left out, it will default to the labelSelector configuration of the deployment
   topologySpreadConstraints: [ ]
   # - maxSkew: 1
@@ -2725,6 +2907,8 @@ repoServer:
       interval: 30s
       # -- Prometheus ServiceMonitor scrapeTimeout. If empty, Prometheus uses the global scrape timeout unless it is less than the target's scrape interval value in which the latter is used.
       scrapeTimeout: ""
+      # -- When true, honorLabels preserves the metric’s labels when they collide with the target’s labels.
+      honorLabels: false
       # -- Prometheus [RelabelConfigs] to apply to samples before scraping
       relabelings: [ ]
       # -- Prometheus [MetricRelabelConfigs] to apply to samples before ingestion
@@ -2884,6 +3068,8 @@ applicationSet:
       interval: 30s
       # -- Prometheus ServiceMonitor scrapeTimeout. If empty, Prometheus uses the global scrape timeout unless it is less than the target's scrape interval value in which the latter is used.
       scrapeTimeout: ""
+      # -- When true, honorLabels preserves the metric’s labels when they collide with the target’s labels.
+      honorLabels: false
       # -- Prometheus [RelabelConfigs] to apply to samples before scraping
       relabelings: [ ]
       # -- Prometheus [MetricRelabelConfigs] to apply to samples before ingestion
@@ -2976,7 +3162,7 @@ applicationSet:
         - ALL
 
   ## Probes for ApplicationSet controller (optional)
-  ## Ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/
+  ## Ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
   readinessProbe:
     # -- Enable Kubernetes liveness probe for ApplicationSet controller
     enabled: false
@@ -3128,8 +3314,8 @@ applicationSet:
     # @default -- `[]` (See [values.yaml])
     ## Note: Supports use of custom Helm templates
     extraRules: [ ]
-    # - http:
-    #    paths:
+      # - http:
+      #    paths:
     #    - path: /api/webhook
     #      pathType: Prefix
     #      backend:
@@ -3194,12 +3380,13 @@ notifications:
   # @default -- `[]` (defaults to global.imagePullSecrets)
   imagePullSecrets: [ ]
 
+  # DEPRECATED - Use configs.params to override
   # -- Notifications controller log format. Either `text` or `json`
   # @default -- `""` (defaults to global.logging.format)
-  logFormat: ""
+  # logFormat: ""
   # -- Notifications controller log level. One of: `debug`, `info`, `warn`, `error`
   # @default -- `""` (defaults to global.logging.level)
-  logLevel: ""
+  # logLevel: ""
 
   # -- Extra arguments to provide to the notifications controller
   extraArgs: [ ]
@@ -3253,7 +3440,7 @@ notifications:
     ## Can be used for templates, notification services etc. Some examples given below.
     ## For more information: https://argo-cd.readthedocs.io/en/stable/operator-manual/notifications/services/overview/
     items: { }
-    # slack-token:
+      # slack-token:
     #   # For more information: https://argo-cd.readthedocs.io/en/stable/operator-manual/notifications/services/slack/
 
     # grafana-apiKey:
@@ -3298,6 +3485,8 @@ notifications:
       scheme: ""
       # -- Prometheus ServiceMonitor tlsConfig
       tlsConfig: { }
+      # -- When true, honorLabels preserves the metric’s labels when they collide with the target’s labels.
+      honorLabels: false
       # -- Prometheus [RelabelConfigs] to apply to samples before scraping
       relabelings: [ ]
       # -- Prometheus [MetricRelabelConfigs] to apply to samples before ingestion
@@ -3351,7 +3540,7 @@ notifications:
         - ALL
 
   ## Probes for notifications controller Pods (optional)
-  ## Ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/
+  ## Ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
   readinessProbe:
     # -- Enable Kubernetes liveness probe for notifications controller Pods
     enabled: false
@@ -3397,7 +3586,7 @@ notifications:
 
   # -- Assign custom [TopologySpreadConstraints] rules to the application controller
   # @default -- `[]` (defaults to global.topologySpreadConstraints)
-  ## Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/
+  ## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/
   ## If labelSelector is left out, it will default to the labelSelector configuration of the deployment
   topologySpreadConstraints: [ ]
   # - maxSkew: 1
@@ -3440,11 +3629,11 @@ notifications:
   # -- Contains centrally managed global application subscriptions
   ## For more information: https://argo-cd.readthedocs.io/en/stable/operator-manual/notifications/subscriptions/
   subscriptions: [ ]
-  # # subscription for on-sync-status-unknown trigger notifications
-  # - recipients:
-  #   - slack:test2
-  #   - email:test@gmail.com
-  #   triggers:
+    # # subscription for on-sync-status-unknown trigger notifications
+    # - recipients:
+    #   - slack:test2
+    #   - email:test@gmail.com
+    #   triggers:
   #   - on-sync-status-unknown
   # # subscription restricted to applications with matching labels only
   # - recipients:
@@ -3656,12 +3845,12 @@ notifications:
     #         {
     #           "title": "Repository",
     #           "value": "{{.app.spec.source.repoURL}}",
-  #           "short": true
-  #         }
-  #         {{range $index, $c := .app.status.conditions}}
-  #         {{if not $index}},{{end}}
-  #         {{if $index}},{{end}}
-  #         {
+    #           "short": true
+    #         }
+    #         {{range $index, $c := .app.status.conditions}}
+    #         {{if not $index}},{{end}}
+    #         {{if $index}},{{end}}
+    #         {
   #           "title": "{{$c.type}}",
   #           "value": "{{$c.message}}",
   #           "short": true
@@ -3695,12 +3884,12 @@ notifications:
     #     - app-sync-running
     #     when: app.status.operationState.phase in ['Running']
     # trigger.on-sync-status-unknown: |
-  #   - description: Application status is 'Unknown'
-  #     send:
-  #     - app-sync-status-unknown
-  #     when: app.status.sync.status == 'Unknown'
-  # trigger.on-sync-succeeded: |
-  #   - description: Application syncing has succeeded
+    #   - description: Application status is 'Unknown'
+    #     send:
+    #     - app-sync-status-unknown
+    #     when: app.status.sync.status == 'Unknown'
+    # trigger.on-sync-succeeded: |
+    #   - description: Application syncing has succeeded
   #     send:
   #     - app-sync-succeeded
   #     when: app.status.operationState.phase in ['Succeeded']
@@ -3708,3 +3897,183 @@ notifications:
   # For more information: https://argo-cd.readthedocs.io/en/stable/operator-manual/notifications/triggers/#default-triggers
   # defaultTriggers: |
   #   - on-sync-status-unknown
+
+commitServer:
+  # -- Enable commit server
+  enabled: false
+
+  # -- Commit server name
+  name: commit-server
+
+  # -- Runtime class name for the commit server
+  # @default -- `""` (defaults to global.runtimeClassName)
+  runtimeClassName: ""
+
+  ## commit server controller image
+  image:
+    # -- Repository to use for the commit server
+    # @default -- `""` (defaults to global.image.repository)
+    repository: ""
+    # -- Tag to use for the commit server
+    # @default -- `""` (defaults to global.image.tag)
+    tag: ""
+    # -- Image pull policy for the commit server
+    # @default -- `""` (defaults to global.image.imagePullPolicy)
+    imagePullPolicy: ""
+
+  # -- commit server command line flags
+  extraArgs: [ ]
+
+  # -- Environment variables to pass to the commit server
+  extraEnv: [ ]
+  # - name: "MY_VAR"
+  #   value: "value"
+
+  # -- envFrom to pass to the commit server
+  # @default -- `[]` (See [values.yaml])
+  extraEnvFrom: [ ]
+  # - configMapRef:
+  #     name: config-map-name
+  # - secretRef:
+  #     name: secret-name
+
+  # -- List of extra mounts to add (normally used with extraVolumes)
+  extraVolumeMounts: [ ]
+
+  # -- List of extra volumes to add
+  extraVolumes: [ ]
+
+  metrics:
+    # -- Enables prometheus metrics server
+    enabled: false
+    service:
+      # -- Metrics service type
+      type: ClusterIP
+      # -- Metrics service clusterIP. `None` makes a "headless service" (no virtual IP)
+      clusterIP: ""
+      # -- Metrics service annotations
+      annotations: { }
+      # -- Metrics service labels
+      labels: { }
+      # -- Metrics service port
+      servicePort: 8087
+      # -- Metrics service port name
+      portName: metrics
+
+  ## commit server service configuration
+  service:
+    # -- commit server service annotations
+    annotations: { }
+    # -- commit server service labels
+    labels: { }
+
+  # -- Automount API credentials for the Service Account into the pod.
+  automountServiceAccountToken: false
+
+  serviceAccount:
+    # -- Create commit server service account
+    create: true
+    # -- commit server service account name
+    name: argocd-commit-server
+    # -- Annotations applied to created service account
+    annotations: { }
+    # -- Labels applied to created service account
+    labels: { }
+    # -- Automount API credentials for the Service Account
+    automountServiceAccountToken: true
+
+  # -- Annotations to be added to commit server Deployment
+  deploymentAnnotations: { }
+
+  # -- Annotations for the commit server pods
+  podAnnotations: { }
+
+  # -- Labels for the commit server pods
+  podLabels: { }
+
+  # -- Resource limits and requests for the commit server pods.
+  resources: { }
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+  # -- [DNS configuration]
+  dnsConfig: { }
+  # -- Alternative DNS policy for commit server pods
+  dnsPolicy: "ClusterFirst"
+
+  # -- commit server container-level security context
+  # @default -- See [values.yaml]
+  containerSecurityContext:
+    runAsNonRoot: true
+    readOnlyRootFilesystem: true
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
+    seccompProfile:
+      type: RuntimeDefault
+
+  ## Probes for commit server (optional)
+  ## Ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
+  readinessProbe:
+    # -- Enable Kubernetes liveness probe for commit server
+    enabled: true
+    # -- Number of seconds after the container has started before [probe] is initiated
+    initialDelaySeconds: 5
+    # -- How often (in seconds) to perform the [probe]
+    periodSeconds: 10
+    # -- Number of seconds after which the [probe] times out
+    timeoutSeconds: 1
+    # -- Minimum consecutive failures for the [probe] to be considered failed after having succeeded
+    failureThreshold: 3
+
+  livenessProbe:
+    # -- Enable Kubernetes liveness probe for commit server
+    enabled: true
+    # -- Number of seconds after the container has started before [probe] is initiated
+    initialDelaySeconds: 30
+    # -- How often (in seconds) to perform the [probe]
+    periodSeconds: 30
+    # -- Number of seconds after which the [probe] times out
+    timeoutSeconds: 5
+    # -- Minimum consecutive failures for the [probe] to be considered failed after having succeeded
+    failureThreshold: 3
+
+  # -- terminationGracePeriodSeconds for container lifecycle hook
+  terminationGracePeriodSeconds: 30
+
+  # -- [Node selector]
+  # @default -- `{}` (defaults to global.nodeSelector)
+  nodeSelector: { }
+
+  # -- [Tolerations] for use with node taints
+  # @default -- `[]` (defaults to global.tolerations)
+  tolerations: [ ]
+
+  # -- Assign custom [affinity] rules
+  # @default -- `{}` (defaults to global.affinity preset)
+  affinity: { }
+
+  # -- Assign custom [TopologySpreadConstraints] rules to the commit server
+  # @default -- `[]` (defaults to global.topologySpreadConstraints)
+  ## Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/
+  ## If labelSelector is left out, it will default to the labelSelector configuration of the deployment
+  topologySpreadConstraints: [ ]
+  # - maxSkew: 1
+  #   topologyKey: topology.kubernetes.io/zone
+  #   whenUnsatisfiable: DoNotSchedule
+
+  # -- Deployment strategy to be added to the commit server Deployment
+  deploymentStrategy: { }
+  # type: RollingUpdate
+  # rollingUpdate:
+  #   maxSurge: 25%
+  #   maxUnavailable: 25%
+
+  # -- Priority class for the commit server pods
+  # @default -- `""` (defaults to global.priorityClassName)
+  priorityClassName: ""
