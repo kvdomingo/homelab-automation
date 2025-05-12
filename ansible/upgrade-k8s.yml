@@ -1,0 +1,5 @@
+- name: Upgrade K3s
+  hosts: k8s
+  become: true
+  roles:
+    - kubernetes-server-upgrade
