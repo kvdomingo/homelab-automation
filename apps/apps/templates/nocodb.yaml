@@ -18,7 +18,7 @@ spec:
         - name: HELM_VALUES
           value: |
             image:
-              tag: 0.258.2
+              tag: 0.263.0
             env:
               NC_DB: 'pg://nocodb-postgresql:5432?u=nocodb&p=<path:kv/data/lab/nocodb#POSTGRESQL_PASSWORD>&d=nocodb'
             ingress:
