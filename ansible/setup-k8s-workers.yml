@@ -1,5 +1,0 @@
-- name: Setup K3s worker nodes
-  hosts: rpi5_workers
-  become: true
-  roles:
-    - kubernetes-server-agent

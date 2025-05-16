@@ -26,20 +26,22 @@
       environment:
         INSTALL_K3S_CHANNEL: '{{ k8s_version }}'
       ansible.builtin.shell: >
-        ~/Downloads/install-k3s.sh server
+        ~/Downloads/install-k3s.sh
+        server
         --cluster-init
         --write-kubeconfig-mode 644
         --disable=traefik,coredns,metrics-server
+        --tls-san=srv-k8s-01,srv-k8s-01.lab,srv-k8s-02,srv-k8s-02.lab,srv-k8s-03,srv-k8s-03.lab,k8s.lab.kvd.studio,k8s.kvd.studio
       changed_when: false
 
 - name: Get kubeconfig
   ansible.builtin.fetch:
     src: /etc/rancher/k3s/k3s.yaml
-    dest: ./outputs/rpi5-kubeconfig.yaml
+    dest: ./outputs/kubeconfig.yamlk
     flat: true
 
 - name: Get node token
   ansible.builtin.fetch:
     src: /var/lib/rancher/k3s/server/node-token
-    dest: ./outputs/rpi5-node-token
+    dest: ./outputs/node-token
     flat: true

@@ -1,0 +1,5 @@
+- name: Setup K3s server nodes
+  hosts: k8s_servers
+  become: true
+  roles:
+    - k8s-server-add
