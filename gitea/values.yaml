@@ -369,11 +369,11 @@ gitea:
   ## @param gitea.ldap LDAP configuration
   ldap:
     [ ]
-    # - name: "LDAP 1"
-    #  existingSecret:
-    #  securityProtocol:
-    #  host:
-    #  port:
+  # - name: "LDAP 1"
+  #  existingSecret:
+  #  securityProtocol:
+  #  host:
+  #  port:
   #  userSearchBase:
   #  userFilter:
   #  adminFilter:
@@ -387,9 +387,9 @@ gitea:
   ## @param gitea.oauth OAuth configuration
   oauth:
     [ ]
-    # - name: 'OAuth 1'
-    #   provider:
-    #   key:
+  # - name: 'OAuth 1'
+  #   provider:
+  #   key:
   #   secret:
   #   existingSecret:
   #   autoDiscoverUrl:
@@ -490,6 +490,33 @@ gitea:
 redis-cluster:
   enabled: true
   usePassword: false
+  image:
+    tag: 7.4.3-debian-12-r0
+    debug: true
+  redis:
+    readinessProbe:
+      enabled: false
+    startupProbe:
+      enabled: true
+      initialDelaySeconds: 30
+      periodSeconds: 10
+      timeoutSeconds: 3
+      failureThreshold: 60
+      successThreshold: 1
+    livenessProbe:
+      enabled: true
+      periodSeconds: 20
+      timeoutSeconds: 5
+      successThreshold: 1
+      failureThreshold: 3
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+            - matchExpressions:
+                - key: kubernetes.io/arch
+                  operator: NotIn
+                  values: [ arm64, arm ]
   cluster:
     nodes: 6 # default: 6
     replicas: 1 # default: 1
