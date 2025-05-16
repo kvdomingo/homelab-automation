@@ -34,6 +34,27 @@
         --tls-san=srv-k8s-01,srv-k8s-01.lab,srv-k8s-02,srv-k8s-02.lab,srv-k8s-03,srv-k8s-03.lab,k8s.lab.kvd.studio,k8s.kvd.studio
       changed_when: false
 
+- name: Update default registries.yaml
+  become: true
+  block:
+    - name: Copy registries.yaml
+      ansible.builtin.copy:
+        src: ./files/registries.yaml
+        dest: /etc/rancher/k3s/registries.yaml.tmpl
+        force: true
+        mode: "644"
+    - name: Substitute values
+      environment:
+        DOCKER_PAT: "{{ lookup('env', 'DOCKER_PAT') }}"
+      ansible.builtin.shell: >
+        envsubst < /etc/rancher/k3s/registries.yaml.tmpl > /etc/rancher/k3s/registries.yaml
+
+- name: Restart K3s
+  become: true
+  ansible.builtin.systemd:
+    name: k3s
+    state: reloaded
+
 - name: Get kubeconfig
   ansible.builtin.fetch:
     src: /etc/rancher/k3s/k3s.yaml
