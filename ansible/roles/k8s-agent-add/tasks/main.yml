@@ -30,3 +30,30 @@
       ansible.builtin.shell: >
         ~/Downloads/install-k3s.sh agent
       changed_when: false
+
+- name: Ensure K3s directory exists
+  ansible.builtin.file:
+    path: /etc/rancher/k3s
+    state: directory
+    mode: '755'
+
+- name: Update default registries.yaml
+  become: true
+  block:
+    - name: Copy registries.yaml
+      ansible.builtin.copy:
+        src: ./files/registries.yaml
+        dest: /etc/rancher/k3s/registries.yaml.tmpl
+        force: true
+        mode: "644"
+    - name: Substitute values
+      environment:
+        DOCKER_PAT: "{{ lookup('env', 'DOCKER_PAT') }}"
+      ansible.builtin.shell: >
+        envsubst < /etc/rancher/k3s/registries.yaml.tmpl > /etc/rancher/k3s/registries.yaml
+
+- name: Restart K3s
+  become: true
+  ansible.builtin.systemd:
+    name: k3s-agent
+    state: restarted
