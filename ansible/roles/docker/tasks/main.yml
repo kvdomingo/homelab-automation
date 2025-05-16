@@ -76,6 +76,14 @@
     force: true
     mode: "644"
 
+- name: Update logrotate configuration
+  become: true
+  ansible.builtin.copy:
+    src: ./files/logrotate.conf
+    dest: /etc/logrotate.d/docker
+    force: true
+    mode: "644"
+
 - name: Update apt
   become: true
   ansible.builtin.apt:
