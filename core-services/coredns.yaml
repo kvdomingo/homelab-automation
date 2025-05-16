@@ -15,7 +15,7 @@ image:
   # pullSecrets:
   #   - name: myRegistryKeySecretName
 
-replicaCount: 3
+replicaCount: 7
 
 resources:
   limits:

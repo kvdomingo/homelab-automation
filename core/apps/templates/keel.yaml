@@ -11,7 +11,7 @@ spec:
   source:
     repoURL: https://charts.keel.sh
     chart: keel
-    targetRevision: 1.0.3
+    targetRevision: 1.0.5
     plugin:
       name: argocd-vault-plugin-helm
       env:
@@ -56,6 +56,14 @@ spec:
             persistence:
               enabled: true
               storageClass: "nfs-client"
+            affinity:
+              nodeAffinity:
+                requiredDuringSchedulingIgnoredDuringExecution:
+                  nodeSelectorTerms:
+                    - matchExpressions:
+                      - key: kubernetes.io/arch
+                        operator: NotIn
+                        values: [ arm64, arm ]
   destination:
     server: {{ .Values.destination.server }}
     namespace: kube-system
