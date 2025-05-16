@@ -8,6 +8,7 @@
   ansible.builtin.package:
     name:
       - apt-transport-https
+      - btop
       - ca-certificates
       - curl
       - gnupg

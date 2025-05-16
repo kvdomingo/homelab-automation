@@ -2,4 +2,5 @@
   hosts: k8s
   become: true
   roles:
-    - kubernetes-server-upgrade
+    - k8s-server-upgrade
+    - k8s-agent-upgrade

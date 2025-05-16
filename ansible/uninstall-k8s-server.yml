@@ -1,10 +1,10 @@
-- name: Setup K3s master node
-  hosts: rpi5_workers
+- name: Uninstall K3s server nodes
+  hosts: k8s_servers
   become: true
 
   tasks:
     - name: Uninstall K3s
-      ansible.builtin.command: /usr/local/bin/k3s-agent-uninstall.sh
+      ansible.builtin.command: /usr/local/bin/k3s-uninstall.sh
       changed_when: false
       ignore_errors: true
 

@@ -1,0 +1,32 @@
+- name: Ensure Downloads directory exists
+  ansible.builtin.file:
+    path: ~/Downloads
+    state: directory
+    mode: '755'
+
+- name: Setup K3s
+  block:
+    - name: Stop K3s
+      become: true
+      ansible.builtin.systemd:
+        name: k3s
+        state: stopped
+
+    - name: Download K3s installer
+      ansible.builtin.get_url:
+        url: https://get.k3s.io
+        dest: ~/Downloads/install-k3s.sh
+        mode: '755'
+
+    - name: Upgrade K3s
+      environment:
+        INSTALL_K3S_CHANNEL: '{{ k8s_version }}'
+      ansible.builtin.shell: >
+        ~/Downloads/install-k3s.sh agent
+      changed_when: false
+
+    - name: Start K3s
+      become: true
+      ansible.builtin.systemd:
+        name: k3s
+        state: restarted

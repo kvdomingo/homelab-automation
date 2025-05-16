@@ -1,0 +1,12 @@
+- name: Uninstall K3s agent nodes
+  hosts: k8s_agents
+  become: true
+
+  tasks:
+    - name: Uninstall K3s
+      ansible.builtin.command: /usr/local/bin/k3s-agent-uninstall.sh
+      changed_when: false
+      ignore_errors: true
+
+    - name: Reboot
+      ansible.builtin.reboot:

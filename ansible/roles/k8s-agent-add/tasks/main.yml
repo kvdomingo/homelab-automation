@@ -25,8 +25,8 @@
     - name: Install K3s
       environment:
         INSTALL_K3S_CHANNEL: '{{ k8s_version }}'
-        K3S_TOKEN: "{{ lookup('file', './outputs/rpi5-node-token') }}"
-        K3S_URL: https://srv-pi5-01.lab:6443
+        K3S_TOKEN: "{{ lookup('file', './outputs/node-token') }}"
+        K3S_URL: https://srv-k8s-01.lab:6443
       ansible.builtin.shell: >
-        ~/Downloads/install-k3s.sh
+        ~/Downloads/install-k3s.sh agent
       changed_when: false

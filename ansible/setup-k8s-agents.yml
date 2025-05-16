@@ -1,0 +1,6 @@
+- name: Setup K3s agent nodes
+  hosts:
+    - k8s_agents
+  become: true
+  roles:
+    - k8s-agent-add

@@ -1,0 +1,5 @@
+- name: Setup K3s initial node
+  hosts: k8s_primary
+  become: true
+  roles:
+    - k8s-server-initial

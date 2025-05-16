@@ -1,5 +1,0 @@
-- name: Setup K3s master node
-  hosts: k8s_master
-  become: true
-  roles:
-    - kubernetes-server-master
