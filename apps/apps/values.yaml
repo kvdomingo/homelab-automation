@@ -6,16 +6,4 @@ destination:
 ingress:
   baseDomain: lab.kvd.studio
 
-disableAffine: true
-disableAirbyte: true
-disableCnpgCluster: true
-disableDocmost: true
 disableFirefly: true
-disableKestra: true
-disableMaybe: true
-disableMetabase: true
-disableNextcloud: true
-disablePaperless: true
-disableSonarqube: true
-disableSupabase: true
-disableSupertokens: true
