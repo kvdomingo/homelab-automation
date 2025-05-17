@@ -20,6 +20,9 @@ global:
   #   hostnames:
   #   - example.com
 
+## @param namespace An explicit namespace to deploy gitea into. Defaults to the release namespace if not specified
+namespace: ""
+
 ## @param replicaCount number of replicas for the deployment
 replicaCount: 1
 
@@ -45,12 +48,12 @@ clusterDomain: cluster.local
 ## @param image.rootless Wether or not to pull the rootless version of Gitea, only works on Gitea 1.14.x or higher
 ## @param image.fullOverride Completely overrides the image registry, path/image, tag and digest. **Adjust `image.rootless` accordingly and review [Rootless defaults](#rootless-defaults).**
 image:
-  registry: ""
-  repository: gitea/gitea
+  registry: "docker.gitea.com"
+  repository: gitea
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "1.23.4"
+  tag: "1.23"
   digest: ""
-  pullPolicy: Always
+  pullPolicy: IfNotPresent
   rootless: true
   fullOverride: ""
 
@@ -73,7 +76,7 @@ containerSecurityContext: { }
 #   # run pods on nodes that use the container runtime cri-o. Otherwise, you will
 #   # get an error message from the SSH server that it is not possible to read from
 #   # the repository.
-#   # https://gitea.com/gitea/helm-chart/issues/161
+#   # https://gitea.com/gitea/helm-gitea/issues/161
 #     add:
 #       - SYS_CHROOT
 #   privileged: false
@@ -91,7 +94,7 @@ securityContext: { }
 ## @param podDisruptionBudget Pod disruption budget
 podDisruptionBudget:
   #  maxUnavailable: 1
-  minAvailable: 1
+  minAvailable: 2
 
 ## @section Service
 service:
@@ -107,6 +110,7 @@ service:
   ## @param service.http.loadBalancerSourceRanges Source range filter for http loadbalancer
   ## @param service.http.annotations HTTP service annotations
   ## @param service.http.labels HTTP service additional labels
+  ## @param service.http.loadBalancerClass Loadbalancer class
   http:
     type: ClusterIP
     port: 3000
@@ -120,6 +124,7 @@ service:
     loadBalancerSourceRanges: [ ]
     annotations: { }
     labels: { }
+    loadBalancerClass:
   ## @param service.ssh.type Kubernetes service type for ssh traffic
   ## @param service.ssh.port Port number for ssh traffic
   ## @param service.ssh.clusterIP ClusterIP setting for ssh autosetup for deployment is None
@@ -133,6 +138,7 @@ service:
   ## @param service.ssh.loadBalancerSourceRanges Source range filter for ssh loadbalancer
   ## @param service.ssh.annotations SSH service annotations
   ## @param service.ssh.labels SSH service additional labels
+  ## @param service.ssh.loadBalancerClass Loadbalancer class
   ssh:
     type: ClusterIP
     port: 22
@@ -147,28 +153,26 @@ service:
     loadBalancerSourceRanges: [ ]
     annotations: { }
     labels: { }
+    loadBalancerClass:
 
 ## @section Ingress
 ## @param ingress.enabled Enable ingress
-## @param ingress.className Ingress class name
+## @param ingress.className DEPRECATED: Ingress class name.
+## @param ingress.pathType Ingress Path Type
 ## @param ingress.annotations Ingress annotations
 ## @param ingress.hosts[0].host Default Ingress host
 ## @param ingress.hosts[0].paths[0].path Default Ingress path
-## @param ingress.hosts[0].paths[0].pathType Ingress path type
 ## @param ingress.tls Ingress tls settings
-## @extra ingress.apiVersion Specify APIVersion of ingress object. Mostly would only be used for argocd.
 ingress:
   enabled: true
-  # className: nginx
-  className:
+  className: ""
+  pathType: Prefix
   annotations:
     gethomepage.dev/enabled: "true"
     gethomepage.dev/name: "Gitea"
     gethomepage.dev/group: "CI/CD"
     gethomepage.dev/icon: "gitea.png"
     gethomepage.dev/ping: "git.lab.kvd.studio"
-  # kubernetes.io/ingress.class: nginx
-  # kubernetes.io/tls-acme: "true"
   hosts:
     - host: git.lab.kvd.studio
       paths:
@@ -182,9 +186,6 @@ ingress:
   #  - secretName: chart-example-tls
   #    hosts:
   #      - git.example.com
-  # Mostly for argocd or any other CI that uses `helm template | kubectl apply` or similar
-  # If helm doesn't correctly detect your ingress API version you can set it here.
-  # apiVersion: networking.k8s.io/v1
 
 ## @section deployment
 #
@@ -284,6 +285,12 @@ persistence:
   annotations:
     helm.sh/resource-policy: keep
 
+## @param extraContainers Additional sidecar containers to run in the pod
+extraContainers: [ ]
+#  - name: sidecar-bob
+#    image: busybox
+#    command: [/bin/sh, -c, 'echo "Hello world"; sleep 86400']
+
 ## @param extraVolumes Additional volumes to mount to the Gitea deployment
 extraVolumes: [ ]
 # - name: postgres-ssl-vol
@@ -309,6 +316,8 @@ extraVolumeMounts: [ ]
 ## @section Init
 ## @param initPreScript Bash shell script copied verbatim to the start of the init-container.
 initPreScript: ""
+## @param initContainersScriptsVolumeMountPath Path to mount the scripts consumed from the Secrets
+initContainersScriptsVolumeMountPath: "/usr/sbinx"
 #
 # initPreScript: |
 #   mkdir -p /data/git/.postgresql
@@ -350,21 +359,35 @@ gitea:
   ## @param gitea.admin.existingSecret Use an existing secret to store admin user credentials
   ## @param gitea.admin.password Password for the Gitea admin user
   ## @param gitea.admin.email Email for the Gitea admin user
+  ## @param gitea.admin.passwordMode Mode for how to set/update the admin user password. Options are: initialOnlyNoReset, initialOnlyRequireReset, and keepUpdated
   admin:
     # existingSecret: gitea-admin-secret
     existingSecret:
     username: ""
     password: ""
     email: ""
+    passwordMode: initialOnlyNoReset
 
   ## @param gitea.metrics.enabled Enable Gitea metrics
-  ## @param gitea.metrics.serviceMonitor.enabled Enable Gitea metrics service monitor
+  ## @param gitea.metrics.token used for `bearer` token authentication on metrics endpoint. If not specified or empty metrics endpoint is public.
+  ## @param gitea.metrics.serviceMonitor.enabled Enable Gitea metrics service monitor. Requires, that `gitea.metrics.enabled` is also set to true, to enable metrics generally.
+  ## @param gitea.metrics.serviceMonitor.interval Interval at which metrics should be scraped. If not specified Prometheus' global scrape interval is used.
+  ## @param gitea.metrics.serviceMonitor.relabelings RelabelConfigs to apply to samples before scraping.
+  ## @param gitea.metrics.serviceMonitor.scheme HTTP scheme to use for scraping. For example `http` or `https`. Default is http.
+  ## @param gitea.metrics.serviceMonitor.scrapeTimeout Timeout after which the scrape is ended. If not specified, global Prometheus scrape timeout is used.
+  ## @param gitea.metrics.serviceMonitor.tlsConfig TLS configuration to use when scraping the metric endpoint by Prometheus.
   metrics:
     enabled: true
+    token:
     serviceMonitor:
       enabled: true
       #  additionalLabels:
       #    prometheus-release: prom1
+      interval: ""
+      relabelings: [ ]
+      scheme: ""
+      scrapeTimeout: ""
+      tlsConfig: { }
 
   ## @param gitea.ldap LDAP configuration
   ldap:
@@ -404,13 +427,21 @@ gitea:
   config:
     APP_NAME: "Gitea"
     RUN_MODE: prod
+    server:
+      SSH_PORT: 22 # rootful image
+      SSH_LISTEN_PORT: 2222 # rootless image
+    database:
+      user: gitea
+  #
+  #  security:
+  #    PASSWORD_COMPLEXITY: spec
 
   ## @param gitea.additionalConfigSources Additional configuration from secret or configmap
-  additionalConfigSources:
-    #    - secret:
-    #        secretName: gitea-app-ini-secret
-    - configMap:
-        name: gitea-app-ini-configmap
+  additionalConfigSources: [ ]
+  #   - secret:
+  #       secretName: gitea-app-ini-oauth
+  #   - configMap:
+  #       name: gitea-app-ini-plaintext
 
   ## @param gitea.additionalConfigFromEnvs Additional configuration sources from environment variables
   additionalConfigFromEnvs: [ ]
@@ -482,44 +513,61 @@ gitea:
     successThreshold: 1
     failureThreshold: 10
 
-## @section redis-cluster
-## @param redis-cluster.enabled Enable redis
-## @param redis-cluster.usePassword Whether to use password authentication
-## @param redis-cluster.cluster.nodes Number of redis cluster master nodes
-## @param redis-cluster.cluster.replicas Number of redis cluster master node replicas
-redis-cluster:
-  enabled: true
+## @section valkey-cluster
+## @param valkey-cluster.enabled Enable valkey cluster
+# ⚠️ The valkey charts do not work well with special characters in the password (<https://gitea.com/gitea/helm-chart/issues/690>).
+# Consider omitting such or open an issue in the Bitnami repo and let us know once this got fixed.
+## @param valkey-cluster.usePassword Whether to use password authentication
+## @param valkey-cluster.usePasswordFiles Whether to mount passwords as files instead of environment variables
+## @param valkey-cluster.cluster.nodes Number of valkey cluster master nodes
+## @param valkey-cluster.cluster.replicas Number of valkey cluster master node replicas
+## @param valkey-cluster.service.ports.valkey Port of Valkey service
+## @descriptionStart
+## Valkey cluster and [Valkey](#valkey) cannot be enabled at the same time.
+## @descriptionEnd
+valkey-cluster:
+  enabled: false
   usePassword: false
+  usePasswordFiles: false
+  cluster:
+    nodes: 3 # default: 6
+    replicas: 0 # default: 1
+  service:
+    ports:
+      valkey: 6379
+
+## @section valkey
+## @param valkey.enabled Enable valkey standalone or replicated
+## @param valkey.architecture Whether to use standalone or replication
+# ⚠️ The valkey charts do not work well with special characters in the password (<https://gitea.com/gitea/helm-chart/issues/690>).
+# Consider omitting such or open an issue in the Bitnami repo and let us know once this got fixed.
+## @param valkey.global.valkey.password Required password
+## @param valkey.master.count Number of Valkey master instances to deploy
+## @param valkey.master.service.ports.valkey Port of Valkey service
+## @descriptionStart
+## Valkey and [Valkey cluster](#valkey-cluster) cannot be enabled at the same time.
+## @descriptionEnd
+valkey:
+  enabled: true
   image:
-    tag: 7.4.3-debian-12-r0
-    debug: true
-  redis:
-    readinessProbe:
-      enabled: false
+    tag: 8.1.1-debian-12-r0
+  architecture: standalone
+  auth:
+    enabled: false
+  primary:
+    replicaCount: 1
+    service:
+      ports:
+        valkey: 6379
     startupProbe:
       enabled: true
-      initialDelaySeconds: 30
+      initialDelaySeconds: 20
       periodSeconds: 10
-      timeoutSeconds: 3
-      failureThreshold: 60
-      successThreshold: 1
-    livenessProbe:
-      enabled: true
-      periodSeconds: 20
       timeoutSeconds: 5
       successThreshold: 1
-      failureThreshold: 3
-    affinity:
-      nodeAffinity:
-        requiredDuringSchedulingIgnoredDuringExecution:
-          nodeSelectorTerms:
-            - matchExpressions:
-                - key: kubernetes.io/arch
-                  operator: NotIn
-                  values: [ arm64, arm ]
-  cluster:
-    nodes: 6 # default: 6
-    replicas: 1 # default: 1
+      failureThreshold: 60
+    readinessProbe:
+      enabled: false
 
 ## @section PostgreSQL HA
 #
@@ -532,7 +580,7 @@ redis-cluster:
 ## @param postgresql-ha.postgresql.postgresPassword postgres Password
 ## @param postgresql-ha.pgpool.adminPassword pgpool adminPassword
 ## @param postgresql-ha.service.ports.postgresql PostgreSQL service port (overrides `service.ports.postgresql`)
-## @param postgresql-ha.primary.persistence.size PVC Storage Request for PostgreSQL HA volume
+## @param postgresql-ha.persistence.size PVC Storage Request for PostgreSQL HA volume
 postgresql-ha:
   global:
     postgresql:
@@ -549,9 +597,8 @@ postgresql-ha:
   service:
     ports:
       postgresql: 5432
-  primary:
-    persistence:
-      size: 10Gi
+  persistence:
+    size: 10Gi
 
 ## @section PostgreSQL
 #
@@ -566,7 +613,7 @@ postgresql:
   global:
     postgresql:
       auth:
-        password: gitea
+        password: ""
         database: gitea
         username: gitea
       service:

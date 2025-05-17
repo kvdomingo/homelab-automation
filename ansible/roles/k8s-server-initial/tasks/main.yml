@@ -53,7 +53,7 @@
   become: true
   ansible.builtin.systemd:
     name: k3s
-    state: reloaded
+    state: restarted
 
 - name: Get kubeconfig
   ansible.builtin.fetch:

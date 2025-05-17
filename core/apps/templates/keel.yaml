@@ -57,13 +57,23 @@ spec:
               enabled: true
               storageClass: "nfs-client"
             affinity:
+              podAntiAffinity:
+                preferredDuringSchedulingIgnoredDuringExecution:
+                  - weight: 100
+                    podAffinityTerm:
+                      topologyKey: kubernetes.io/hostname
+                      labelSelector:
+                        matchExpressions:
+                          - key: app.kubernetes.io/name
+                            operator: In
+                            values: [ keel ]
               nodeAffinity:
                 requiredDuringSchedulingIgnoredDuringExecution:
                   nodeSelectorTerms:
                     - matchExpressions:
-                      - key: kubernetes.io/arch
-                        operator: NotIn
-                        values: [ arm64, arm ]
+                        - key: kubernetes.io/arch
+                          operator: NotIn
+                          values: [ arm64, arm ]
   destination:
     server: {{ .Values.destination.server }}
     namespace: kube-system
