@@ -9,7 +9,7 @@ releases:
   - name: gitea
     namespace: gitea
     chart: gitea/gitea
-    version: 10.1.4
+    version: 12.0.0
     values:
       - ./values.yaml
     set:
@@ -20,4 +20,4 @@ releases:
       - value: ref+vault://kv/lab/gitea#ADMIN_EMAIL
         name: gitea.admin.email
       - value: ref+vault://kv/lab/gitea#POSTGRESQL_PASSWORD
-        name: postgresql.auth.password
+        name: postgresql.global.postgresql.auth.password

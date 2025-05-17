@@ -5,13 +5,13 @@
 image:
   repository: coredns/coredns
   # Overrides the image tag whose default is the chart appVersion.
-  tag: ""
+  tag: 1.12.1
   pullPolicy: IfNotPresent
   ## Optionally specify an array of imagePullSecrets.
   ## Secrets must be manually created in the namespace.
   ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
   ##
-  pullSecrets: []
+  pullSecrets: [ ]
   # pullSecrets:
   #   - name: myRegistryKeySecretName
 
@@ -31,7 +31,7 @@ rollingUpdate:
 
 terminationGracePeriodSeconds: 30
 
-podAnnotations: {}
+podAnnotations: { }
 #  cluster-autoscaler.kubernetes.io/safe-to-evict: "false"
 
 serviceType: "ClusterIP"
@@ -42,36 +42,37 @@ prometheus:
     annotations:
       prometheus.io/scrape: "true"
       prometheus.io/port: "9153"
-    selector: {}
+    selector: { }
   monitor:
     enabled: false
-    additionalLabels: {}
+    additionalLabels: { }
     namespace: ""
     interval: ""
-    selector: {}
+    selector: { }
 
 service:
-# clusterIP: ""
-# clusterIPs: []
-# loadBalancerIP: ""
-# loadBalancerClass: ""
-# externalIPs: []
-# externalTrafficPolicy: ""
-# ipFamilyPolicy: ""
-# trafficDistribution: PreferClose
+  clusterIP: 10.43.0.10
+  clusterIPs:
+    - 10.43.0.10
+  # loadBalancerIP: ""
+  # loadBalancerClass: ""
+  # externalIPs: []
+  # externalTrafficPolicy: ""
+  # ipFamilyPolicy: ""
+  # trafficDistribution: PreferClose
   # The name of the Service
   # If not set, a name is generated using the fullname template
   name: ""
-  annotations: {}
+  annotations: { }
   # Pod selector
-  selector: {}
+  selector: { }
 
 serviceAccount:
   create: false
   # The name of the ServiceAccount to use
   # If not set and create is true, a name is generated using the fullname template
   name: ""
-  annotations: {}
+  annotations: { }
 
 rbac:
   # If true, create & use RBAC resources
@@ -89,7 +90,7 @@ isClusterService: true
 priorityClassName: ""
 
 # Configure the pod level securityContext.
-podSecurityContext: {}
+podSecurityContext: { }
 
 # Configure SecurityContext for Pod.
 # Ensure that required linux capability to bind port number below 1024 is assigned (`CAP_NET_BIND_SERVICE`).
@@ -105,39 +106,39 @@ securityContext:
 # Default zone is what Kubernetes recommends:
 # https://kubernetes.io/docs/tasks/administer-cluster/dns-custom-nameservers/#coredns-configmap-options
 servers:
-- zones:
-  - zone: .
-  port: 53
-  # -- expose the service on a different port
-  # servicePort: 5353
-  # If serviceType is nodePort you can specify nodePort here
-  # nodePort: 30053
-  # hostPort: 53
-  plugins:
-  - name: errors
-  # Serves a /health endpoint on :8080, required for livenessProbe
-  - name: health
-    configBlock: |-
-      lameduck 5s
-  # Serves a /ready endpoint on :8181, required for readinessProbe
-  - name: ready
-  # Required to query kubernetes API for data
-  - name: kubernetes
-    parameters: cluster.local in-addr.arpa ip6.arpa
-    configBlock: |-
-      pods insecure
-      fallthrough in-addr.arpa ip6.arpa
-      ttl 30
-  # Serves a /metrics endpoint on :9153, required for serviceMonitor
-  - name: prometheus
-    parameters: 0.0.0.0:9153
-  - name: forward
-    parameters: . /etc/resolv.conf
-  - name: cache
-    parameters: 30
-  - name: loop
-  - name: reload
-  - name: loadbalance
+  - zones:
+      - zone: .
+    port: 53
+    # -- expose the service on a different port
+    # servicePort: 5353
+    # If serviceType is nodePort you can specify nodePort here
+    # nodePort: 30053
+    # hostPort: 53
+    plugins:
+      - name: errors
+      # Serves a /health endpoint on :8080, required for livenessProbe
+      - name: health
+        configBlock: |-
+          lameduck 5s
+      # Serves a /ready endpoint on :8181, required for readinessProbe
+      - name: ready
+      # Required to query kubernetes API for data
+      - name: kubernetes
+        parameters: cluster.local in-addr.arpa ip6.arpa
+        configBlock: |-
+          pods insecure
+          fallthrough in-addr.arpa ip6.arpa
+          ttl 30
+      # Serves a /metrics endpoint on :9153, required for serviceMonitor
+      - name: prometheus
+        parameters: 0.0.0.0:9153
+      - name: forward
+        parameters: . /etc/resolv.conf
+      - name: cache
+        parameters: 30
+      - name: loop
+      - name: reload
+      - name: loadbalance
 
 # Complete example with all the options:
 # - zones:                 # the `zones` block can be left out entirely, defaults to "."
@@ -160,7 +161,7 @@ servers:
 # extraConfig:
 #   import:
 #     parameters: /opt/coredns/*.conf
-extraConfig: {}
+extraConfig: { }
 
 # To use the livenessProbe, the health plugin needs to be enabled in CoreDNS' server config
 livenessProbe:
@@ -218,11 +219,11 @@ affinity:
 #       topologyKey: kubernetes.io/hostname
 #       maxSkew: 1
 #       whenUnsatisfiable: ScheduleAnyway
-topologySpreadConstraints: []
+topologySpreadConstraints: [ ]
 
 # Node labels for pod assignment
 # Ref: https://kubernetes.io/docs/user-guide/node-selection/
-nodeSelector: {}
+nodeSelector: { }
 
 # expects input structure as per specification https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.11/#toleration-v1-core
 # for example:
@@ -231,7 +232,7 @@ nodeSelector: {}
 #     operator: Equal
 #     value: master
 #     effect: NoSchedule
-tolerations: []
+tolerations: [ ]
 
 # https://kubernetes.io/docs/tasks/run-application/configure-pdb/#specifying-a-poddisruptionbudget
 podDisruptionBudget:
@@ -239,7 +240,7 @@ podDisruptionBudget:
   minAvailable: 2
 
 # configure custom zone files as per https://coredns.io/2017/05/08/custom-dns-entries-for-kubernetes/
-zoneFiles: []
+zoneFiles: [ ]
 #  - filename: example.db
 #    domain: example.com
 #    contents: |
@@ -250,22 +251,22 @@ zoneFiles: []
 #      *.example.com. IN A   192.168.99.102
 
 # optional array of sidecar containers
-extraContainers: []
+extraContainers: [ ]
 # - name: some-container-name
 #   image: some-image:latest
 #   imagePullPolicy: Always
 # optional array of extra volumes to create
-extraVolumes: []
+extraVolumes: [ ]
 # - name: some-volume-name
 #   emptyDir: {}
 # optional array of mount points for extraVolumes
-extraVolumeMounts: []
+extraVolumeMounts: [ ]
 # - name: some-volume-name
 #   mountPath: /etc/wherever
 
 # optional array of secrets to mount inside coredns container
 # possible usecase: need for secure connection with etcd backend
-extraSecrets: []
+extraSecrets: [ ]
 # - name: etcd-client-certs
 #   mountPath: /etc/coredns/tls/etcd
 #   defaultMode: 420
@@ -275,7 +276,7 @@ extraSecrets: []
 
 # optional array of environment variables for coredns container
 # possible usecase: provides username and password for etcd user authentications
-env: []
+env: [ ]
 # - name: WHATEVER_ENV
 #   value: whatever
 # - name: SOME_SECRET_ENV
@@ -289,10 +290,10 @@ env: []
 # k8sAppLabelOverride: "kube-dns"
 
 # Custom labels to apply to Deployment, Pod, Configmap, Service, ServiceMonitor. Including autoscaler if enabled.
-customLabels: {}
+customLabels: { }
 
 # Custom annotations to apply to Deployment, Pod, Configmap, Service, ServiceMonitor. Including autoscaler if enabled.
-customAnnotations: {}
+customAnnotations: { }
 
 ## Alternative configuration for HPA deployment if wanted
 ## Create HorizontalPodAutoscaler object.
@@ -319,8 +320,8 @@ customAnnotations: {}
 hpa:
   enabled: true
   minReplicas: 3
-  maxReplicas: 4
-  metrics: []
+  maxReplicas: 7
+  metrics: [ ]
 
 ## Configue a cluster-proportional-autoscaler for coredns
 # See https://github.com/kubernetes-incubator/cluster-proportional-autoscaler
@@ -342,7 +343,7 @@ autoscaler:
   preventSinglePointFailure: true
 
   # Annotations for the coredns proportional autoscaler pods
-  podAnnotations: {}
+  podAnnotations: { }
 
   ## Optionally specify some extra flags to pass to cluster-proprtional-autoscaler.
   ## Useful for e.g. the nodelabels flag.
@@ -357,7 +358,7 @@ autoscaler:
     ## Secrets must be manually created in the namespace.
     ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
     ##
-    pullSecrets: []
+    pullSecrets: [ ]
     # pullSecrets:
     #   - name: myRegistryKeySecretName
 
@@ -365,14 +366,14 @@ autoscaler:
   priorityClassName: ""
 
   # expects input structure as per specification https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.11/#affinity-v1-core
-  affinity: {}
+  affinity: { }
 
   # Node labels for pod assignment
   # Ref: https://kubernetes.io/docs/user-guide/node-selection/
-  nodeSelector: {}
+  nodeSelector: { }
 
   # expects input structure as per specification https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.11/#toleration-v1-core
-  tolerations: []
+  tolerations: [ ]
 
   # resources for autoscaler pod
   resources:
@@ -387,7 +388,7 @@ autoscaler:
   configmap:
     ## Annotations for the coredns-autoscaler configmap
     # i.e. strategy.spinnaker.io/versioned: "false" to ensure configmap isn't renamed
-    annotations: {}
+    annotations: { }
 
   # Enables the livenessProbe for cluster-proportional-autoscaler - this requires version 1.8.0+ of the autoscaler
   livenessProbe:
@@ -399,7 +400,7 @@ autoscaler:
     successThreshold: 1
 
   # optional array of sidecar containers
-  extraContainers: []
+  extraContainers: [ ]
   # - name: some-container-name
   #   image: some-image:latest
   #   imagePullPolicy: Always
@@ -409,6 +410,6 @@ deployment:
   enabled: true
   name: ""
   ## Annotations for the coredns deployment
-  annotations: {}
+  annotations: { }
   ## Pod selector
-  selector: {}
+  selector: { }
