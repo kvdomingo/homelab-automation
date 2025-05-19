@@ -48,7 +48,24 @@ infisical:
     imagePullSecrets: [ ]
 
   # -- Node affinity settings for pod placement
-  affinity: { }
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: kubernetes.io/arch
+                operator: NotIn
+                values: [ arm64, arm ]
+    podAntiAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+        - weight: 100
+          podAffinityTerm:
+            topologyKey: kubernetes.io/hostname
+            labelSelector:
+              matchExpressions:
+                - key: app
+                  operator: In
+                  values: [ infisical-standalone ]
   # -- Kubernetes Secret reference containing Infisical root credentials
   kubeSecretRef: "infisical-secrets"
 
@@ -90,10 +107,10 @@ ingress:
   # -- TLS settings for HTTPS access
   tls:
     [ ]
-    # -- TLS secret name for HTTPS
-    # - secretName: letsencrypt-prod
-    # -- Domain name to associate with the TLS certificate
-    #   hosts:
+  # -- TLS secret name for HTTPS
+  # - secretName: letsencrypt-prod
+  # -- Domain name to associate with the TLS certificate
+  #   hosts:
   #     - some.domain.com
 
 postgresql:
