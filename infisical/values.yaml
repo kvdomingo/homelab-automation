@@ -24,16 +24,16 @@ infisical:
     # -- Creates a new service account if true, with necessary permissions for this chart. If false and `serviceAccount.name` is not defined, the chart will attempt to use the Default service account
     create: true
     # -- Custom annotations for the auto-created service account
-    annotations: {}
+    annotations: { }
     # -- Optional custom service account name, if existing service account is used
     name: null
 
   # -- Override for the full name of Infisical resources in this deployment
   fullnameOverride: ""
   # -- Custom annotations for Infisical pods
-  podAnnotations: {}
+  podAnnotations: { }
   # -- Custom annotations for Infisical deployment
-  deploymentAnnotations: {}
+  deploymentAnnotations: { }
   # -- Number of pod replicas for high availability
   replicaCount: 3
 
@@ -41,20 +41,20 @@ infisical:
     # -- Image repository for the Infisical service
     repository: infisical/infisical
     # -- Specific version tag of the Infisical image. View the latest version here https://hub.docker.com/r/infisical/infisical
-    tag: "v0.119.0-postgres"
+    tag: "v0.129.1-postgres"
     # -- Pulls image only if not already present on the node
     pullPolicy: IfNotPresent
     # -- Secret references for pulling the image, if needed
-    imagePullSecrets: []
+    imagePullSecrets: [ ]
 
   # -- Node affinity settings for pod placement
-  affinity: {}
+  affinity: { }
   # -- Kubernetes Secret reference containing Infisical root credentials
   kubeSecretRef: "infisical-secrets"
 
   service:
     # -- Custom annotations for Infisical service
-    annotations: {}
+    annotations: { }
     # -- Service type, can be changed based on exposure needs (e.g., LoadBalancer)
     type: ClusterIP
     # -- Optional node port for service when using NodePort type
@@ -89,12 +89,12 @@ ingress:
     gethomepage.dev/ping: "https://infisical.lab.kvd.studio/"
   # -- TLS settings for HTTPS access
   tls:
-    []
+    [ ]
     # -- TLS secret name for HTTPS
     # - secretName: letsencrypt-prod
     # -- Domain name to associate with the TLS certificate
     #   hosts:
-    #     - some.domain.com
+  #     - some.domain.com
 
 postgresql:
   # -- Enables an in-cluster PostgreSQL deployment. To achieve HA for Postgres, we recommend deploying https://github.com/zalando/postgres-operator instead.
