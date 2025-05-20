@@ -89,7 +89,7 @@ ingress:
   # -- Enable or disable ingress configuration
   enabled: true
   # -- Hostname for ingress access, e.g., app.example.com
-  hostName: "infisical.kvd.studio"
+  hostName: infisical.lab.kvd.studio
   # -- Specifies the ingress class, useful for multi-ingress setups
   ingressClassName: traefik
 
