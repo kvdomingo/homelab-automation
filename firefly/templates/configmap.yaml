@@ -1,19 +1,23 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: '{{- include "firefly.fullname" . }}-configmap'
+  name: '{{ include "firefly.fullname" . }}-configmap'
   labels:
-    {{- include "firefly.labels" . | nindent 4 }}
+    {{ include "firefly.labels" . | nindent 4 }}
+  annotations:
+    helm.sh/hook: pre-install,pre-upgrade
+    helm.sh/hook-weight: "-5"
+    helm.sh/hook-delete-policy: before-hook-creation
 data:
   DB_CONNECTION: "pgsql"
-  DB_HOST: '{{- include "firefly.fullname" . }}-postgresql'
+  DB_HOST: '10.10.10.103'
   DB_PORT: "5432"
   DB_USERNAME: "firefly"
   DB_DATABASE: "firefly"
   APP_ENV: "production"
   TZ: "Asia/Manila"
   TRUSTED_PROXIES: "**"
-  REDIS_HOST: '{{- include "firefly.fullname" . }}-redis-headless'
+  REDIS_HOST: '{{ include "firefly.fullname" . }}-redis-headless'
   REDIS_PORT: "6379"
   CACHE_DRIVER: "redis"
   SESSION_DRIVER: "redis"
