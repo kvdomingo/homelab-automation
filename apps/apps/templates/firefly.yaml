@@ -99,6 +99,44 @@ spec:
               auth:
                 enabled: true
                 password: "<path:kv/data/lab/firefly#REDIS_PASSWORD>"
+    - repoURL: https://firefly-iii.github.io/kubernetes/
+      chart: importer
+      targetRevision: 1.4.1
+      plugin:
+        name: argocd-vault-plugin-helm
+        env:
+          - name: HELM_VALUES
+            value: |
+              image:
+                tag: version-1.6.1
+              trustedProxies: "**"
+              fireflyiii:
+                url: http://firefly-firefly-iii
+                vanityUrl: https://firefly.lab.kvd.studio
+                auth:
+                  accessToken: "<path:kv/data/lab/firefly#ACCESS_TOKEN>"
+              config:
+                env:
+                  IGNORE_DUPLICATE_ERRORS: true
+                  TZ: Asia/Manila
+              ingress:
+                enabled: true
+                className: traefik
+                annotations:
+                  gethomepage.dev/enabled: "true"
+                  gethomepage.dev/name: "Firefly Importer"
+                  gethomepage.dev/group: "Finances"
+                  gethomepage.dev/icon: "firefly.png"
+                  gethomepage.dev/ping: "https://firefly-importer.lab.kvd.studio/health"
+                hosts:
+                  - firefly-importer.lab.kvd.studio
+                resources:
+                  limits:
+                    cpu: 100m
+                    memory: 128Mi
+                  requests:
+                    cpu: 100m
+                    memory: 128Mi
   destination:
     server: {{ .Values.destination.server }}
     namespace: firefly
