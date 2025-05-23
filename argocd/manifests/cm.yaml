@@ -14,12 +14,16 @@ data:
       discover:
         find:
           command:
-            - sh
+            - /bin/sh
+            - -eu
             - "-c"
             - "find . -name 'Chart.yaml' && find . -name 'values.yaml'"
+      init:
       generate:
         command:
-          - bash
+          - /bin/bash
+          - -euxo
+          - pipefail
           - "-c"
           - |
             helm template $ARGOCD_APP_NAME --include-crds -n $ARGOCD_APP_NAMESPACE -f <(echo "$ARGOCD_ENV_HELM_VALUES") . |
