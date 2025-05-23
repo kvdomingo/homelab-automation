@@ -8,71 +8,97 @@ metadata:
     {{ include "apps.finalizers" . | nindent 4 }}
 spec:
   project: {{ .Values.project }}
-  source:
-    repoURL: https://firefly-iii.github.io/kubernetes/
-    chart: firefly-iii
-    targetRevision: 1.9.3
-    plugin:
-      name: argocd-vault-plugin-helm
-      env:
-        - name: HELM_VALUES
-          value: |
-            image:
-              tag: version-6
-            persistence:
-              enabled: true
-              storageClassName: nfs-client
-            config:
-              env:
-                DB_CONNECTION: "pgsql"
-                DB_HOST: '10.10.10.103'
-                DB_PORT: "5432"
-                DB_USERNAME: "firefly"
-                DB_DATABASE: "firefly"
-                APP_ENV: "production"
-                TZ: "Asia/Manila"
-                TRUSTED_PROXIES: "**"
-                MAP_DEFAULT_LAT: "14.60"
-                MAP_DEFAULT_LONG: "120.97"
-                APP_URL: "https://firefly.lab.kvd.studio/"
-                ENABLE_EXCHANGE_RATES: true
-                ENABLE_EXTERNAL_RATES: true
-            secrets:
-              env:
-                APP_KEY: "<path:kv/data/lab/firefly#APP_KEY>"
-                DB_PASSWORD: "<path:kv/data/lab/firefly#POSTGRESQL_PASSWORD>"
-                STATIC_CRON_TOKEN: "<path:kv/data/lab/firefly#STATIC_CRON_TOKEN>"
-                SITE_OWNER: "<path:kv/data/lab/firefly#SITE_OWNER>"
-            cronjob:
-              enabled: true
+  sources:
+    - repoURL: https://firefly-iii.github.io/kubernetes/
+      chart: firefly-iii
+      targetRevision: 1.9.3
+      plugin:
+        name: argocd-vault-plugin-helm
+        env:
+          - name: HELM_VALUES
+            value: |
+              image:
+                tag: version-6
+              persistence:
+                enabled: true
+                storageClassName: nfs-client
+              config:
+                env:
+                  DB_CONNECTION: "pgsql"
+                  DB_HOST: '10.10.10.103'
+                  DB_PORT: "5432"
+                  DB_USERNAME: "firefly"
+                  DB_DATABASE: "firefly"
+                  APP_ENV: "production"
+                  TZ: "Asia/Manila"
+                  TRUSTED_PROXIES: "**"
+                  MAP_DEFAULT_LAT: "14.60"
+                  MAP_DEFAULT_LONG: "120.97"
+                  APP_URL: "https://firefly.lab.kvd.studio/"
+                  CACHE_DRIVER: redis
+                  SESSION_DRIVER: redis
+                  REDIS_HOST: firefly-redis-master
+                  REDIS_PORT: 6379
+                  REDIS_PASSWORD: "<path:kv/data/lab/firefly#REDIS_PASSWORD>"
+                  ENABLE_EXCHANGE_RATES: true
+                  ENABLE_EXTERNAL_RATES: true
+              secrets:
+                env:
+                  APP_KEY: "<path:kv/data/lab/firefly#APP_KEY>"
+                  DB_PASSWORD: "<path:kv/data/lab/firefly#POSTGRESQL_PASSWORD>"
+                  STATIC_CRON_TOKEN: "<path:kv/data/lab/firefly#STATIC_CRON_TOKEN>"
+                  SITE_OWNER: "<path:kv/data/lab/firefly#SITE_OWNER>"
+              cronjob:
+                enabled: true
+                auth:
+                  token: "<path:kv/data/lab/firefly#STATIC_CRON_TOKEN>"
+                schedule: "0 16 * * *"
+              ingress:
+                enabled: true
+                className: traefik
+                annotations:
+                  gethomepage.dev/enabled: "true"
+                  gethomepage.dev/name: "Firefly"
+                  gethomepage.dev/group: "Finances"
+                  gethomepage.dev/icon: "firefly.png"
+                  gethomepage.dev/ping: "https://firefly.lab.kvd.studio/health"
+                hosts:
+                  - firefly.lab.kvd.studio
+                  - firefly.kvd.studio
+              resources:
+                limits:
+                  cpu: 100m
+                  memory: 128Mi
+                requests:
+                  cpu: 100m
+                  memory: 128Mi
+              autoscaling:
+                enabled: true
+                minReplicas: 2
+                maxReplicas: 7
+              startupProbe:
+                failureThreshold: 60
+    - repoURL: https://charts.bitnami.com/bitnami
+      chart: redis
+      targetRevision: 21.1.6
+      plugin:
+        name: argocd-vault-plugin-helm
+        env:
+          - name: HELM_VALUES
+            value: |
+              image:
+                tag: 7.4.3-debian-12-r0
+              architecture: standalone
+              master:
+                persistence:
+                  enabled: true
+                  annotations:
+                    argocd.argoproj.io/sync-options: Delete=false,Prune=false
+              volumePermissions:
+                enabled: true
               auth:
-                token: "<path:kv/data/lab/firefly#STATIC_CRON_TOKEN>"
-              schedule: "0 16 * * *"
-            ingress:
-              enabled: true
-              className: traefik
-              annotations:
-                gethomepage.dev/enabled: "true"
-                gethomepage.dev/name: "Firefly"
-                gethomepage.dev/group: "Finances"
-                gethomepage.dev/icon: "firefly.png"
-                gethomepage.dev/ping: "https://firefly.lab.kvd.studio/health"
-              hosts:
-                - firefly.lab.kvd.studio
-                - firefly.kvd.studio
-            resources:
-              limits:
-                cpu: 100m
-                memory: 128Mi
-              requests:
-                cpu: 100m
-                memory: 128Mi
-            autoscaling:
-              enabled: true
-              minReplicas: 2
-              maxReplicas: 7
-            startupProbe:
-              failureThreshold: 60
+                enabled: true
+                password: "<path:kv/data/lab/firefly#REDIS_PASSWORD>"
   destination:
     server: {{ .Values.destination.server }}
     namespace: firefly
