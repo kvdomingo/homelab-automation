@@ -3,7 +3,7 @@ kind: Pod
 metadata:
   name: "{{ include "firefly.fullname" . }}-test-connection"
   labels:
-    {{- include "firefly.labels" . | nindent 4 }}
+    {{ include "firefly.labels" . | nindent 4 }}
   annotations:
     "helm.sh/hook": test
 spec:
