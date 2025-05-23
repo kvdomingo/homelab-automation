@@ -34,7 +34,7 @@ spec:
                 TRUSTED_PROXIES: "**"
                 MAP_DEFAULT_LAT: "14.60"
                 MAP_DEFAULT_LONG: "120.97"
-                APP_URL: "https://firefly.lab.kvd.studio"
+                APP_URL: "https://firefly.lab.kvd.studio/"
                 ENABLE_EXCHANGE_RATES: true
                 ENABLE_EXTERNAL_RATES: true
             secrets:
@@ -56,7 +56,7 @@ spec:
                 gethomepage.dev/name: "Firefly"
                 gethomepage.dev/group: "Finances"
                 gethomepage.dev/icon: "firefly.png"
-                gethomepage.dev/ping: "https://firefly.lab.kvd.studio/"
+                gethomepage.dev/ping: "https://firefly.lab.kvd.studio/health"
               hosts:
                 - firefly.lab.kvd.studio
                 - firefly.kvd.studio
