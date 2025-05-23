@@ -35,19 +35,12 @@ spec:
                 MAP_DEFAULT_LAT: "14.60"
                 MAP_DEFAULT_LONG: "120.97"
                 APP_URL: "https://firefly.lab.kvd.studio"
-                MAIL_MAILER: "smtp"
-                MAIL_HOST: "smtp.gmail.com"
-                MAIL_PORT: "587"
-                MAIL_ENCRYPTION: "tls"
             secrets:
               env:
                 APP_KEY: "<path:kv/data/lab/firefly#APP_KEY>"
                 DB_PASSWORD: "<path:kv/data/lab/firefly#POSTGRESQL_PASSWORD>"
                 STATIC_CRON_TOKEN: "<path:kv/data/lab/firefly#STATIC_CRON_TOKEN>"
                 SITE_OWNER: "<path:kv/data/lab/firefly#SITE_OWNER>"
-                MAIL_FROM: "<path:kv/data/lab/firefly#SITE_OWNER>"
-                MAIL_USERNAME: "<path:kv/data/lab/firefly#SITE_OWNER>"
-                MAIL_PASSWORD: "<path:kv/data/lab/firefly#MAIL_PASSWORD>"
             cronjob:
               enabled: true
               auth:
@@ -76,6 +69,8 @@ spec:
               enabled: true
               minReplicas: 2
               maxReplicas: 7
+            startupProbe:
+              failureThreshold: 60
   destination:
     server: {{ .Values.destination.server }}
     namespace: firefly
