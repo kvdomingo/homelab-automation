@@ -35,6 +35,8 @@ spec:
                 MAP_DEFAULT_LAT: "14.60"
                 MAP_DEFAULT_LONG: "120.97"
                 APP_URL: "https://firefly.lab.kvd.studio"
+                ENABLE_EXCHANGE_RATES: true
+                ENABLE_EXTERNAL_RATES: true
             secrets:
               env:
                 APP_KEY: "<path:kv/data/lab/firefly#APP_KEY>"
