@@ -11,7 +11,7 @@ spec:
   source:
     repoURL: https://jameswynn.github.io/helm-charts
     chart: homepage
-    targetRevision: 2.0.1
+    targetRevision: 2.1.0
     plugin:
       name: argocd-vault-plugin-helm
       env:
@@ -19,7 +19,7 @@ spec:
           value: |
             image:
               repository: ghcr.io/gethomepage/homepage
-              tag: v0.9.11
+              tag: v1.2.0
             enableRbac: true
             serviceAccount:
               create: true
@@ -226,6 +226,9 @@ spec:
                 showStats: false
                 background: "https://apod.{{ .Values.ingress.baseDomain }}"
                 backgroundOpacity: 0.33
+            env:
+              - name: HOMEPAGE_ALLOWED_HOSTS
+                value: home.lab.kvd.studio
   destination:
     server: {{ .Values.destination.server }}
     namespace: homepage2
