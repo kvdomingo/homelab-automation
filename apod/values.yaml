@@ -3,14 +3,25 @@
 # Declare variables to be passed into your templates.
 
 replicaCount: 1
+
 image:
   repository: ghcr.io/kvdomingo/apod
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "d5a7e0beab4ec4421e05de8903b942d5472cd322"
+  tag: latest
+
 imagePullSecrets: [ ]
+
 nameOverride: ""
+
 fullnameOverride: ""
+
+annotations:
+  keel.sh/policy: "force"
+  keel.sh/match-tag: "true"
+  keel.sh/trigger: "poll"
+  keel.sh/pollSchedule: "@every 5m"
+
 serviceAccount:
   # Specifies whether a service account should be created
   create: true
