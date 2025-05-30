@@ -37,7 +37,7 @@ spec:
             enabled: true
             servicemonitor:
               enabled: true
-    - repoURL: https://git.lab.kvd.studio/r/homelab
+    - repoURL: https://github.com/kvdomingo/homelab-automation
       targetRevision: main
       path: cert-manager
       plugin:

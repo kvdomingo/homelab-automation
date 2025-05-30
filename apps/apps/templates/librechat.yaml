@@ -9,7 +9,7 @@ metadata:
 spec:
   project: {{ .Values.project }}
   source:
-    repoURL: https://git.lab.kvd.studio/r/homelab.git
+    repoURL: https://github.com/kvdomingo/homelab-automation.git
     targetRevision: main
     path: librechat
     plugin:

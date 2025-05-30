@@ -5,7 +5,7 @@
 replicaCount: 1
 
 image:
-  repository: git.lab.kvd.studio/r/time-machine
+  repository: ghcr.io/kvdomingo/time-machine
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
   tag: latest
@@ -133,8 +133,8 @@ affinity:
 
 postgresql:
   image:
-    registry: git.lab.kvd.studio
-    repository: r/time-machine-postgresql
+    registry: ghcr.io
+    repository: kvdomingo/time-machine-postgresql
     tag: latest
   auth:
     username: timemachine-client
@@ -158,5 +158,5 @@ postgresql:
 
 migrate:
   image:
-    repository: git.lab.kvd.studio/r/time-machine-migrate
+    repository: ghcr.io/kvdomingo/time-machine-migrate
     tag: latest
