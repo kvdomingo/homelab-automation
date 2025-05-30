@@ -21,3 +21,5 @@ releases:
         name: gitea.admin.email
       - value: ref+vault://kv/lab/gitea#POSTGRESQL_PASSWORD
         name: postgresql.global.postgresql.auth.password
+      - value: ref+vault://kv/lab/gitea#REDIS_PASSWORD
+        name: valkey.global.valkey.password

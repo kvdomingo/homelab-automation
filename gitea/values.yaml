@@ -191,17 +191,16 @@ ingress:
 #
 ## @param resources Kubernetes resources
 resources:
-  { }
-# We usually recommend not to specify default resources and to leave this as a conscious
-# choice for the user. This also increases chances charts run on environments with little
-# resources, such as Minikube. If you do want to specify resources, uncomment the following
-# lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-# limits:
-#   cpu: 100m
-#   memory: 128Mi
-# requests:
-#   cpu: 100m
-#   memory: 128Mi
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  limits:
+    cpu: 1000m
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 256Mi
 
 ## Use an alternate scheduler, e.g. "stork".
 ## ref: https://kubernetes.io/docs/tasks/administer-cluster/configure-multiple-schedulers/
@@ -238,7 +237,8 @@ deployment:
   #   value: my-value
   terminationGracePeriodSeconds: 60
   labels: { }
-  annotations: { }
+  annotations:
+    keel.sh/policy: "patch"
 
 ## @section ServiceAccount
 
@@ -249,7 +249,7 @@ deployment:
 ## @param serviceAccount.annotations Custom annotations for the ServiceAccount
 ## @param serviceAccount.labels Custom labels for the ServiceAccount
 serviceAccount:
-  create: false
+  create: true
   name: ""
   automountServiceAccountToken: false
   imagePullSecrets: [ ]
@@ -428,10 +428,30 @@ gitea:
     APP_NAME: "Gitea"
     RUN_MODE: prod
     server:
-      SSH_PORT: 22 # rootful image
-      SSH_LISTEN_PORT: 2222 # rootless image
+      SSH_PORT: 3322
+      DOMAIN: git.lab.kvd.studio
+      SSH_DOMAIN: git.lab.kvd.studio
+      ROOT_URL: https://git.lab.kvd.studio
+      LFS_START_SERVER: true
+    repository:
+      DEFAULT_REPO_UNITS: repo.code, repo.releases, repo.issues, repo.pulls, repo.wiki, repo.projects, repo.packages, repo.actions
+      DEFAULT_BRANCH: main
+    repository.pull-request:
+      DEFAULT_MERGE_STYLE: squash
+      POPULATE_SQUASH_COMMENT_WITH_COMMIT_MESSAGES: true
+    webhook:
+      ALLOWED_HOST_LIST: loopback,private,*.dev.kvd.studio,*.lab.kvd.studio,discord.com
+    markup:
+      ENABLED: true
+    actions:
+      ENABLED: true
+    security:
+      LOGIN_REMEMBER_DAYS: 14
     database:
-      user: gitea
+      HOST: gitea-postgresql
+      USER: gitea
+    service:
+      DISABLE_REGISTRATION: true
   #
   #  security:
   #    PASSWORD_COMPLEXITY: spec
@@ -552,8 +572,9 @@ valkey:
   image:
     tag: 8.1.1-debian-12-r0
   architecture: standalone
-  auth:
-    enabled: false
+  global:
+    valkey:
+      password: ""
   primary:
     replicaCount: 1
     service:

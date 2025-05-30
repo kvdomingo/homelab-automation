@@ -1,11 +1,13 @@
 services:
   runner:
-    image: gitea/act_runner:0.2.10
+    image: gitea/act_runner:0.2.11
     restart: unless-stopped
     env_file: .env
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - runner-data:/data
+    ports:
+      - '8088:8088'
 
 volumes:
   runner-data: { }

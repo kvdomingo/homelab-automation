@@ -43,9 +43,9 @@ ingress:
   annotations:
     gethomepage.dev/enabled: "true"
     gethomepage.dev/name: "APOD"
-    gethomepage.dev/group: "Background Services"
+    gethomepage.dev/group: "Apps"
     gethomepage.dev/icon: "si-nasa"
-    gethomepage.dev/ping: "https://apod.lab.kvd.studio/health"
+    gethomepage.dev/ping: "http://apod.apod.svc.cluster.local/health"
   hosts:
     - host: apod.lab.kvd.studio
       paths:
