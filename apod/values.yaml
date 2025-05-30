@@ -112,13 +112,6 @@ affinity:
               - key: app.kubernetes.io/name
                 operator: In
                 values: [ apod ]
-  nodeAffinity:
-    requiredDuringSchedulingIgnoredDuringExecution:
-      nodeSelectorTerms:
-        - matchExpressions:
-            - key: kubernetes.io/arch
-              operator: NotIn
-              values: [ arm64, arm ]
 
 envConfigMaps: [ ]
 #  - name: apod-configmap
