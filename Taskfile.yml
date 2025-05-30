@@ -11,9 +11,6 @@ vars:
   CLOUDNATIVE_PG_VERSION_MINOR: 1.25
   CLOUDNATIVE_PG_VERSION_PATCH: '{{ .CLOUDNATIVE_PG_VERSION_MINOR }}.0'
 
-dotenv:
-  - ./gitea/.env
-
 tasks:
   setup-k8s:
     desc: Run first-time K8s & core infra setup
@@ -52,7 +49,6 @@ tasks:
       - pre-commit install
       - helm repo add bitnami https://charts.bitnami.com/bitnami
       - helm repo add traefik https://traefik.github.io/charts
-      - helm repo add gitea https://dl.gitea.com/charts/
       - helm repo add nextcloud https://nextcloud.github.io/helm/
       - helm repo add hashicorp https://helm.releases.hashicorp.com
       - helm repo add firefly https://firefly-iii.github.io/kubernetes/
@@ -74,11 +70,6 @@ tasks:
         --create-namespace
         --values values.yaml
       - kubectl apply -f middlewares.yaml --namespace traefik
-
-  setup-gitea:
-    desc: Setup Gitea
-    dir: gitea
-    cmd: helmfile apply
 
   setup-vaultwarden:
     desc: Setup Vaultwarden
