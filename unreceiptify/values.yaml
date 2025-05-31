@@ -35,7 +35,7 @@ annotations:
   keel.sh/policy: "force"
   keel.sh/match-tag: "true"
   keel.sh/trigger: "poll"
-  keel.sh/pollSchedule: "@every 3m"
+  keel.sh/pollSchedule: "@every 5m"
 
 # This is for setting Kubernetes Annotations to a Pod.
 # For more information checkout: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
