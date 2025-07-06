@@ -1,0 +1,26 @@
+{{- if not .Values.disableHD2App }}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: hd2-app
+  namespace: {{ include "apps.argocdNamespace" . | quote }}
+  finalizers:
+      {{- include "apps.finalizers" . | nindent 4 }}
+spec:
+  project: {{ .Values.project }}
+  source:
+    repoURL: https://github.com/kvdomingo/hd2-app.git
+    targetRevision: main
+    path: infra/helm/hd2-app
+    plugin:
+      name: argocd-vault-plugin-helm
+  destination:
+    server: {{ .Values.destination.server }}
+    namespace: hd2-app
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+    automated:
+      selfHeal: true
+      prune: true
+{{- end }}
