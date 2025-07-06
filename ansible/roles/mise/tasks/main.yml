@@ -32,3 +32,9 @@
   ansible.builtin.command: |
     go install {{ item }}
   changed_when: false
+
+- name: Install/update global Rust crates
+  loop: "{{ mise_global_rust_crates }}"
+  ansible.builtin.command: |
+    cargo install {{ item }}
+  changed_when: false

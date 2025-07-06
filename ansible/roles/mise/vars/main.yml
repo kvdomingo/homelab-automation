@@ -11,3 +11,5 @@ mise_global_go_packages:
   - github.com/air-verse/air@latest
   - github.com/sqlc-dev/sqlc/cmd/sqlc@latest
   - github.com/golang-migrate/migrate/v4/cmd/migrate@latest
+mise_global_rust_crates:
+  - oha
