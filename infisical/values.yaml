@@ -41,7 +41,7 @@ infisical:
     # -- Image repository for the Infisical service
     repository: infisical/infisical
     # -- Specific version tag of the Infisical image. View the latest version here https://hub.docker.com/r/infisical/infisical
-    tag: "v0.129.1-postgres"
+    tag: "v0.140.0-postgres"
     # -- Pulls image only if not already present on the node
     pullPolicy: IfNotPresent
     # -- Secret references for pulling the image, if needed
@@ -80,7 +80,7 @@ infisical:
   resources:
     limits:
       # -- Memory limit for Infisical container
-      memory: 600Mi
+      memory: 768Mi
     requests:
       # -- CPU request for Infisical container
       cpu: 350m
