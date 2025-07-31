@@ -9,9 +9,9 @@ metadata:
 spec:
   project: {{ .Values.project }}
   source:
-    repoURL: https://github.com/kvdomingo/homelab-automation.git
+    repoURL: https://github.com/kvdomingo/discdevbot.git
     targetRevision: main
-    path: discdevbot
+    path: infra/helm/discdevbot
     plugin:
       name: argocd-vault-plugin-helm
   destination:
