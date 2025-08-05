@@ -48,6 +48,15 @@ spec:
               until pg_isready -h $DB_HOST -U $DB_USERNAME -d $DB_DATABASE; do
               sleep 2;
               done;
+        - name: init-migrate-db
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          envFrom:
+            - configMapRef:
+                name: '{{- include "solidtime.fullname" . }}-configmap'
+            - secretRef:
+                name: '{{- include "solidtime.fullname" . }}-secrets'
+          command: [ php, artisan, migrate, --force ]
       containers:
         - name: "{{ .Chart.Name }}-app"
           {{- with .Values.securityContext }}
