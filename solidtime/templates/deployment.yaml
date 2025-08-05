@@ -60,6 +60,10 @@ spec:
         - name: init-initialize-folders
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- with .Values.podSecurityContext }}
+          securityContext:
+            {{- toYaml . | nindent 8 }}
+          {{- end }}
           envFrom:
             - configMapRef:
                 name: '{{- include "solidtime.fullname" . }}-configmap'
