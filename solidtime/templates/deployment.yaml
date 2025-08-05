@@ -57,6 +57,25 @@ spec:
             - secretRef:
                 name: '{{- include "solidtime.fullname" . }}-secrets'
           command: [ php, artisan, migrate, --force ]
+        - name: init-initialize-folders
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          envFrom:
+            - configMapRef:
+                name: '{{- include "solidtime.fullname" . }}-configmap'
+            - secretRef:
+                name: '{{- include "solidtime.fullname" . }}-secrets'
+          command:
+            - /bin/sh
+            - -eu
+            - -c
+            - >
+              php artisan cache:clear;
+              php artisan config:clear;
+              php artisan view:clear;
+              mkdir -p storage/logs;
+              mkdir -p storage/framework/{cache,sessions,views};
+              chmod -R 775 storage/framework;
       containers:
         - name: "{{ .Chart.Name }}-app"
           {{- with .Values.securityContext }}
