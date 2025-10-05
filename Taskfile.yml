@@ -79,7 +79,7 @@ tasks:
       - kubectl apply -f namespace.yaml
       - kubectl apply -f secrets.yaml
       - >
-        helm upgrade --install postgres bitnami/postgresql
+        helm upgrade --install postgres bitnamilegacy/postgresql
         --create-namespace
         --namespace vaultwarden
         --values pg-values.yaml

@@ -60,7 +60,7 @@ spec:
           {{- end }}
       initContainers:
         - name: init-wait-db
-          image: bitnami/postgresql:17
+          image: bitnamilegacy/postgresql:17
           {{- with .Values.env }}
           env:
             {{ toYaml . | nindent 12 }}

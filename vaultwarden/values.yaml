@@ -328,7 +328,7 @@ logging:
 ##
 initContainers:
   - name: init-wait-db
-    image: bitnami/postgresql:16.1.0-debian-11-r9
+    image: bitnamilegacy/postgresql:16.1.0-debian-11-r9
     command:
       - /bin/sh
       - -c
