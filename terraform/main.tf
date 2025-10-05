@@ -199,5 +199,11 @@ module "storyofus" {
       content = "4cee16db81c20404.vercel-dns-017.com."
       proxied = false
     }
+    _2025_with_daf = {
+      type    = "CNAME"
+      name    = "2025-with-daf"
+      content = "ead1fc91919dd127.vercel-dns-017.com."
+      proxied = false
+    }
   }
 }
