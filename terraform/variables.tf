@@ -1,22 +1,9 @@
-variable "cloudflare_account_name" {
-  type = string
-}
-
-variable "cloudflare_account_id" {
-  type = string
-}
-
-variable "cloudflare_api_key" {
+variable "infisical_client_id" {
   type      = string
   sensitive = true
 }
 
-variable "dev_tunnel_secret" {
-  type      = string
-  sensitive = true
-}
-
-variable "lab_tunnel_secret" {
+variable "infisical_client_secret" {
   type      = string
   sensitive = true
 }

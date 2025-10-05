@@ -1,6 +1,7 @@
 locals {
   kvdstudio_domain = "kvd.studio"
   banyuhai_domain  = "banyuh.ai"
+  storyofus_domain = "storyof.us.kg"
 
   dev_kvd_studio_subdomains = tomap({
     jellyfin = "10.10.10.100:8096"
@@ -33,31 +34,31 @@ locals {
 }
 
 resource "cloudflare_tunnel" "dev" {
-  account_id = var.cloudflare_account_id
+  account_id = data.infisical_secrets.dev.secrets["CLOUDFLARE_ACCOUNT_ID"].value
   name       = "homelab-dev"
-  secret     = var.dev_tunnel_secret
+  secret     = data.infisical_secrets.dev.secrets["DEV_TUNNEL_SECRET"].value
 }
 
 resource "cloudflare_tunnel" "lab" {
-  account_id = var.cloudflare_account_id
+  account_id = data.infisical_secrets.dev.secrets["CLOUDFLARE_ACCOUNT_ID"].value
   name       = "homelab-lab"
-  secret     = var.lab_tunnel_secret
+  secret     = data.infisical_secrets.dev.secrets["LAB_TUNNEL_SECRET"].value
 }
 
 resource "cloudflare_tunnel_route" "dev" {
-  account_id = var.cloudflare_account_id
+  account_id = data.infisical_secrets.dev.secrets["CLOUDFLARE_ACCOUNT_ID"].value
   network    = "10.10.0.0/16"
   tunnel_id  = cloudflare_tunnel.dev.id
 }
 
 resource "cloudflare_tunnel_route" "lab" {
-  account_id = var.cloudflare_account_id
+  account_id = data.infisical_secrets.dev.secrets["CLOUDFLARE_ACCOUNT_ID"].value
   network    = "10.20.0.0/16"
   tunnel_id  = cloudflare_tunnel.lab.id
 }
 
 resource "cloudflare_tunnel_config" "dev" {
-  account_id = var.cloudflare_account_id
+  account_id = data.infisical_secrets.dev.secrets["CLOUDFLARE_ACCOUNT_ID"].value
   tunnel_id  = cloudflare_tunnel.dev.id
 
   config {
@@ -81,7 +82,7 @@ resource "cloudflare_tunnel_config" "dev" {
 }
 
 resource "cloudflare_tunnel_config" "lab" {
-  account_id = var.cloudflare_account_id
+  account_id = data.infisical_secrets.dev.secrets["CLOUDFLARE_ACCOUNT_ID"].value
   tunnel_id  = cloudflare_tunnel.lab.id
 
   config {
@@ -186,4 +187,17 @@ module "banyuh_ai" {
       }
     },
   )
+}
+
+module "storyofus" {
+  source      = "./modules/dns_records"
+  base_domain = local.storyofus_domain
+  records = {
+    _2024_with_daf = {
+      type    = "CNAME"
+      name    = "2024-with-daf"
+      content = "4cee16db81c20404.vercel-dns-017.com."
+      proxied = false
+    }
+  }
 }

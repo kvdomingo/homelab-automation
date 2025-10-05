@@ -117,9 +117,9 @@ tasks:
   tf-plan:
     desc: Generate Terraform plan
     dir: terraform
-    cmd: terraform plan -out=.tfplan {{.CLI_ARGS}}
+    cmd: infisical run -- terraform plan -out=.tfplan {{.CLI_ARGS}}
 
   tf-apply:
     desc: Apply Terraform plan
     dir: terraform
-    cmd: terraform apply .tfplan {{.CLI_ARGS}}
+    cmd: infisical run -- terraform apply .tfplan {{.CLI_ARGS}}
