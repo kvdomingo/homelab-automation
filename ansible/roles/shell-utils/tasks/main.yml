@@ -131,3 +131,16 @@
       ansible.builtin.package:
         name: infisical
         state: latest
+
+- name: Install Chroma CLI
+  block:
+    - name: Download Chroma installer
+      ansible.builtin.get_url:
+        url: https://raw.githubusercontent.com/chroma-core/chroma/main/rust/cli/install/install.sh
+        dest: "{{ USER_HOME }}/Downloads/install-chroma.sh"
+        mode: "0755"
+    - name: Install Chroma
+      ansible.builtin.command:
+        chdir: "{{ USER_HOME }}/Downloads"
+        cmd: ./install-chroma.sh
+      changed_when: false

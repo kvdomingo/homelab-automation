@@ -20,6 +20,8 @@ base_system_packages:
   - flex
   - fzf
   - gcc
+  - gcc-11
+  - gcc-12
   - gedit
   - git
   - gnome-keyring
@@ -34,6 +36,8 @@ base_system_packages:
   - libayatana-appindicator3-dev
   - libbz2-dev
   - libcurl4-openssl-dev
+  - libc6
+  - libc6-dev
   - libffi-dev
   - libfuse2
   - libgconf-2-4
@@ -63,6 +67,7 @@ base_system_packages:
   - ncat
   - net-tools
   - portaudio19-dev
+  - pv
   - python3
   - ripgrep
   - sshpass
