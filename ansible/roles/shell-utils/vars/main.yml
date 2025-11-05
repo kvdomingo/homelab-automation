@@ -4,3 +4,4 @@ shell_utils_wakatime_zsh_plugin_version: 0.1.1
 shell_utils_zsh_autosuggestions_plugin_version: v0.7.1
 shell_utils_zsh_history_substring_search_plugin_version: v1.1.0
 shell_utils_zsh_tmux_auto_title_plugin_version: master
+shell_utils_aspnetcore_runtime_version: 9.0
