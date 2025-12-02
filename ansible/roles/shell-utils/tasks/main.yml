@@ -147,24 +147,16 @@
 
 - name: Install ASP.NET core runtime
   block:
-    - name: Download Microsoft package signing key
-      ansible.builtin.get_url:
-        url: https://packages.microsoft.com/config/debian/12/packages-microsoft-prod.deb
-        dest: "{{ USER_HOME }}/Downloads/packages-microsoft-prod.deb"
-    - name: Install Microsoft package signing key
-      ansible.builtin.command:
-        chdir: "{{ USER_HOME }}/Downloads"
-        cmd: dpkg -i packages-microsoft-prod.deb
-      changed_when: false
-    - name: Delete Microsoft package signing key
-      ansible.builtin.file:
-        path: "{{ USER_HOME }}/Downloads/packages-microsoft-prod.deb"
-        state: absent
-        force: true
+    - name: Add .NET PPA repository
+      ansible.builtin.apt_repository:
+        repo: ppa:dotnet/backports
+        state: present
     - name: Update apt
       ansible.builtin.apt:
         update_cache: true
     - name: Install ASP.NET core runtime
       ansible.builtin.package:
-        name: "aspnetcore-runtime-{{ shell_utils_aspnetcore_runtime_version }}"
+        name:
+          - "dotnet-sdk-{{ shell_utils_aspnetcore_runtime_version }}"
+          - "dotnet-runtime-{{ shell_utils_aspnetcore_runtime_version }}"
         state: latest

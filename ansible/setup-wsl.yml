@@ -6,5 +6,5 @@
     - shell-utils
     - mise
     - docker
-    - kubernetes-client
+    - k8s-client
     - jetbrains

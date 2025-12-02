@@ -30,31 +30,26 @@
         mode: '0755'
     - name: Download Docker GPG key
       ansible.builtin.get_url:
-        url: https://download.docker.com/linux/debian/gpg
-        dest: /tmp/docker.gpg
+        url: https://download.docker.com/linux/ubuntu/gpg
+        dest: /etc/apt/keyrings/docker.asc
         mode: "0644"
-    - name: Import Docker GPG key
-      ansible.builtin.command:
-        cmd: gpg --dearmor --yes -o /etc/apt/keyrings/docker.gpg /tmp/docker.gpg
-      register: gpg_import
-      changed_when: gpg_import.rc == 0
     - name: Set permissions for Docker GPG key
       ansible.builtin.file:
         path: /etc/apt/keyrings/docker.gpg
         mode: "0644"
-    - name: Get OS architecture
-      ansible.builtin.command: dpkg --print-architecture
-      register: dpkg_arch
-      changed_when: false
     - name: Get OS codename
-      ansible.builtin.shell: . /etc/os-release && echo "$VERSION_CODENAME"
+      ansible.builtin.shell: . /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}"
       register: os_codename
       changed_when: false
     - name: Add Docker repository
       ansible.builtin.copy:
         content: |
-          deb [arch={{ dpkg_arch.stdout }} signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian {{ os_codename.stdout }} stable
-        dest: /etc/apt/sources.list.d/docker.list
+          Types: deb
+          URIs: https://download.docker.com/linux/ubuntu
+          Suites: {{ os_codename.stdout }}
+          Components: stable
+          Signed-By: /etc/apt/keyrings/docker.asc
+        dest: /etc/apt/sources.list.d/docker.sources
         mode: "0644"
 
 - name: Remove conflicting Docker packages

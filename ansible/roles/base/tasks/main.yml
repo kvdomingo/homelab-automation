@@ -13,30 +13,10 @@
 - name: Setup wslu
   become: true
   block:
-    - name: Download wlsu GPG key
-      ansible.builtin.get_url:
-        url: https://pkg.wslutiliti.es/public.key
-        dest: /tmp/wslu.gpg
-        mode: "0644"
-    - name: Import wslu GPG key
-      ansible.builtin.command:
-        cmd: gpg --dearmor --yes -o /usr/share/keyrings/wslu-archive-keyring.pgp /tmp/wslu.gpg
-      register: gpg_import
-      changed_when: gpg_import.rc == 0
-    - name: Set permissions for wslu GPG key
-      ansible.builtin.file:
-        path: /usr/share/keyrings/wslu-archive-keyring.pgp
-        mode: "0644"
-    - name: Get OS codename
-      ansible.builtin.shell: . /etc/os-release && echo "$VERSION_CODENAME"
-      register: os_codename
-      changed_when: false
-    - name: Add wslu repository
-      ansible.builtin.copy:
-        content: |
-          deb [signed-by=/usr/share/keyrings/wslu-archive-keyring.pgp] https://pkg.wslutiliti.es/debian {{ os_codename.stdout }} main
-        dest: /etc/apt/sources.list.d/wslu.list
-        mode: "0644"
+    - name: Add wslu PPA repository
+      ansible.builtin.apt_repository:
+        repo: ppa:wslutilities/wslu
+        state: present
     - name: Update apt
       ansible.builtin.apt:
         update_cache: true
