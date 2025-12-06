@@ -13,3 +13,6 @@ mise_global_go_packages:
   - github.com/golang-migrate/migrate/v4/cmd/migrate@latest
 mise_global_rust_crates:
   - oha
+mise_plugins:
+  - name: supabase-cli
+    repo: https://github.com/gavinying/asdf-supabase-cli

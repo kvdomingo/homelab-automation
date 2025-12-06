@@ -14,6 +14,11 @@
       ansible.builtin.command: mise install --yes
       changed_when: false
 
+- name: Install mise plugins
+  loop: "{{ mise_plugins }}"
+  ansible.builtin.command: mise plugin add {{ item.name }} {{ item.repo }}
+  changed_when: false
+
 - name: Install/update global Python packages
   loop: "{{ mise_global_python_packages }}"
   ansible.builtin.pip:
