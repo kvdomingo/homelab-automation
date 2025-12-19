@@ -10,7 +10,9 @@ locals {
   lab_kvd_studio_subdomains = toset([
     "git",
     "infisical",
+    "nocodb",
     "primerdriver",
+    "tandoor",
     "umami",
     "unreceiptify",
   ])

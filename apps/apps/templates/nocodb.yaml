@@ -36,6 +36,10 @@ spec:
                     paths:
                       - path: /
                         pathType: Prefix
+                  - host: nocodb.{{ .Values.ingress.externalDomain }}
+                    paths:
+                      - path: /
+                        pathType: Prefix
             postgresql:
               image:
                 tag: 16.6.0-debian-12-r2

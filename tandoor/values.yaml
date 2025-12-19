@@ -77,6 +77,10 @@ ingress:
       paths:
         - path: /
           pathType: Prefix
+    - host: tandoor.kvd.studio
+      paths:
+        - path: /
+          pathType: Prefix
   tls: [ ]
   # - secretName: chart-example-tls
   #   hosts:
