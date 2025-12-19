@@ -43,14 +43,14 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           command:
-            - sh
+            - /bin/sh
             - -c
             - |
               set -e
               source venv/bin/activate
               echo "Running database migrations..."
-              python manage.py migrate
-              python manage.py collectstatic --noinput
+              python manage.py migrate --no-input
+              python manage.py collectstatic --no-input
               echo "Setting media file attributes..."
               chown -R 65534:65534 /opt/recipes/mediafiles
               find /opt/recipes/mediafiles -type d | xargs -r chmod 755
