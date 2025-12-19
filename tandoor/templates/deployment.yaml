@@ -36,6 +36,43 @@ spec:
       securityContext:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      initContainers:
+        - name: init-chmod-data
+          securityContext:
+            runAsUser: 0
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command:
+            - sh
+            - -c
+            - |
+              set -e
+              source venv/bin/activate
+              echo "Running database migrations..."
+              python manage.py migrate
+              python manage.py collectstatic --noinput
+              echo "Setting media file attributes..."
+              chown -R 65534:65534 /opt/recipes/mediafiles
+              find /opt/recipes/mediafiles -type d | xargs -r chmod 755
+              find /opt/recipes/mediafiles -type f | xargs -r chmod 644
+              echo "Done"
+          volumeMounts:
+            - mountPath: /opt/recipes/mediafiles
+              name: media
+              # mount as subPath due to lost+found on ext4 pvc
+              subPath: files
+            - mountPath: /opt/recipes/staticfiles
+              name: static
+              # mount as subPath due to lost+found on ext4 pvc
+              subPath: files
+          {{- with .Values.volumeMounts }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          envFrom:
+            - configMapRef:
+                name: '{{- include "tandoor.fullname" . }}-configmap'
+            - secretRef:
+                name: '{{- include "tandoor.fullname" . }}-secrets'
       containers:
         - name: {{ .Chart.Name }}
           {{- with .Values.securityContext }}
@@ -44,6 +81,17 @@ spec:
           {{- end }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command:
+            - /opt/recipes/venv/bin/gunicorn
+            - -b
+            - 0.0.0.0:80
+            - --access-logfile
+            - "-"
+            - --error-logfile
+            - "-"
+            - --log-level
+            - INFO
+            - recipes.wsgi
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}
@@ -56,6 +104,10 @@ spec:
           readinessProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}
+          {{- with .Values.startupProbe }}
+          startupProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           {{- with .Values.resources }}
           resources:
             {{- toYaml . | nindent 12 }}
@@ -63,8 +115,10 @@ spec:
           volumeMounts:
             - name: static
               mountPath: /opt/recipes/staticfiles
+              subPath: files
             - name: media
               mountPath: /opt/recipes/mediafiles
+              subPath: files
           {{- with .Values.volumeMounts }}
             {{- toYaml . | nindent 12 }}
           {{- end }}

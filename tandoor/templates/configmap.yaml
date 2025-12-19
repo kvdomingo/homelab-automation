@@ -14,3 +14,6 @@ data:
   POSTGRES_PORT: "5432"
   POSTGRES_USER: "tandoor"
   POSTGRES_DB: "tandoor"
+  DEBUG: "0"
+  ALLOWED_HOSTS: "*"
+  GUNICORN_MEDIA: "0"
