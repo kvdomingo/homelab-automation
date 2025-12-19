@@ -1,4 +1,4 @@
 {
-  "ansible.python.interpreterPath": "~/.local/share/mise/installs/python/3.12/bin/python",
+  "ansible.python.interpreterPath": "/home/kvdomingo/.local/share/mise/installs/python/3.12/bin/python",
   "vscord.app.privacyMode.enable": false
 }
