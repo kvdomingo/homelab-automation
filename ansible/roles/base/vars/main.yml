@@ -40,7 +40,7 @@ base_system_packages:
   - libc6-dev
   - libffi-dev
   - libfuse2
-  - libgconf-2-4
+#  - libgconf-2-4
   - libgl1
   - libglib2.0-0
   - libgtk-3-dev

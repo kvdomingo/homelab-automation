@@ -27,7 +27,7 @@
       ansible.builtin.file:
         path: /etc/apt/keyrings
         state: directory
-        mode: '0755'
+        mode: "0755"
     - name: Download Docker GPG key
       ansible.builtin.get_url:
         url: https://download.docker.com/linux/ubuntu/gpg
@@ -35,7 +35,7 @@
         mode: "0644"
     - name: Set permissions for Docker GPG key
       ansible.builtin.file:
-        path: /etc/apt/keyrings/docker.gpg
+        path: /etc/apt/keyrings/docker.asc
         mode: "0644"
     - name: Get OS codename
       ansible.builtin.shell: . /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}"

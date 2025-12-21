@@ -11,7 +11,9 @@
         cmd: ./install-mise.sh
       changed_when: false
     - name: Install mise plugins/tools
-      ansible.builtin.command: mise install --yes
+      ansible.builtin.shell: |
+        mise trust --yes
+        mise install --yes
       changed_when: false
 
 - name: Install mise plugins
@@ -20,10 +22,8 @@
   changed_when: false
 
 - name: Install/update global Python packages
-  loop: "{{ mise_global_python_packages }}"
   ansible.builtin.pip:
-    name: "{{ item }}"
-    state: latest
+    requirements: "{{ USER_HOME }}/requirements.txt"
 
 - name: Install/update global Node.js packages
   loop: "{{ mise_global_node_packages }}"
