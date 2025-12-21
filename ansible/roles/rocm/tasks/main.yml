@@ -1,0 +1,12 @@
+- name: Download AMD unified driver package
+  ansible.builtin.get_url:
+    url: https://repo.radeon.com/amdgpu-install/{{ rocm_driver_version }}/amdgpu-install_{{ rocm_driver_version_deep }}_all.deb
+    dest: "{{ USER_HOME }}/Downloads/amdgpu-install_{{ rocm_driver_version_deep }}_all.deb"
+
+- name: Install AMD unified driver package
+  ansible.builtin.apt:
+    deb: "{{ USER_HOME }}/Downloads/amdgpu-install_{{ rocm_driver_version_deep }}_all.deb"
+    state: present
+
+- name: Install ROCm
+  ansible.builtin.command: amdgpu-install -y --usecase=wsl,rocm --no-dkms

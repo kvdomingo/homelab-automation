@@ -7,3 +7,4 @@
     - mise
     - docker
     - k8s-client
+    - rocm
