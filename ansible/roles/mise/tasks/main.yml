@@ -43,3 +43,27 @@
   ansible.builtin.command: |
     cargo install {{ item }}
   changed_when: false
+
+- name: Install DVC
+  block:
+    - name: Download DVC GPG key
+      ansible.builtin.get_url:
+        url: https://dvc.org/deb/iterative.asc
+        dest: /etc/apt/keyrings/packages.iterative.gpg
+        mode: "0644"
+
+    - name: Add DVC repository
+      ansible.builtin.copy:
+        content: |
+          deb [arch=amd64 signed-by=/etc/apt/keyrings/packages.iterative.gpg] https://dvc.org/deb/ stable main
+        dest: /etc/apt/sources.list.d/dvc.list
+        mode: "0644"
+
+    - name: Update apt
+      ansible.builtin.apt:
+        update_cache: true
+
+    - name: Install DVC
+      ansible.builtin.package:
+        name: dvc
+        state: latest
