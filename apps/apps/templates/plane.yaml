@@ -11,7 +11,7 @@ spec:
   source:
     repoURL: https://helm.plane.so/
     chart: plane-ce
-    targetRevision: 1.0.29
+    targetRevision: 1.4.1
     plugin:
       name: argocd-vault-plugin-helm
       env:
