@@ -64,6 +64,7 @@ base_system_packages:
   - lolcat
   - lsb-release
   - mesa-utils
+  - nasm
   - neofetch
   - ncat
   - net-tools
