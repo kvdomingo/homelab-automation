@@ -9,9 +9,9 @@ metadata:
 spec:
   project: {{ .Values.project }}
   source:
-    repoURL: https://github.com/kvdomingo/homelab-automation.git
+    repoURL: https://github.com/kvdomingo/time-machine.git
     targetRevision: main
-    path: time-machine
+    path: deploy/helm/time-machine
     plugin:
       name: argocd-vault-plugin-helm
   destination:
