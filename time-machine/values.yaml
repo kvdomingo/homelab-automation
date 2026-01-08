@@ -131,31 +131,6 @@ affinity:
               operator: NotIn
               values: [ arm64, arm ]
 
-postgresql:
-  image:
-    registry: ghcr.io
-    repository: kvdomingo/time-machine-postgresql
-    tag: latest
-  auth:
-    username: timemachine-client
-    database: timemachine
-    existingSecret: time-machine-secrets
-    secretKeys:
-      adminPasswordKey: POSTGRESQL_PASSWORD
-      userPasswordKey: POSTGRESQL_PASSWORD
-      replicationPasswordKey: POSTGRESQL_PASSWORD
-  primary:
-    annotations:
-      keel.sh/policy: "force"
-      keel.sh/match-tag: "true"
-      keel.sh/trigger: "poll"
-      keel.sh/pollSchedule: "@every 3m"
-    persistence:
-      annotations:
-        argocd.argoproj.io/sync-options: Delete=false,Prune=false
-  volumePermissions:
-    enabled: true
-
 migrate:
   image:
     repository: ghcr.io/kvdomingo/time-machine-migrate
