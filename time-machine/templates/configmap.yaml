@@ -9,10 +9,9 @@ metadata:
     helm.sh/hook-weight: "-5"
     helm.sh/hook-delete-policy: before-hook-creation
 data:
-  DJANGO_SETTINGS_MODULE: "time_machine.settings"
-  POSTGRESQL_HOST: "time-machine-postgresql"
+  POSTGRESQL_HOST: "10.10.10.103"
   POSTGRESQL_PORT: "5432"
-  POSTGRESQL_USERNAME: "postgres"
-  POSTGRESQL_DATABASE: "timemachine"
+  POSTGRESQL_USERNAME: "time_machine"
+  POSTGRESQL_DATABASE: "time_machine"
   PORT: "5000"
   PRODUCTION: "true"

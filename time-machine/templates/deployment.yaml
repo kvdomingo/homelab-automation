@@ -113,7 +113,7 @@ spec:
                 topologyKey: kubernetes.io/hostname
                 labelSelector:
                   matchLabels:
-                    {{- include "time-machine.selectorLabels" . | nindent 20 }}
+                    {{ include "time-machine.selectorLabels" $ | nindent 20 }}
               weight: 100
         {{- toYaml . | nindent 8 }}
       {{- end }}
