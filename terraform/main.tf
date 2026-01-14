@@ -133,7 +133,13 @@ module "kvdstudio" {
         type    = "CNAME"
         name    = "hannibot"
         content = "cname.vercel-dns.com."
-        proxied = true
+        proxied = false
+      }
+      betterplaridel = {
+        type    = "CNAME"
+        name    = "betterplaridel"
+        content = "b94dec802dbb1537.vercel-dns-017.com."
+        proxied = false
       }
     },
     {
