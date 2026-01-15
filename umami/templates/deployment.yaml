@@ -55,13 +55,13 @@ spec:
                 name: {{ include "umami.fullname" . }}-secrets
       initContainers:
         - name: {{ .Chart.Name }}-init-wait-db
-          image: {{ .Values.postgresql.image.repository }}:{{ .Values.postgresql.image.tag }}
+          image: ghcr.io/kvdomingo/postgresql-pig:18
           imagePullPolicy: Always
           command:
             - /bin/sh
             - -c
             - |
-              until pg_isready -h srv-pg-01.lab -U {{ .Values.postgresql.auth.username }} -d {{ .Values.postgresql.auth.database }}; do
+              until pg_isready -h srv-pg-01.lab -U umami -d umami; do
                 echo "Waiting for PostgreSQL to be ready..."
                 sleep 2
               done

@@ -6,11 +6,17 @@ replicaCount: 3
 
 image:
   repository: docker.umami.is/umami-software/umami
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: postgresql-v2.17.0
+  tag: postgresql-latest
 
-imagePullSecrets: [ ]
+annotations:
+  keel.sh/policy: "force"
+  keel.sh/match-tag: "true"
+  keel.sh/trigger: "poll"
+  keel.sh/pollSchedule: "@every 5m"
+
+imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
@@ -20,18 +26,18 @@ serviceAccount:
   # Automatically mount a ServiceAccount's API credentials?
   automount: true
   # Annotations to add to the service account
-  annotations: { }
+  annotations: {}
   # The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
   name: ""
 
-podAnnotations: { }
-podLabels: { }
+podAnnotations: {}
+podLabels: {}
 
-podSecurityContext: { }
+podSecurityContext: {}
 # fsGroup: 2000
 
-securityContext: { }
+securityContext: {}
 # capabilities:
 #   drop:
 #   - ALL
@@ -60,7 +66,7 @@ ingress:
       paths:
         - path: /
           pathType: Prefix
-  tls: [ ]
+  tls: []
 
 resources:
   # We usually recommend not to specify default resources and to leave this as a conscious
@@ -99,28 +105,20 @@ pdb:
   minAvailable: 2
 
 # Additional volumes on the output Deployment definition.
-volumes: [ ]
+volumes: []
 # - name: foo
 #   secret:
 #     secretName: mysecret
 #     optional: false
 
 # Additional volumeMounts on the output Deployment definition.
-volumeMounts: [ ]
+volumeMounts: []
 # - name: foo
 #   mountPath: "/etc/foo"
 #   readOnly: true
 
-nodeSelector: { }
+nodeSelector: {}
 
-tolerations: [ ]
+tolerations: []
 
-affinity: { }
-
-postgresql:
-  image:
-    repository: bitnamilegacy/postgresql
-    tag: 16.3.0-debian-12-r20
-  auth:
-    username: umami
-    database: umami
+affinity: {}
