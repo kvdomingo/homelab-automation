@@ -90,5 +90,8 @@ base_system_packages:
   - zlib1g-dev
   - zsh
   - zsh-syntax-highlighting
+base_brew_taps:
+  - treeverse/lakefs
 base_brew_packages:
   - git-xet
+  - lakefs

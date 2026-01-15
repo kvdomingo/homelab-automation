@@ -23,6 +23,11 @@
         cmd: ./install-homebrew.sh
       changed_when: false
 
+- name: Add Homebrew taps
+  community.general.homebrew_tap:
+    name: "{{ base_brew_taps }}"
+  state: present
+
 - name: Install Homebrew packages
   community.general.homebrew:
     name: {{ base_brew_packages }}
