@@ -10,17 +10,20 @@
     name: "{{ base_system_packages }}"
     state: latest
 
-- name: Setup wslu
-  become: true
+- name: Setup Homebrew
   block:
-    - name: Add wslu PPA repository
-      ansible.builtin.apt_repository:
-        repo: ppa:wslutilities/wslu
-        state: present
-    - name: Update apt
-      ansible.builtin.apt:
-        update_cache: true
-    - name: Install wslu
-      ansible.builtin.package:
-        name: wslu
-        state: latest
+    - name: Download Homebrew
+      ansible.builtin.get_url:
+        url: https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh
+        dest: "{{ USER_HOME }}/Downloads/install-homebrew.sh"
+        mode: "0755"
+    - name: Install Homebrew
+      ansible.builtin.command:
+        chdir: "{{ USER_HOME }}/Downloads"
+        cmd: ./install-homebrew.sh
+      changed_when: false
+
+- name: Install Homebrew packages
+  community.general.homebrew:
+    name: {{ base_brew_packages }}
+    state: latest
