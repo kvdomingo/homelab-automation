@@ -11,18 +11,22 @@ spec:
   source:
     repoURL: https://charts.bitnami.com/bitnami
     chart: minio
-    targetRevision: 14.7.0
+    targetRevision: 17.0.21
     plugin:
       name: argocd-vault-plugin-helm
       env:
         - name: HELM_VALUES
           value: |
             image:
-              tag: 2024.10.13-debian-12-r0
-            mode: distributed
+              repository: bitnamilegacy/minio
+              tag: 2025.7.23-debian-12-r5
+            clientImage:
+              repository: bitnamilegacy/minio-client
+              tag: 2025.7.21-debian-12-r3
             auth:
               rootUser: '<path:kv/data/lab/minio#ROOT_USERNAME>'
               rootPassword: '<path:kv/data/lab/minio#ROOT_PASSWORD>'
+            mode: distributed
             statefulset:
               replicaCount: 4
               zones: 1
@@ -42,20 +46,28 @@ spec:
               failureThreshold: 60
             ingress:
               enabled: true
-              hostname: 'minio.{{ .Values.ingress.baseDomain }}'
-              path: /
+              hostname: 'api-minio.{{ .Values.ingress.baseDomain }}'
               pathType: Prefix
               annotations:
                 gethomepage.dev/enabled: "true"
-                gethomepage.dev/name: "MinIO"
+                gethomepage.dev/name: "MinIO API"
                 gethomepage.dev/group: "Storage"
                 gethomepage.dev/icon: "minio.png"
-                gethomepage.dev/ping: "https://minio.{{ .Values.ingress.baseDomain }}"
-            apiIngress:
-              enabled: true
-              hostname: 'api-minio.{{ .Values.ingress.baseDomain }}'
-              path: /
-              pathType: Prefix
+                gethomepage.dev/ping: "https://api-minio.{{ .Values.ingress.baseDomain }}"
+            console:
+              image:
+                repository: bitnamilegacy/minio-object-browser
+                tag: 2.0.2-debian-12-r3
+              ingress:
+                enabled: true
+                hostname: 'minio.{{ .Values.ingress.baseDomain }}'
+                pathType: Prefix
+                annotations:
+                  gethomepage.dev/enabled: "true"
+                  gethomepage.dev/name: "MinIO"
+                  gethomepage.dev/group: "Storage"
+                  gethomepage.dev/icon: "minio.png"
+                  gethomepage.dev/ping: "https://minio.{{ .Values.ingress.baseDomain }}"
             persistence:
               enabled: true
               annotations:
