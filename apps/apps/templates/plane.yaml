@@ -17,6 +17,7 @@ spec:
       env:
         - name: HELM_VALUES
           value: |
+            planeVersion: v1.2.0
             ingress:
               enabled: true
               appHost: plane.{{ .Values.ingress.baseDomain }}
