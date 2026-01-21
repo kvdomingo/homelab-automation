@@ -41,6 +41,7 @@ spec:
               pgdb_password: <path:kv/data/lab/plane#POSTGRESQL_PASSWORD>
               pgdb_name: plane
               pgdb_remote_url: "postgres://plane:<path:kv/data/lab/plane#POSTGRESQL_PASSWORD>@10.10.10.103:5432/plane"
+              aws_region: ap-southeast-1
               aws_access_key: "<path:kv/data/lab/plane#MINIO_ROOT_USER>"
               aws_secret_access_key: "<path:kv/data/lab/plane#MINIO_ROOT_PASSWORD>"
               aws_s3_endpoint_url: "https://api-minio.lab.kvd.studio"
