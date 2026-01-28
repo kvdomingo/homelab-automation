@@ -132,7 +132,7 @@ module "kvdstudio" {
       hannibot = {
         type    = "CNAME"
         name    = "hannibot"
-        content = "cname.vercel-dns.com."
+        content = "470bf1810574e5e9.vercel-dns-017.com."
         proxied = false
       }
       betterplaridel = {
