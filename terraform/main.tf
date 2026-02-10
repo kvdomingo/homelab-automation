@@ -129,6 +129,12 @@ module "kvdstudio" {
         content = "google-site-verification=tIAe-0kYQ5fk42kI2nw2HGh50tUB-SDRf44JyxvSaFc"
         proxied = false
       }
+      openai_verification = {
+        type    = "TXT"
+        name    = "@"
+        content = "openai-domain-verification=dv-1rHkOFyDBYYVTS3rj8qDXpip"
+        proxied = false
+      }
       hannibot = {
         type    = "CNAME"
         name    = "hannibot"
