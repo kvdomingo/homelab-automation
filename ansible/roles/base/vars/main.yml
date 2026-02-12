@@ -95,3 +95,5 @@ base_brew_taps:
 base_brew_packages:
   - git-xet
   - lakefs
+base_brew_casks:
+  - amir20/homebrew-dtop/dtop

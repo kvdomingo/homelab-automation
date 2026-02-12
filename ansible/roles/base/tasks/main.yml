@@ -30,5 +30,11 @@
 
 - name: Install Homebrew packages
   community.general.homebrew:
-    name: {{ base_brew_packages }}
+    name: "{{ base_brew_packages }}"
     state: latest
+
+- name: Install Homebrew casks
+  community.general.homebrew_cask:
+    name: "{{ base_brew_casks }}"
+    state: latest
+    greedy: true
