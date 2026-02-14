@@ -147,6 +147,18 @@ module "kvdstudio" {
         content = "b94dec802dbb1537.vercel-dns-017.com."
         proxied = false
       }
+      pili_planet_stg = {
+        type    = "CNAME"
+        name    = "pili-planet-stg"
+        content = "2043495636191cbc.vercel-dns-017.com."
+        proxied = false
+      }
+      pili_planet = {
+        type    = "CNAME"
+        name    = "pili-planet"
+        content = "2043495636191cbc.vercel-dns-017.com."
+        proxied = false
+      }
     },
     {
       for k, v in local.github_pages_ipv4 : "primerdriver-docs-ipv4-${k}" =>
