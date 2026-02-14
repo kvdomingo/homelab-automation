@@ -12,6 +12,7 @@ locals {
     "infisical",
     "nocodb",
     "primerdriver",
+    "solidtime",
     "tandoor",
     "umami",
     "unreceiptify",
