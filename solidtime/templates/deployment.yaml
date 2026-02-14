@@ -1,0 +1,113 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "solidtime.fullname" . }}
+  labels:
+    {{ include "solidtime.labels" . | nindent 4 }}
+  annotations:
+    {{ toYaml .Values.annotations | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{ include "solidtime.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{ toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{ include "solidtime.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{ toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{ toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "solidtime.serviceAccountName" . }}
+      {{- with .Values.podSecurityContext }}
+      securityContext:
+        {{ toYaml . | nindent 8 }}
+      {{- end }}
+      initContainers:
+        - name: migrate
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          command:
+            - php
+            - /var/www/html/artisan
+            - migrate
+            - --force
+          envFrom:
+            - configMapRef:
+                name: '{{ include "solidtime.fullname" . }}-configmap'
+            - secretRef:
+                name: '{{ include "solidtime.fullname" . }}-secrets'
+          volumeMounts:
+            - name: app-storage
+              mountPath: /var/www/html/storage/app
+      containers:
+        - name: {{ .Chart.Name }}
+          {{- with .Values.securityContext }}
+          securityContext:
+            {{ toYaml . | nindent 12 }}
+          {{- end }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+          {{- with .Values.livenessProbe }}
+          livenessProbe:
+            {{ toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.readinessProbe }}
+          readinessProbe:
+            {{ toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.startupProbe }}
+          startupProbe:
+            {{ toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.resources }}
+          resources:
+            {{ toYaml . | nindent 12 }}
+          {{- end }}
+          volumeMounts:
+            - name: app-storage
+              mountPath: /var/www/html/storage/app
+          {{- with .Values.volumeMounts }}
+            {{ toYaml . | nindent 12 }}
+          {{- end }}
+          env:
+            - name: CONTAINER_MODE
+              value: http
+          envFrom:
+            - configMapRef:
+                name: '{{ include "solidtime.fullname" . }}-configmap'
+            - secretRef:
+                name: '{{ include "solidtime.fullname" . }}-secrets'
+      volumes:
+        - name: app-storage
+          persistentVolumeClaim:
+            claimName: '{{ include "solidtime.fullname" . }}-app-storage'
+      {{- with .Values.volumes }}
+        {{ toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{ toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{ toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{ toYaml . | nindent 8 }}
+      {{- end }}

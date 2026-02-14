@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: '{{- include "solidtime.fullname" . }}-gotenberg'
+  labels:
+    {{- include "solidtime-gotenberg.labels" . | nindent 4 }}
+  {{- with .Values.gotenberg.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{ include "solidtime-gotenberg.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{ toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{ include "solidtime-gotenberg.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{ toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{ toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "solidtime.serviceAccountName" . }}
+      {{- with .Values.podSecurityContext }}
+      securityContext:
+        {{ toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: gotenberg
+          {{- with .Values.securityContext }}
+          securityContext:
+            {{ toYaml . | nindent 12 }}
+          {{- end }}
+          image: "{{ .Values.gotenberg.image.repository }}:{{ .Values.gotenberg.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.gotenberg.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.gotenberg.service.port }}
+              protocol: TCP
+          {{- with .Values.gotenberg.livenessProbe }}
+          livenessProbe:
+            {{ toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.gotenberg.startupProbe }}
+          startupProbe:
+            {{ toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.resources }}
+          resources:
+            {{ toYaml . | nindent 12 }}
+          {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{ toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{ toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{ toYaml . | nindent 8 }}
+      {{- end }}
