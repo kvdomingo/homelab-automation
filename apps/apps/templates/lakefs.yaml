@@ -1,0 +1,66 @@
+{{- if not .Values.disableLakeFs }}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: lakefs
+  namespace: {{ include "apps.argocdNamespace" . | quote }}
+  finalizers:
+    {{- include "apps.finalizers" . | nindent 4 }}
+spec:
+  project: {{ .Values.project }}
+  source:
+    repoURL: https://charts.lakefs.io
+    chart: lakefs
+    targetRevision: 1.7.18
+    plugin:
+      name: argocd-vault-plugin-helm
+      env:
+        - name: HELM_VALUES
+          value: |
+            ingress:
+              enabled: true
+              annotations:
+                gethomepage.dev/enabled: "true"
+                gethomepage.dev/name: "LakeFS"
+                gethomepage.dev/group: "Storage"
+                gethomepage.dev/icon: "lakefs.png"
+                gethomepage.dev/ping: "https://lakefs.lab.kvd.studio"
+              hosts:
+                - host: lakefs.lab.kvd.studio
+                  paths:
+                    - /
+            lakefsConfig: |
+              database:
+                type: postgres
+                postgres:
+                  max_open_connections: 10
+                  max_idle_connections: 10
+              blockstore:
+                type: s3
+                default_namespace_prefix: "s3://lakefs-"
+                s3:
+                  region: ap-southeast-1
+                  force_path_style: true
+                  endpoint: https://api-minio.lab.kvd.studio
+                  credentials:
+                    access_key_id: "<path:kv/data/lab/lakefs#MINIO_ACCESS_KEY>"
+                    secret_access_key: "<path:kv/data/lab/lakefs#MINIO_SECRET_KEY>"
+              stats:
+                enabled: false
+              usage_report:
+                enabled: false
+            secretKeys:
+              authEncryptSecretKey: null
+            secrets:
+              databaseConnectionString: "<path:kv/data/lab/lakefs#DATABASE_URL>"
+              authEncryptSecretKey: "<path:kv/data/lab/lakefs#AUTH_ENCRYPT_SECRET_KEY>"
+  destination:
+    server: {{ .Values.destination.server }}
+    namespace: lakefs
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+    automated:
+      selfHeal: true
+      prune: true
+{{- end }}
