@@ -45,6 +45,11 @@ spec:
               periodSeconds: 10
               timeoutSeconds: 3
               failureThreshold: 60
+            extraEnvVars:
+              - name: MINIO_REGION
+                value: ap-southeast-1
+              - name: MINIO_REGION_NAME
+                value: ap-southeast-1
             ingress:
               enabled: true
               hostname: 'api-minio.{{ .Values.ingress.baseDomain }}'
@@ -69,6 +74,14 @@ spec:
               enabled: true
               serviceMonitor:
                 enabled: true
+            affinity:
+              nodeAffinity:
+                requiredDuringSchedulingIgnoredDuringExecution:
+                  nodeSelectorTerms:
+                    - matchExpressions:
+                        - key: kubernetes.io/arch
+                          operator: NotIn
+                          values: [ arm64, arm ]
             console:
               image:
                 repository: bitnamilegacy/minio-object-browser
@@ -83,6 +96,11 @@ spec:
                   gethomepage.dev/group: "Storage"
                   gethomepage.dev/icon: "minio.png"
                   gethomepage.dev/ping: "https://minio.{{ .Values.ingress.baseDomain }}"
+              extraEnvVars:
+                - name: MINIO_REGION
+                  value: ap-southeast-1
+                - name: MINIO_REGION_NAME
+                  value: ap-southeast-1
               pdb:
                 create: true
                 minAvailable: 1
@@ -93,6 +111,14 @@ spec:
                   maxReplicas: 5
                   targetCPU: 80
                   targetMemory: 80
+              affinity:
+                nodeAffinity:
+                  requiredDuringSchedulingIgnoredDuringExecution:
+                    nodeSelectorTerms:
+                      - matchExpressions:
+                          - key: kubernetes.io/arch
+                            operator: NotIn
+                            values: [ arm64, arm ]
   destination:
     server: {{ .Values.destination.server }}
     namespace: minio
