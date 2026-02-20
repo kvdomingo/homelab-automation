@@ -24,8 +24,9 @@ spec:
               repository: bitnamilegacy/minio-client
               tag: 2025.7.21-debian-12-r3
             auth:
-              rootUser: '<path:kv/data/lab/minio#ROOT_USERNAME>'
-              rootPassword: '<path:kv/data/lab/minio#ROOT_PASSWORD>'
+              rootUser: "<path:kv/data/lab/minio#ROOT_USERNAME>"
+              rootPassword: "<path:kv/data/lab/minio#ROOT_PASSWORD>"
+              forceNewKeys: true
             mode: distributed
             statefulset:
               replicaCount: 4
@@ -54,6 +55,20 @@ spec:
                 gethomepage.dev/group: "Storage"
                 gethomepage.dev/icon: "minio.png"
                 gethomepage.dev/ping: "https://api-minio.{{ .Values.ingress.baseDomain }}"
+            persistence:
+              enabled: true
+              annotations:
+                argocd.argoproj.io/sync-options: Delete=false,Prune=false
+            defaultInitPermissions:
+              volumePermissions:
+                enabled: true
+                image:
+                  repository: bitnamilegacy/os-shell
+                  tag: 12-debian-12-r50
+            metrics:
+              enabled: true
+              serviceMonitor:
+                enabled: true
             console:
               image:
                 repository: bitnamilegacy/minio-object-browser
@@ -68,16 +83,16 @@ spec:
                   gethomepage.dev/group: "Storage"
                   gethomepage.dev/icon: "minio.png"
                   gethomepage.dev/ping: "https://minio.{{ .Values.ingress.baseDomain }}"
-            persistence:
-              enabled: true
-              annotations:
-                argocd.argoproj.io/sync-options: Delete=false,Prune=false
-            volumePermissions:
-              enabled: true
-            metrics:
-              enabled: true
-              serviceMonitor:
-                enabled: true
+              pdb:
+                create: true
+                minAvailable: 1
+              autoscaling:
+                hpa:
+                  enabled: true
+                  minReplicas: 2
+                  maxReplicas: 5
+                  targetCPU: 80
+                  targetMemory: 80
   destination:
     server: {{ .Values.destination.server }}
     namespace: minio
