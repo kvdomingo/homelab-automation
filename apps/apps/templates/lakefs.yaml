@@ -37,7 +37,7 @@ spec:
                   max_idle_connections: 10
               blockstore:
                 type: s3
-                default_namespace_prefix: "s3://lakefs-"
+                default_namespace_prefix: "s3://lakefs/"
                 s3:
                   region: ap-southeast-1
                   force_path_style: true
