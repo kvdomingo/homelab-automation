@@ -58,8 +58,7 @@ spec:
               password: "<path:kv/data/lab/vaultwarden#POSTGRESQL_PASSWORD>"
               dbName: vaultwarden
             domain: "https://vaultwarden.{{ .Values.ingress.baseDomain }}"
-            signupsAllowed: true
-            signupsVerify: true
+            signupsAllowed: false
             invitationsAllowed: true
             adminToken:
               value: "<path:kv/data/lab/vaultwarden#ADMIN_TOKEN>"
