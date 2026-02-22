@@ -59,7 +59,7 @@ spec:
                   gethomepage.dev/enabled: "true"
                   gethomepage.dev/name: "Dagster"
                   gethomepage.dev/group: "DataOps"
-                  gethomepage.dev/icon: "https://dagster.io/images/brand/logos/dagster-primary-mark.png"
+                  gethomepage.dev/icon: "https://dagster-website.vercel.app/images/brand/logos/dagster-primary-mark.png"
                   gethomepage.dev/ping: "https://dagster.{{ .Values.ingress.baseDomain }}/server_info"
                 dagsterWebserver:
                   host: "dagster.{{ .Values.ingress.baseDomain }}"
