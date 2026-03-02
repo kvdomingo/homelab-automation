@@ -96,7 +96,8 @@ affinity: { }
 
 postgresql:
   image:
-    tag: 13.6.0-debian-10-r19
+    repository: bitnamilegacy/postgresql
+    tag: 13.18.0-debian-12-r2
   auth:
     username: hannibot
     database: hannibot

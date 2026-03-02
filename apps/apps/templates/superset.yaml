@@ -74,9 +74,15 @@ spec:
                 minAvailable: 2
                 maxUnavailable: ~
             postgresql:
+              image:
+                repository: bitnamilegacy/postgresql
+                tag: 14.6.0-debian-11-r13
               auth:
                 password: "<path:kv/data/lab/superset#POSTGRESQL_PASSWORD>"
             redis:
+              image:
+                repository: bitnamilegacy/redis
+                tag: 7.0.10-debian-11-r4
               master:
                 persistence:
                   enabled: true
