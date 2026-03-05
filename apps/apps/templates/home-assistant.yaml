@@ -1,0 +1,74 @@
+{{- if not .Values.disableHomeAssistant }}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: home-assistant
+  namespace: {{ include "apps.argocdNamespace" . | quote }}
+  finalizers:
+    {{ include "apps.finalizers" . | nindent 4 }}
+spec:
+  project: {{ .Values.project }}
+  source:
+    repoURL: http://pajikos.github.io/home-assistant-helm-chart/
+    chart: home-assistant
+    targetRevision: 0.3.46
+    plugin:
+      name: argocd-vault-plugin-helm
+      env:
+        - name: HELM_VALUES
+          value: |
+            image:
+              tag: latest
+            env:
+              - name: TZ
+                value: Asia/Manila
+            ingress:
+              enabled: true
+              annotations:
+                gethomepage.dev/enabled: "true"
+                gethomepage.dev/name: "Home Assistant"
+                gethomepage.dev/group: "Home Automation"
+                gethomepage.dev/icon: "home-assistant.png"
+                gethomepage.dev/ping: "https://home-assistant.{{ .Values.ingress.baseDomain }}"
+              hosts:
+                - host: home-assistant.{{ .Values.ingress.baseDomain }}
+                  paths:
+                    - path: /
+                      pathType: Prefix
+                - host: home-assistant.{{ .Values.ingress.externalDomain }}
+                  paths:
+                    - path: /
+                      pathType: Prefix
+            persistence:
+              enabled: true
+              annotations:
+                argocd.argoproj.io/sync-options: Delete=false,Prune=false
+            readinessProbe:
+              failureThreshold: 60
+              periodSeconds: 10
+              timeoutSeconds: 3
+            serviceMonitor:
+              enabled: true
+            statefulSetAnnotations:
+              keel.sh/policy: "force"
+              keel.sh/match-tag: "true"
+              keel.sh/trigger: "poll"
+              keel.sh/pollSchedule: "@every 5m"
+            configuration:
+              enabled: true
+              forceInit: true
+              trusted_proxies:
+                - 10.0.0.0/8
+                - 172.16.0.0/12
+                - 192.168.0.0/16
+                - 127.0.0.0/8
+  destination:
+    server: {{ .Values.destination.server }}
+    namespace: home-assistant
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+    automated:
+      selfHeal: true
+      prune: true
+{{- end }}
