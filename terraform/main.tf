@@ -130,6 +130,12 @@ module "kvdstudio" {
         content = "google-site-verification=tIAe-0kYQ5fk42kI2nw2HGh50tUB-SDRf44JyxvSaFc"
         proxied = false
       }
+      microsoft_domain_verification = {
+        type    = "TXT"
+        name    = "@"
+        content = "MS=B9DD85B6C0438DB6C634911330D9848E1BB2E7EB"
+        proxied = false
+      }
       openai_verification = {
         type    = "TXT"
         name    = "@"
