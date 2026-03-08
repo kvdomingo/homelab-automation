@@ -10,79 +10,92 @@ http:
     pfsense:
       rule: "Host(`pfsense.dev.kvd.studio`)"
       service: pfsense
-      !!merge <<: *common-http-router
+      <<: *common-http-router
     bastion:
       rule: "Host(`bastion.dev.kvd.studio`)"
       service: bastion
-      !!merge <<: *common-http-router
+      <<: *common-http-router
     aurora:
       rule: "Host(`aurora.dev.kvd.studio`)"
       service: aurora
-      !!merge <<: *common-http-router
+      <<: *common-http-router
     truenas:
       rule: "Host(`truenas.dev.kvd.studio`)"
       service: truenas
-      !!merge <<: *common-http-router
+      <<: *common-http-router
     jellyfin:
       rule: "Host(`jellyfin.dev.kvd.studio`)"
       service: jellyfin
-      !!merge <<: *common-http-router
+      <<: *common-http-router
     pihole1:
       rule: "Host(`pihole1.dev.kvd.studio`)"
       service: pihole1
-      !!merge <<: *common-http-router
+      <<: *common-http-router
     pihole2:
       rule: "Host(`pihole2.dev.kvd.studio`)"
       service: pihole2
-      !!merge <<: *common-http-router
+      <<: *common-http-router
     wings:
       rule: "Host(`wings0.dev.kvd.studio`)"
       service: wings
-      !!merge <<: *common-http-router
+      <<: *common-http-router
     prowlarr:
       rule: "Host(`prowlarr.dev.kvd.studio`)"
       service: prowlarr
-      !!merge <<: *common-http-router
+      <<: *common-http-router
     flaresolverr:
       rule: "Host(`flaresolverr.dev.kvd.studio`)"
       service: flaresolverr
-      !!merge <<: *common-http-router
+      <<: *common-http-router
     sonarr:
       rule: "Host(`sonarr.dev.kvd.studio`)"
       service: sonarr
-      !!merge <<: *common-http-router
+      <<: *common-http-router
     jellyseerr:
       rule: "Host(`jellyseerr.dev.kvd.studio`)"
       service: jellyseerr
-      !!merge <<: *common-http-router
+      <<: *common-http-router
     radarr:
       rule: "Host(`radarr.dev.kvd.studio`)"
       service: radarr
-      !!merge <<: *common-http-router
+      <<: *common-http-router
     lidarr:
       rule: "Host(`lidarr.dev.kvd.studio`)"
       service: lidarr
-      !!merge <<: *common-http-router
+      <<: *common-http-router
     qbittorrent:
       rule: "Host(`qbittorrent.dev.kvd.studio`)"
       service: qbittorrent
-      !!merge <<: *common-http-router
+      <<: *common-http-router
     readarr:
       rule: "Host(`readarr.dev.kvd.studio`)"
       service: readarr
-      !!merge <<: *common-http-router
+      <<: *common-http-router
     portainer:
       rule: "Host(`portainer.dev.kvd.studio`)"
       service: portainer
-      !!merge <<: *common-http-router
+      <<: *common-http-router
     dblab-api:
       rule: "Host(`dblab-api.dev.kvd.studio`)"
       service: dblab-api
-      !!merge <<: *common-http-router
+      <<: *common-http-router
     dblab:
       rule: "Host(`dblab.dev.kvd.studio`)"
       service: dblab
-      !!merge <<: *common-http-router
+      <<: *common-http-router
+    pg:
+      rule: "Host(`pg.lab.kvd.studio`)"
+      service: pg
+      <<: *common-http-router
+      tls:
+        options: postgres
+    pgpool:
+      rule: "Host(`pg.lab.kvd.studio`)"
+      service: pgpool
+      <<: *common-http-router
+      tls:
+        options: postgres
+
   services:
     pfsense:
       loadBalancer:
@@ -179,6 +192,17 @@ http:
         servers:
           - url: "http://10.10.10.103:2346"
         passHostHeader: true
+    pg:
+      loadBalancer:
+        servers:
+          - url: "http://10.10.10.103:5432"
+        passHostHeader: true
+    pgpool:
+      loadBalancer:
+        servers:
+          - url: "http://10.10.10.103:6543"
+        passHostHeader: true
+
   middlewares:
     default-headers:
       headers:
@@ -206,6 +230,7 @@ http:
         middlewares:
           - default-headers
           - default-whitelist
+
 tcp:
   routers:
     wings:
@@ -215,8 +240,15 @@ tcp:
       service: wings
       tls:
         passthrough: true
+
   services:
     wings:
       loadBalancer:
         servers:
           - address: "10.10.10.104:2022"
+
+tls:
+  options:
+    postgres:
+      alpnProtocols:
+        - postgresql
