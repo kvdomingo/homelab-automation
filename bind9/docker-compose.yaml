@@ -1,6 +1,6 @@
 services:
   master:
-    image: ubuntu/bind9:9.18-22.04_beta
+    image: ubuntu/bind9:9.20-24.10_beta
     environment:
       BIND9_USER: root
       TZ: Asia/Manila
