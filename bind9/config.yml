@@ -207,16 +207,6 @@ http:
         servers:
           - url: "http://10.10.10.103:2346"
         passHostHeader: true
-    pg:
-      loadBalancer:
-        servers:
-          - url: "http://10.10.10.103:5432"
-        passHostHeader: true
-    pgpool:
-      loadBalancer:
-        servers:
-          - url: "http://10.10.10.103:6543"
-        passHostHeader: true
 
   middlewares:
     default-headers:
@@ -252,6 +242,14 @@ tcp:
       loadBalancer:
         servers:
           - address: "10.10.10.104:2022"
+    pg:
+      loadBalancer:
+        servers:
+          - url: "http://10.10.10.103:5432"
+    pgpool:
+      loadBalancer:
+        servers:
+          - url: "http://10.10.10.103:6543"
 
   routers:
     wings:
