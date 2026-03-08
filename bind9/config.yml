@@ -3,7 +3,7 @@ x-common-http-router: &common-http-router
     - https
   middlewares:
     - secured
-  tls: {}
+  tls: { }
 
 http:
   routers:
@@ -245,11 +245,11 @@ tcp:
     pg:
       loadBalancer:
         servers:
-          - url: "http://10.10.10.103:5432"
+          - address: "10.10.10.103:5432"
     pgpool:
       loadBalancer:
         servers:
-          - url: "http://10.10.10.103:6543"
+          - address: "10.10.10.103:6543"
 
   routers:
     wings:
