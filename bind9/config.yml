@@ -194,7 +194,7 @@ http:
           X-Forwarded-Proto: https
           X-Robots-Tag: "none,noarchive,nosnippet,notranslate,noimageindex"
     default-whitelist:
-      ipWhiteList:
+      ipAllowList:
         sourceRange:
           - 10.0.0.0/8
           - 172.16.0.0/12
