@@ -1,0 +1,24 @@
+http:
+  middlewares:
+    secure-headers:
+      headers:
+        browserXssFilter: true
+        contentTypeNosniff: true
+        forceSTSHeader: true
+        frameDeny: true
+        stsIncludeSubdomains: true
+        stsPreload: true
+        stsSeconds: 15552000
+        customFrameOptionsValue: SAMEORIGIN
+        customRequestHeaders:
+          X-Forwarded-Proto: https
+          X-Robots-Tag: none,noarchive,nosnippet,notranslate,noimageindex
+
+    compress:
+      compress: {}
+
+    secured:
+      chain:
+        middlewares:
+          - secure-headers
+          - compress
