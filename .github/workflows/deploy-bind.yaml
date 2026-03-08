@@ -24,6 +24,7 @@ jobs:
         env:
           CF_DNS_API_TOKEN: ${{ secrets.CF_DNS_API_TOKEN }}
           CF_ZONE_API_TOKEN: ${{ secrets.CF_ZONE_API_TOKEN }}
-        run: >
-          docker compose pull &&
+        run: |
+          docker compose pull
           docker compose up --wait --remove-orphans
+          docker compose restart master

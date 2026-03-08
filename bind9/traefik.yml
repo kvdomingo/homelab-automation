@@ -30,12 +30,12 @@ entryPoints:
         - "172.16.0.0/12"
         - "192.168.0.0/16"
         - "127.0.0.1/8"
+  sftp:
+    address: ":2022"
   pg:
-    address: ":5400"
-  pgpool-sess:
-    address: ":5500"
-  pgpool-trans:
-    address: ":6500"
+    address: ":5432"
+  pgpool:
+    address: ":6543"
 
 providers:
   docker:

@@ -1,6 +1,186 @@
-http:
+x-common-http-router: &common-http-router
+  entryPoints:
+    - https
   middlewares:
-    secure-headers:
+    - secured
+  tls: {}
+
+http:
+  routers:
+    pfsense:
+      rule: "Host(`pfsense.dev.kvd.studio`)"
+      service: pfsense
+      !!merge <<: *common-http-router
+    bastion:
+      rule: "Host(`bastion.dev.kvd.studio`)"
+      service: bastion
+      !!merge <<: *common-http-router
+    aurora:
+      rule: "Host(`aurora.dev.kvd.studio`)"
+      service: aurora
+      !!merge <<: *common-http-router
+    truenas:
+      rule: "Host(`truenas.dev.kvd.studio`)"
+      service: truenas
+      !!merge <<: *common-http-router
+    jellyfin:
+      rule: "Host(`jellyfin.dev.kvd.studio`)"
+      service: jellyfin
+      !!merge <<: *common-http-router
+    pihole1:
+      rule: "Host(`pihole1.dev.kvd.studio`)"
+      service: pihole1
+      !!merge <<: *common-http-router
+    pihole2:
+      rule: "Host(`pihole2.dev.kvd.studio`)"
+      service: pihole2
+      !!merge <<: *common-http-router
+    wings:
+      rule: "Host(`wings0.dev.kvd.studio`)"
+      service: wings
+      !!merge <<: *common-http-router
+    prowlarr:
+      rule: "Host(`prowlarr.dev.kvd.studio`)"
+      service: prowlarr
+      !!merge <<: *common-http-router
+    flaresolverr:
+      rule: "Host(`flaresolverr.dev.kvd.studio`)"
+      service: flaresolverr
+      !!merge <<: *common-http-router
+    sonarr:
+      rule: "Host(`sonarr.dev.kvd.studio`)"
+      service: sonarr
+      !!merge <<: *common-http-router
+    jellyseerr:
+      rule: "Host(`jellyseerr.dev.kvd.studio`)"
+      service: jellyseerr
+      !!merge <<: *common-http-router
+    radarr:
+      rule: "Host(`radarr.dev.kvd.studio`)"
+      service: radarr
+      !!merge <<: *common-http-router
+    lidarr:
+      rule: "Host(`lidarr.dev.kvd.studio`)"
+      service: lidarr
+      !!merge <<: *common-http-router
+    qbittorrent:
+      rule: "Host(`qbittorrent.dev.kvd.studio`)"
+      service: qbittorrent
+      !!merge <<: *common-http-router
+    readarr:
+      rule: "Host(`readarr.dev.kvd.studio`)"
+      service: readarr
+      !!merge <<: *common-http-router
+    portainer:
+      rule: "Host(`portainer.dev.kvd.studio`)"
+      service: portainer
+      !!merge <<: *common-http-router
+    dblab-api:
+      rule: "Host(`dblab-api.dev.kvd.studio`)"
+      service: dblab-api
+      !!merge <<: *common-http-router
+    dblab:
+      rule: "Host(`dblab.dev.kvd.studio`)"
+      service: dblab
+      !!merge <<: *common-http-router
+  services:
+    pfsense:
+      loadBalancer:
+        servers:
+          - url: "http://10.10.0.1"
+        passHostHeader: true
+    bastion:
+      loadBalancer:
+        servers:
+          - url: "https://10.10.0.200:8006"
+        passHostHeader: true
+    aurora:
+      loadBalancer:
+        servers:
+          - url: "https://10.10.10.99:8006"
+        passHostHeader: true
+    truenas:
+      loadBalancer:
+        servers:
+          - url: "http://10.10.10.100"
+        passHostHeader: true
+    jellyfin:
+      loadBalancer:
+        servers:
+          - url: "http://10.10.10.100:8096"
+        passHostHeader: true
+    pihole1:
+      loadBalancer:
+        servers:
+          - url: "http://10.10.1.53"
+        passHostHeader: true
+    pihole2:
+      loadBalancer:
+        servers:
+          - url: "http://10.10.2.53"
+        passHostHeader: true
+    wings:
+      loadBalancer:
+        servers:
+          - url: "http://10.10.10.104:443"
+        passHostHeader: true
+    prowlarr:
+      loadBalancer:
+        servers:
+          - url: "http://10.10.10.100:9696"
+        passHostHeader: true
+    flaresolverr:
+      loadBalancer:
+        servers:
+          - url: "http://10.10.10.100:8191"
+        passHostHeader: true
+    sonarr:
+      loadBalancer:
+        servers:
+          - url: "http://10.10.10.100:8989"
+        passHostHeader: true
+    jellyseerr:
+      loadBalancer:
+        servers:
+          - url: "http://10.10.10.100:10241"
+        passHostHeader: true
+    radarr:
+      loadBalancer:
+        servers:
+          - url: "http://10.10.10.100:7878"
+        passHostHeader: true
+    lidarr:
+      loadBalancer:
+        servers:
+          - url: "http://10.10.10.100:8686"
+        passHostHeader: true
+    qbittorrent:
+      loadBalancer:
+        servers:
+          - url: "http://10.10.10.100:10095"
+        passHostHeader: true
+    readarr:
+      loadBalancer:
+        servers:
+          - url: "http://10.10.10.100:30045"
+        passHostHeader: true
+    portainer:
+      loadBalancer:
+        servers:
+          - url: "http://10.10.10.100:31017"
+        passHostHeader: true
+    dblab-api:
+      loadBalancer:
+        servers:
+          - url: "http://10.10.10.103:2345"
+        passHostHeader: true
+    dblab:
+      loadBalancer:
+        servers:
+          - url: "http://10.10.10.103:2346"
+        passHostHeader: true
+  middlewares:
+    default-headers:
       headers:
         browserXssFilter: true
         contentTypeNosniff: true
@@ -12,13 +192,31 @@ http:
         customFrameOptionsValue: SAMEORIGIN
         customRequestHeaders:
           X-Forwarded-Proto: https
-          X-Robots-Tag: none,noarchive,nosnippet,notranslate,noimageindex
-
-    compress:
-      compress: {}
-
+          X-Robots-Tag: "none,noarchive,nosnippet,notranslate,noimageindex"
+    default-whitelist:
+      ipWhiteList:
+        sourceRange:
+          - 10.0.0.0/8
+          - 172.16.0.0/12
+          - 100.64.0.0/10
+          - 192.168.0.0/16
+          - 127.0.0.0/8
     secured:
       chain:
         middlewares:
-          - secure-headers
-          - compress
+          - default-headers
+          - default-whitelist
+tcp:
+  routers:
+    wings:
+      entryPoints:
+        - sftp
+      rule: "HostSNI(`wings0.dev.kvd.studio`)"
+      service: wings
+      tls:
+        passthrough: true
+  services:
+    wings:
+      loadBalancer:
+        servers:
+          - address: "10.10.10.104:2022"
