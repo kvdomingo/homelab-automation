@@ -7,6 +7,18 @@ x-common-http-router: &common-http-router
 
 http:
   routers:
+    homepage:
+      rule: "Host(`homepage.dev.kvd.studio`)"
+      service: homepage
+      <<: *common-http-router
+    pterodactyl:
+      rule: "Host(`pterodactyl.dev.kvd.studio`)"
+      service: pterodactyl
+      <<: *common-http-router
+    uptime-kuma:
+      rule: "Host(`uptime.dev.kvd.studio`)"
+      service: uptime-kuma
+      <<: *common-http-router
     pfsense:
       rule: "Host(`pfsense.dev.kvd.studio`)"
       service: pfsense
@@ -83,20 +95,23 @@ http:
       rule: "Host(`dblab.dev.kvd.studio`)"
       service: dblab
       <<: *common-http-router
-    pg:
-      rule: "Host(`pg.lab.kvd.studio`)"
-      service: pg
-      <<: *common-http-router
-      tls:
-        options: postgres
-    pgpool:
-      rule: "Host(`pg.lab.kvd.studio`)"
-      service: pgpool
-      <<: *common-http-router
-      tls:
-        options: postgres
 
   services:
+    homepage:
+      loadBalancer:
+        servers:
+          - url: "http://10.10.10.101:3000"
+        passHostHeader: true
+    pterodactyl:
+      loadBalancer:
+        servers:
+          - url: "http://10.10.10.101:8080"
+        passHostHeader: true
+    uptime-kuma:
+      loadBalancer:
+        servers:
+          - url: "http://10.10.10.101:3001"
+        passHostHeader: true
     pfsense:
       loadBalancer:
         servers:
@@ -232,6 +247,12 @@ http:
           - default-whitelist
 
 tcp:
+  services:
+    wings:
+      loadBalancer:
+        servers:
+          - address: "10.10.10.104:2022"
+
   routers:
     wings:
       entryPoints:
@@ -240,12 +261,20 @@ tcp:
       service: wings
       tls:
         passthrough: true
-
-  services:
-    wings:
-      loadBalancer:
-        servers:
-          - address: "10.10.10.104:2022"
+    pg:
+      rule: "HostSNI(`pg.lab.kvd.studio`)"
+      service: pg
+      entryPoints:
+        - pg
+      tls:
+        options: postgres
+    pgpool:
+      rule: "HostSNI(`pg.lab.kvd.studio`)"
+      service: pgpool
+      entryPoints:
+        - pgpool
+      tls:
+        options: postgres
 
 tls:
   options:
