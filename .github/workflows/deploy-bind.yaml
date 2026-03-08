@@ -1,0 +1,26 @@
+name: Deploy bind9 server
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - bind9/**
+  workflow_dispatch:
+
+concurrency:
+  group: bind
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: bind
+    environment: bind
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Deploy bind9 server
+        working-directory: bind9
+        run: >
+          docker compose pull &&
+          docker compose up --wait --remove-orphans
