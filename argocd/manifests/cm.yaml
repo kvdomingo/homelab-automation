@@ -4,31 +4,6 @@ metadata:
   name: cmp-plugin
   namespace: argocd
 data:
-  avp-helm.yaml: |
-    apiVersion: argoproj.io/v1alpha1
-    kind: ConfigManagementPlugin
-    metadata:
-      name: argocd-vault-plugin-helm
-    spec:
-      allowConcurrency: true
-      discover:
-        find:
-          command:
-            - /bin/sh
-            - -eu
-            - "-c"
-            - "find . -name 'Chart.yaml' && find . -name 'values.yaml'"
-      init:
-      generate:
-        command:
-          - /bin/bash
-          - -euxo
-          - pipefail
-          - "-c"
-          - |
-            helm template $ARGOCD_APP_NAME --include-crds -n $ARGOCD_APP_NAMESPACE -f <(echo "$ARGOCD_ENV_HELM_VALUES") . |
-            argocd-vault-plugin generate -s vault-configuration -
-      lockRepo: false
   avp.yaml: |
     apiVersion: argoproj.io/v1alpha1
     kind: ConfigManagementPlugin
@@ -38,15 +13,41 @@ data:
       allowConcurrency: true
       discover:
         find:
-          command:
-            - sh
-            - "-c"
-            - "find . -name '*.yaml' | xargs -I {} grep \"<path\\|avp\\.kubernetes\\.io\" {} | grep ."
+          command: [sh, -c]
+          args:
+            - find . -name '*.yaml' | xargs -I {} grep \"<path\\|avp\\.kubernetes\\.io\" {} | grep .
       generate:
-        command:
-          - argocd-vault-plugin
-          - generate
-          - "."
-          - "-s"
-          - "vault-configuration"
+        command: [sh, -c]
+        args:
+          - argocd-vault-plugin generate -s vault-configuration .
+      lockRepo: false
+  avp-helm.yaml: |
+    apiVersion: argoproj.io/v1alpha1
+    kind: ConfigManagementPlugin
+    metadata:
+      name: argocd-vault-plugin-helm
+    spec:
+      allowConcurrency: true
+      discover:
+        find:
+          command: [sh, -c]
+          args:
+            - find . -name 'Chart.yaml' && find . -name 'values.yaml'
+      init:
+        command: [bash, -c]
+        args:
+          - |
+            set -euo pipefail
+            if [ -f Chart.yaml ]; then
+              yq -r '.dependencies[].repository' Chart.yaml 2>/dev/null | grep '^https\?://' | sort -u | while read -r repo; do
+                helm repo add "$(echo "$repo" | awk -F/ '{print $3}' | tr '.' '-')" "$repo" || true
+              done
+            fi
+            helm dependency build
+      generate:
+        command: [bash, -c]
+        args:
+          - >
+            helm template $ARGOCD_APP_NAME --include-crds -n $ARGOCD_APP_NAMESPACE -f <(echo "$ARGOCD_ENV_HELM_VALUES") . |
+            argocd-vault-plugin generate -s vault-configuration -
       lockRepo: false
