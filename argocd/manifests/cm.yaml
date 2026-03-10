@@ -41,13 +41,14 @@ data:
             if [ -f Chart.yaml ]; then
               yq -r '.dependencies[].repository' Chart.yaml 2>/dev/null | grep '^https\?://' | sort -u | while read -r repo; do
                 helm repo add "$(echo "$repo" | awk -F/ '{print $3}' | tr '.' '-')" "$repo" || true
-              done
+              done || true
             fi
             helm dependency build
       generate:
         command: [bash, -c]
         args:
-          - >
+          - |
+            set -eo pipefail
             helm template $ARGOCD_APP_NAME --include-crds -n $ARGOCD_APP_NAMESPACE -f <(echo "$ARGOCD_ENV_HELM_VALUES") . |
             argocd-vault-plugin generate -s vault-configuration -
       lockRepo: false
