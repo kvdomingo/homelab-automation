@@ -43,6 +43,8 @@ services:
       traefik.http.routers.traefik.tls.domains[0].sans: "*.dev.kvd.studio"
       traefik.http.routers.traefik.tls.domains[1].main: lab.kvd.studio
       traefik.http.routers.traefik.tls.domains[1].sans: "*.lab.kvd.studio"
+      traefik.http.routers.traefik.tls.domains[2].main: pie.kvd.studio
+      traefik.http.routers.traefik.tls.domains[2].sans: "*.pie.kvd.studio"
       traefik.http.routers.traefik.service: api@internal
       traefik.http.services.traefik.loadbalancer.server.port: 8080
       traefik.http.routers.traefik.middlewares: secured@file

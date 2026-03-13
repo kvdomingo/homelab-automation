@@ -3,7 +3,7 @@ x-common-http-router: &common-http-router
     - https
   middlewares:
     - secured
-  tls: { }
+  tls: {}
 
 http:
   routers:
