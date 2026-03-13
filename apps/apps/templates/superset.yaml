@@ -86,6 +86,13 @@ spec:
               master:
                 persistence:
                   enabled: true
+            bootstrapScript: |
+              #!/bin/bash
+
+              pip install prophet
+
+              if [ ! -f ~/bootstrap ]; then echo "Running Superset with uid {{ .Values.runAsUser }}" > ~/bootstrap; fi
+
   destination:
     server: {{ .Values.destination.server }}
     namespace: superset
