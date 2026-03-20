@@ -69,7 +69,7 @@ ingress:
   annotations:
     gethomepage.dev/enabled: "true"
     gethomepage.dev/name: "IT Tools"
-    gethomepage.dev/group: "Admin"
+    gethomepage.dev/group: "Tools"
     gethomepage.dev/icon: "it-tools.png"
     gethomepage.dev/ping: "https://it-tools.lab.kvd.studio"
   hosts:
