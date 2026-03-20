@@ -1,0 +1,12 @@
+{{- if .Values.pdb.enabled }}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "atuin.fullname" . }}
+  labels:
+    {{- include "atuin.labels" . | nindent 4 }}
+spec:
+  selector:
+    {{- include "atuin.selectorLabels" . | nindent 4 }}
+  minAvailable: {{ .Values.pdb.minAvailable }}
+{{- end }}
