@@ -1,0 +1,63 @@
+{{- if not .Values.disableDelphiTools }}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: delphitools
+  namespace: {{ include "apps.argocdNamespace" . | quote }}
+  finalizers:
+    {{- include "apps.finalizers" . | nindent 4 }}
+spec:
+  project: {{ .Values.project }}
+  source:
+    repoURL: https://github.com/kvdomingo/delphitools.git
+    targetRevision: HEAD
+    path: helm/delphitools
+    plugin:
+      name: argocd-vault-plugin-helm
+      env:
+        - name: HELM_VALUES
+          value: |
+            image:
+              repository: ghcr.io/kvdomingo/delphitools
+              tag: latest
+            annotations:
+              gethomepage.dev/enabled: "true"
+              gethomepage.dev/name: "Delphi Tools"
+              gethomepage.dev/group: "Tools"
+              gethomepage.dev/icon: "nextjs.png"
+            ingress:
+              enabled: true
+              hosts:
+                - host: delphitools.{{ .Values.ingress.baseDomain }}
+                  paths:
+                    - path: /
+                      pathType: Prefix
+            resources:
+              limits:
+                cpu: 100m
+                memory: 64Mi
+            livenessProbe:
+              enabled: true
+            readinessProbe:
+              enabled: false
+            startupProbe:
+              enabled: true
+            autoscaling:
+              enabled: true
+              minReplicas: 2
+              maxReplicas: 5
+              targetCPUUtilizationPercentage: 80
+              targetMemoryUtilizationPercentage: 80
+            pdb:
+              enabled: true
+              minAvailable: 1
+  destination:
+    server: {{ .Values.destination.server }}
+    namespace: delphitools
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+    automated:
+      selfHeal: true
+      prune: true
+{{- end }}
