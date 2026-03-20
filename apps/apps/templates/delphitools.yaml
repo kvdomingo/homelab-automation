@@ -20,13 +20,18 @@ spec:
             image:
               repository: ghcr.io/kvdomingo/delphitools
               tag: latest
-            annotations:
-              gethomepage.dev/enabled: "true"
-              gethomepage.dev/name: "Delphi Tools"
-              gethomepage.dev/group: "Tools"
-              gethomepage.dev/icon: "nextjs.png"
+            deploymentAnnotations:
+              keel.sh/policy: "force"
+              keel.sh/match-tag: "true"
+              keel.sh/trigger: "poll"
+              keel.sh/pollSchedule: "@every 5m"
             ingress:
               enabled: true
+              annotations:
+                gethomepage.dev/enabled: "true"
+                gethomepage.dev/name: "Delphi Tools"
+                gethomepage.dev/group: "Tools"
+                gethomepage.dev/icon: "nextjs.png"
               hosts:
                 - host: delphitools.{{ .Values.ingress.baseDomain }}
                   paths:
