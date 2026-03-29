@@ -9,7 +9,7 @@ metadata:
 spec:
   project: {{ .Values.project }}
   source:
-    repoURL: https://github.com/kvdomingo/homelab-automation.git
+    repoURL: https://github.com/kvdomingo/banyuhay.git
     targetRevision: main
     path: infra/helm/banyuhay
     plugin:
