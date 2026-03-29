@@ -20,6 +20,7 @@ locals {
 
   banyuh_ai_subdomains = toset([
     "@",
+    "api",
   ])
 
   github_pages_ipv4 = tomap({
@@ -95,7 +96,12 @@ resource "cloudflare_tunnel_config" "lab" {
 
     ingress_rule {
       hostname = local.banyuhai_domain
-      service  = "http://banyuhay.banyuhay.svc.cluster.local:8000"
+      service  = "http://banyuhay-app.banyuhay.svc.cluster.local:8000"
+    }
+
+    ingress_rule {
+      hostname = "api.${local.banyuhai_domain}"
+      service  = "http://banyuhay-api.banyuhay.svc.cluster.local:8000"
     }
 
     dynamic "ingress_rule" {
