@@ -12,3 +12,9 @@ releases:
     namespace: infisical2
     values:
       - values.yaml
+  - name: infisical-operator
+    chart: infisical/secrets-operator
+    version: 0.10.28
+    namespace: infisical2
+    values:
+      - operator-values.yaml

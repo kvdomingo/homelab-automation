@@ -1,0 +1,81 @@
+# -- The Infisical API host URL. This is the default host used when no hostAPI is set on the CRD or global ConfigMap.
+hostAPI: "https://infisical.lab.kvd.studio/api"
+
+controllerManager:
+  serviceAccount:
+    create: true
+    name: ""
+    annotations: {}
+  nodeSelector: {}
+  tolerations: []
+  # -- Extra volumes to add to the pod
+  extraVolumes: []
+  # -- Extra init containers to add to the pod
+  extraInitContainers: []
+  manager:
+    args:
+      - --metrics-bind-address=:8443
+      - --leader-elect
+      - --health-probe-bind-address=:8081
+    containerSecurityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - ALL
+      readOnlyRootFilesystem: true
+    image:
+      repository: infisical/kubernetes-operator
+      tag: v0.10.28
+    resources:
+      limits:
+        cpu: 500m
+        memory: 128Mi
+      requests:
+        cpu: 10m
+        memory: 64Mi
+    # -- Extra environment variables to add to the manager container
+    extraEnv: []
+    # -- Extra volume mounts to add to the manager container
+    extraVolumeMounts: []
+  podSecurityContext:
+    runAsNonRoot: true
+    seccompProfile:
+      type: RuntimeDefault
+  replicas: 3
+kubernetesClusterDomain: cluster.local
+
+# DEPRECATED: Use scopedNamespaces instead. This field will be removed in a future version.
+# If both scopedNamespace and scopedNamespaces are set, scopedNamespaces takes precedence.
+scopedNamespace: ""
+
+# List of namespaces to watch. If empty, the operator watches all namespaces (cluster-scoped).
+# When scopedRBAC is true, a Role and RoleBinding will be created in each namespace.
+# Example:
+#   scopedNamespaces:
+#     - team-a-namespace
+#     - team-b-namespace
+scopedNamespaces: []
+
+scopedRBAC: false
+installCRDs: true
+imagePullSecrets: []
+
+metricsService:
+  ports:
+    - name: https
+      port: 8443
+      protocol: TCP
+      targetPort: 8443
+  type: ClusterIP
+
+telemetry:
+  serviceMonitor:
+    enabled: true
+
+    selectors: {}
+    scheme: https
+    port: https
+    path: /metrics
+    bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+    interval: 30s
+    scrapeTimeout: 10s
