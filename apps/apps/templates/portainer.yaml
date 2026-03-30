@@ -12,31 +12,38 @@ spec:
     repoURL: https://portainer.github.io/k8s/
     chart: portainer
     targetRevision: 239.1.0
-    plugin:
-      name: argocd-vault-plugin-helm
-      env:
-        - name: HELM_VALUES
-          value: |
-            replicaCount: 2
-            image:
-              tag: latest
-            service:
-              type: ClusterIP
-            ingress:
-              enabled: true
-              annotations:
-                gethomepage.dev/enabled: "true"
-                gethomepage.dev/name: "Portainer"
-                gethomepage.dev/group: "Admin"
-                gethomepage.dev/icon: "portainer.png"
-                gethomepage.dev/ping: "portainer.{{ .Values.ingress.baseDomain }}"
-              hosts:
-                - host: "portainer.{{ .Values.ingress.baseDomain }}"
-                  paths:
-                    - path: /
-            persistence:
-              annotations:
-                argocd.argoproj.io/sync-options: Delete=false,Prune=false
+    helm:
+      releaseName: portainer
+      valuesObject:
+        replicaCount: 1
+        enterpriseEdition:
+          enabled: false
+          image:
+            tag: latest
+        image:
+          tag: latest
+        service:
+          type: ClusterIP
+        localMgmt: true
+        trusted_origins:
+          enabled: true
+          domains: "portainer.kvd.studio,portainer.lab.kvd.studio"
+        ingress:
+          enabled: true
+          annotations:
+            gethomepage.dev/enabled: "true"
+            gethomepage.dev/name: "Portainer"
+            gethomepage.dev/group: "Admin"
+            gethomepage.dev/icon: "portainer.png"
+            gethomepage.dev/ping: "portainer.{{ .Values.ingress.baseDomain }}"
+          hosts:
+            - host: "portainer.{{ .Values.ingress.baseDomain }}"
+              paths:
+                - path: /
+        persistence:
+          enabled: true
+          annotations:
+            argocd.argoproj.io/sync-options: Delete=false,Prune=false
   destination:
     server: {{ .Values.destination.server }}
     namespace: portainer
