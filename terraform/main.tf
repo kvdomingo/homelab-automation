@@ -96,7 +96,7 @@ resource "cloudflare_tunnel_config" "lab" {
 
     ingress_rule {
       hostname = local.banyuhai_domain
-      service  = "http://banyuhay-app.banyuhay.svc.cluster.local:8000"
+      service  = "http://banyuhay-app.banyuhay.svc.cluster.local:3000"
     }
 
     ingress_rule {

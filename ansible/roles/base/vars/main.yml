@@ -70,6 +70,7 @@ base_system_packages:
   - net-tools
   - pass
   - portaudio19-dev
+  - powertop
   - pv
   - python3
   - ripgrep
