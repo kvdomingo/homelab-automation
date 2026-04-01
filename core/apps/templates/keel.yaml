@@ -11,7 +11,7 @@ spec:
   source:
     repoURL: https://charts.keel.sh
     chart: keel
-    targetRevision: 1.0.5
+    targetRevision: 1.2.0
     plugin:
       name: argocd-vault-plugin-helm
       env:
@@ -19,6 +19,9 @@ spec:
           value: |
             image:
               tag: latest
+            polling:
+              enabled: true
+              defaultSchedule: "@every 3m"
             helmProvider:
               enabled: true
               version: v3
