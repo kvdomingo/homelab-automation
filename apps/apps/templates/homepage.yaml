@@ -8,227 +8,235 @@ metadata:
     {{- include "apps.finalizers" . | nindent 4 }}
 spec:
   project: {{ .Values.project }}
-  source:
-    repoURL: https://jameswynn.github.io/helm-charts
-    chart: homepage
-    targetRevision: 2.1.0
-    plugin:
-      name: argocd-vault-plugin-helm
-      env:
-        - name: HELM_VALUES
-          value: |
-            image:
-              repository: ghcr.io/gethomepage/homepage
-              tag: v1.2.0
-            enableRbac: true
-            serviceAccount:
-              create: true
-            ingress:
-              main:
-                enabled: true
-                annotations:
-                  gethomepage.dev/enabled: "true"
-                  gethomepage.dev/name: "Homepage"
-                  gethomepage.dev/group: "Admin"
-                  gethomepage.dev/icon: "homepage.png"
-                hosts:
-                  - host: home.{{ .Values.ingress.baseDomain }}
-                    paths:
-                      - path: /
-                        pathType: Prefix
-            config:
-              bookmarks: [ ]
-              services:
-                - Networking:
-                    - Cloudflare:
-                        icon: cloudflare.png
-                        widget:
-                          type: cloudflared
-                          accountid: <path:kv/data/lab/homepage#CLOUDFLARE_ACCOUNT_ID>
-                          tunnelid: <path:kv/data/lab/homepage#CLOUDFLARE_TUNNEL_ID>
-                          key: <path:kv/data/lab/homepage#CLOUDFLARE_KEY>
-                    - pfSense:
-                        icon: pfsense.png
-                        href: https://pfsense.dev.kvd.studio
-                        ping: https://pfsense.dev.kvd.studio
-                - Admin:
-                    - Traefik:
-                        icon: traefik.png
-                        href: https://traefik.lab.kvd.studio
-                        ping: https://traefik.lab.kvd.studio
-                        widget:
-                          type: traefik
-                          url: https://traefik.lab.kvd.studio
-                          routers: true
-                          services: true
-                          middleware: true
-                - Machines:
-                    - Bastion:
-                        icon: proxmox.png
-                        href: https://bastion.dev.kvd.studio
-                        ping: https://bastion.dev.kvd.studio
-                        widget:
-                          type: proxmox
-                          url: https://bastion.dev.kvd.studio
-                          username: <path:kv/data/lab/homepage#BASTION_USERNAME>
-                          password: <path:kv/data/lab/homepage#BASTION_PASSWORD>
-                    - Aurora:
-                        icon: proxmox.png
-                        href: https://aurora.dev.kvd.studio
-                        ping: https://aurora.dev.kvd.studio
-                        widget:
-                          type: proxmox
-                          url: https://aurora.dev.kvd.studio
-                          username: <path:kv/data/lab/homepage#AURORA_USERNAME>
-                          password: <path:kv/data/lab/homepage#AURORA_PASSWORD>
-                    - TrueNAS:
-                        icon: truenas-scale.png
-                        href: https://truenas.dev.kvd.studio
-                        ping: https://truenas.dev.kvd.studio
-                        widget:
-                          type: truenas
-                          url: https://truenas.dev.kvd.studio
-                          key: <path:kv/data/lab/homepage#TRUENAS_KEY>
-                - Media:
-                    - Prowlarr:
-                        icon: prowlarr.png
-                        href: https://prowlarr.dev.kvd.studio
-                        ping: https://prowlarr.dev.kvd.studio
-                        widget:
-                          type: prowlarr
-                          url: https://prowlarr.dev.kvd.studio
-                          key: <path:kv/data/lab/homepage#PROWLARR_API_KEY>
-                    - qBittorrent:
-                        icon: qbittorrent.png
-                        href: https://qbittorrent.dev.kvd.studio
-                        ping: https://qbittorrent.dev.kvd.studio
-                        widget:
-                          type: qbittorrent
-                          url: https://qbittorrent.dev.kvd.studio
-                          username: <path:kv/data/lab/homepage#QBITTORRENT_USERNAME>
-                          password: <path:kv/data/lab/homepage#QBITTORRENT_PASSWORD>
-                    - Sonarr:
-                        icon: sonarr.png
-                        href: https://sonarr.dev.kvd.studio
-                        ping: https://sonarr.dev.kvd.studio
-                        widget:
-                          type: sonarr
-                          url: https://sonarr.dev.kvd.studio
-                          key: <path:kv/data/lab/homepage#SONARR_API_KEY>
-                          enableQueue: true
-                    - Radarr:
-                        icon: radarr.png
-                        href: https://radarr.dev.kvd.studio
-                        ping: https://radarr.dev.kvd.studio
-                        widget:
-                          type: radarr
-                          url: https://radarr.dev.kvd.studio
-                          key: <path:kv/data/lab/homepage#RADARR_API_KEY>
-                          enableQueue: true
-                    - Jellyfin:
-                        icon: jellyfin.png
-                        href: https://jellyfin.dev.kvd.studio
-                        ping: https://jellyfin.dev.kvd.studio
-                        widget:
-                          type: jellyfin
-                          url: https://jellyfin.dev.kvd.studio
-                          key: <path:kv/data/lab/homepage#JELLYFIN_API_KEY>
-                          enableBlocks: true
-                          enableNowPlaying: true
-                          enableUser: true
-                          showEpisodeNumber: true
-                          expandOneStreamToTwoRows: true
-                    - Jellyseerr:
-                        icon: jellyseerr.png
-                        href: https://jellyseerr.dev.kvd.studio
-                        ping: https://jellyseerr.dev.kvd.studio
-                        widget:
-                          type: jellyseerr
-                          url: https://jellyseerr.dev.kvd.studio
-                          key: <path:kv/data/lab/homepage#JELLYSEERR_API_KEY>
-                    - Calendar:
-                        widget:
-                          type: calendar
-                          firstDayInWeek: monday
-                          view: monthly
-                          maxEvents: 10
-                          showTime: true
-                          integrations:
-                            - type: sonarr
-                              service_group: Media
-                              service_name: Sonarr
-                              params:
-                                unmonitored: true
-                            - type: radarr
-                              service_group: Media
-                              service_name: Radarr
+  sources:
+    - repoURL: https://github.com/kvdomingo/homelab-automation.git
+      targetRevision: main
+      path: homepage
+    - repoURL: https://jameswynn.github.io/helm-charts
+      chart: homepage
+      targetRevision: 2.1.0
+      helm:
+        releaseName: homepage
+        valuesObject:
+          image:
+            repository: ghcr.io/gethomepage/homepage
+            tag: v1.12.3
+          enableRbac: true
+          serviceAccount:
+            create: true
+          ingress:
+            main:
+              enabled: true
+              annotations:
+                gethomepage.dev/enabled: "true"
+                gethomepage.dev/name: "Homepage"
+                gethomepage.dev/group: "Admin"
+                gethomepage.dev/icon: "homepage.png"
+              hosts:
+                - host: "home.{{ .Values.ingress.baseDomain }}"
+                  paths:
+                    - path: /
+                      pathType: Prefix
+                - host: "homelab.{{ .Values.ingress.externalDomain }}"
+                  paths:
+                    - path: /
+                      pathType: Prefix
+          config:
+            bookmarks: [ ]
+            services:
+              - Networking:
+                  - Cloudflare:
+                      icon: cloudflare.png
+                      widget:
+                        type: cloudflared
+                        accountid: "{{"{{"}}HOMEPAGE_VAR_CLOUDFLARE_ACCOUNT_ID{{"}}"}}"
+                        tunnelid: "{{"{{"}}HOMEPAGE_VAR_CLOUDFLARE_TUNNEL_ID{{"}}"}}"
+                        key: "{{"{{"}}HOMEPAGE_VAR_CLOUDFLARE_KEY{{"}}"}}"
+                  - pfSense:
+                      icon: pfsense.png
+                      href: https://pfsense.dev.kvd.studio
+                      ping: https://pfsense.dev.kvd.studio
+              - Admin:
+                  - Traefik:
+                      icon: traefik.png
+                      href: "https://traefik.{{ .Values.ingress.baseDomain }}"
+                      ping: "https://traefik.{{ .Values.ingress.baseDomain }}"
+                      widget:
+                        type: traefik
+                        url: "https://traefik.{{ .Values.ingress.baseDomain }}"
+                        routers: true
+                        services: true
+                        middleware: true
+              - Machines:
+                  - Bastion:
+                      icon: proxmox.png
+                      href: https://bastion.dev.kvd.studio
+                      ping: https://bastion.dev.kvd.studio
+                      widget:
+                        type: proxmox
+                        url: https://bastion.dev.kvd.studio
+                        username: "{{"{{"}}HOMEPAGE_VAR_BASTION_USERNAME{{"}}"}}"
+                        password: "{{"{{"}}HOMEPAGE_VAR_BASTION_PASSWORD{{"}}"}}"
+                  - Aurora:
+                      icon: proxmox.png
+                      href: https://aurora.dev.kvd.studio
+                      ping: https://aurora.dev.kvd.studio
+                      widget:
+                        type: proxmox
+                        url: https://aurora.dev.kvd.studio
+                        username: "{{"{{"}}HOMEPAGE_VAR_AURORA_USERNAME{{"}}"}}"
+                        password: "{{"{{"}}HOMEPAGE_VAR_AURORA_PASSWORD{{"}}"}}"
+                  - TrueNAS:
+                      icon: truenas-scale.png
+                      href: https://truenas.dev.kvd.studio
+                      ping: https://truenas.dev.kvd.studio
+                      widget:
+                        type: truenas
+                        url: https://truenas.dev.kvd.studio
+                        key: "{{"{{"}}HOMEPAGE_VAR_TRUENAS_KEY{{"}}"}}"
+              - Media:
+                  - Prowlarr:
+                      icon: prowlarr.png
+                      href: https://prowlarr.dev.kvd.studio
+                      ping: https://prowlarr.dev.kvd.studio
+                      widget:
+                        type: prowlarr
+                        url: https://prowlarr.dev.kvd.studio
+                        key: "{{"{{"}}HOMEPAGE_VAR_PROWLARR_API_KEY{{"}}"}}"
+                  - qBittorrent:
+                      icon: qbittorrent.png
+                      href: https://qbittorrent.dev.kvd.studio
+                      ping: https://qbittorrent.dev.kvd.studio
+                      widget:
+                        type: qbittorrent
+                        url: https://qbittorrent.dev.kvd.studio
+                        username: "{{"{{"}}HOMEPAGE_VAR_QBITTORRENT_USERNAME{{"}}"}}"
+                        password: "{{"{{"}}HOMEPAGE_VAR_QBITTORRENT_PASSWORD{{"}}"}}"
+                  - Sonarr:
+                      icon: sonarr.png
+                      href: https://sonarr.dev.kvd.studio
+                      ping: https://sonarr.dev.kvd.studio
+                      widget:
+                        type: sonarr
+                        url: https://sonarr.dev.kvd.studio
+                        key: "{{"{{"}}HOMEPAGE_VAR_SONARR_API_KEY{{"}}"}}"
+                        enableQueue: true
+                  - Radarr:
+                      icon: radarr.png
+                      href: https://radarr.dev.kvd.studio
+                      ping: https://radarr.dev.kvd.studio
+                      widget:
+                        type: radarr
+                        url: https://radarr.dev.kvd.studio
+                        key: "{{"{{"}}HOMEPAGE_VAR_RADARR_API_KEY{{"}}"}}"
+                        enableQueue: true
+                  - Jellyfin:
+                      icon: jellyfin.png
+                      href: https://jellyfin.dev.kvd.studio
+                      ping: https://jellyfin.dev.kvd.studio
+                      widget:
+                        type: jellyfin
+                        url: https://jellyfin.dev.kvd.studio
+                        key: "{{"{{"}}HOMEPAGE_VAR_JELLYFIN_API_KEY{{"}}"}}"
+                        enableBlocks: true
+                        enableNowPlaying: true
+                        enableUser: true
+                        showEpisodeNumber: true
+                        expandOneStreamToTwoRows: true
+                  - Jellyseerr:
+                      icon: jellyseerr.png
+                      href: https://jellyseerr.dev.kvd.studio
+                      ping: https://jellyseerr.dev.kvd.studio
+                      widget:
+                        type: jellyseerr
+                        url: https://jellyseerr.dev.kvd.studio
+                        key: "{{"{{"}}HOMEPAGE_VAR_JELLYSEERR_API_KEY{{"}}"}}"
+                  - Calendar:
+                      widget:
+                        type: calendar
+                        firstDayInWeek: monday
+                        view: monthly
+                        maxEvents: 10
+                        showTime: true
+                        integrations:
+                          - type: sonarr
+                            service_group: Media
+                            service_name: Sonarr
+                            params:
                               unmonitored: true
-              widgets:
-                - logo:
-                    icon: https://res.cloudinary.com/kdphotography-assets/image/upload/v1597254769/logo/logo-white.png
-                - resources:
-                    backend: kubernetes
-                    expanded: true
+                          - type: radarr
+                            service_group: Media
+                            service_name: Radarr
+                            unmonitored: true
+            widgets:
+              - logo:
+                  icon: https://res.cloudinary.com/kdphotography-assets/image/upload/v1597254769/logo/logo-white.png
+              - resources:
+                  backend: kubernetes
+                  expanded: true
+                  cpu: true
+                  memory: true
+                  disk: /
+              - search:
+                  provider: google
+                  target: _blank
+              - datetime:
+                  text_size: xl
+                  format:
+                    dateStyle: long
+                    timeStyle: short
+                    hourCycle: h23
+              - openmeteo:
+                  label: Plaridel
+                  units: metric
+                  cache: 5
+                  timezone: Asia/Manila
+                  latitude: 14.88
+                  longitude: 120.85
+              - kubernetes:
+                  cluster:
+                    show: true
                     cpu: true
                     memory: true
-                    disk: /
-                - search:
-                    provider: google
-                    target: _blank
-                - datetime:
-                    text_size: xl
-                    format:
-                      dateStyle: long
-                      timeStyle: short
-                      hourCycle: h23
-                - openmeteo:
-                    label: Plaridel
-                    units: metric
-                    cache: 5
-                    timezone: Asia/Manila
-                    latitude: 14.88
-                    longitude: 120.85
-                - kubernetes:
-                    cluster:
-                      show: true
-                      cpu: true
-                      memory: true
-                      showLabel: true
-                      label: "cluster"
-                    nodes:
-                      show: true
-                      cpu: true
-                      memory: true
-                      showLabel: true
-              kubernetes:
-                mode: cluster
-              settings:
-                layout:
-                  Admin:
-                    style: row
-                    columns: 3
-                  Machines:
-                  Networking:
-                  "CI/CD":
-                  Monitoring:
-                  Security:
-                  Storage:
-                  Media:
-                    style: row
-                    columns: 5
-                  Analytics:
-                  "Background Services":
-                headerStyle: underlined
-                quickLaunch:
-                  searchDescriptions: true
-                  hideInternetSearch: false
-                  hideVisitURL: false
-                showStats: false
-                background: "https://apod.{{ .Values.ingress.baseDomain }}"
-                backgroundOpacity: 0.33
-            env:
-              - name: HOMEPAGE_ALLOWED_HOSTS
-                value: home.lab.kvd.studio
+                    showLabel: true
+                    label: "cluster"
+                  nodes:
+                    show: true
+                    cpu: true
+                    memory: true
+                    showLabel: true
+            kubernetes:
+              mode: cluster
+            settings:
+              layout:
+                Admin:
+                  style: row
+                  columns: 3
+                Machines:
+                Networking:
+                "CI/CD":
+                Monitoring:
+                Security:
+                Storage:
+                Media:
+                  style: row
+                  columns: 5
+                Analytics:
+                "Background Services":
+              headerStyle: underlined
+              quickLaunch:
+                searchDescriptions: true
+                hideInternetSearch: false
+                hideVisitURL: false
+              showStats: false
+              background: https://apod.{{ .Values.ingress.baseDomain }}"
+              backgroundOpacity: 0.33
+          env:
+            - name: HOMEPAGE_ALLOWED_HOSTS
+              value: "home.{{ .Values.ingress.baseDomain }},homelab.{{ .Values.ingress.externalDomain }}"
+          envFrom:
+            - secretRef:
+                name: homepage-secrets
   destination:
     server: {{ .Values.destination.server }}
     namespace: homepage2
