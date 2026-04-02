@@ -168,6 +168,15 @@ spec:
                             service_group: Media
                             service_name: Radarr
                             unmonitored: true
+              - "CI/CD":
+                  - ArgoCD:
+                      icon: argo-cd.png
+                      href: https://argo.lab.kvd.studio
+                      ping: https://argo.lab.kvd.studio
+                      widget:
+                        type: argocd
+                        url: https://argo.lab.kvd.studio
+                        key: "{{"{{"}}HOMEPAGE_VAR_ARGOCD_API_KEY{{"}}"}}"
             widgets:
               - logo:
                   icon: https://res.cloudinary.com/kdphotography-assets/image/upload/v1597254769/logo/logo-white.png

@@ -141,9 +141,9 @@ global:
       type: hard
       # -- Default match expressions for node affinity
       matchExpressions: [ ]
-        # - key: topology.kubernetes.io/zone
-        #   operator: In
-        #   values:
+      # - key: topology.kubernetes.io/zone
+      #   operator: In
+      #   values:
       #    - antarctica-east1
       #    - antarctica-west1
 
@@ -151,14 +151,14 @@ global:
   ## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/
   ## If labelSelector is left out, it will default to the labelSelector of the component
   topologySpreadConstraints: [ ]
-    # - maxSkew: 1
+  # - maxSkew: 1
   #   topologyKey: topology.kubernetes.io/zone
   #   whenUnsatisfiable: DoNotSchedule
 
   # -- Deployment strategy for the all deployed Deployments
   deploymentStrategy: { }
-    # type: RollingUpdate
-    # rollingUpdate:
+  # type: RollingUpdate
+  # rollingUpdate:
   #   maxSurge: 25%
   #   maxUnavailable: 25%
 
@@ -427,6 +427,9 @@ configs:
         - ClusterBackgroundScanReport
         - UpdateRequest
 
+    accounts.homepage: apiKey, login
+    accounts.homepage.enabled: "true"
+
   # Argo CD configuration parameters
   ## Ref: https://github.com/argoproj/argo-cd/blob/master/docs/operator-manual/argocd-cmd-params-cm.yaml
   params:
@@ -461,7 +464,8 @@ configs:
 
     # -- File containing user-defined policies and role definitions.
     # @default -- `''` (See [values.yaml])
-    policy.csv: ""
+    policy.csv: |
+      g, homelab, role:readonly
     # Policy rules are in the form:
     #  p, subject, resource, action, object, effect
     # Role definitions and bindings are in the form:
@@ -491,8 +495,8 @@ configs:
     # @default -- `{}` (See [values.yaml])
     ## Note: Public keys should be exported with `gpg --export --armor <KEY>`
     keys: { }
-      # 4AEE18F83AFDEB23: |
-      #   -----BEGIN PGP PUBLIC KEY BLOCK-----
+    # 4AEE18F83AFDEB23: |
+    #   -----BEGIN PGP PUBLIC KEY BLOCK-----
     #   ...
     #   -----END PGP PUBLIC KEY BLOCK-----
 
@@ -535,8 +539,8 @@ configs:
     # -- TLS certificates for Git repositories
     # @default -- `{}` (See [values.yaml])
     certificates: { }
-      # server.example.com: |
-      #   -----BEGIN CERTIFICATE-----
+    # server.example.com: |
+    #   -----BEGIN CERTIFICATE-----
     #   ...
     #   -----END CERTIFICATE-----
 
@@ -571,18 +575,18 @@ configs:
       #       command: [sh, -c, find . -name env.yaml]
 
       # --- Second plugin
-      # my-plugin2:
-      #   init:
-      #     command: [sh]
-      #     args: [-c, 'echo "Initializing..."']
-      #   generate:
-      #     command: [sh, -c]
-      #     args:
-      #       - |
-      #         echo "{\"kind\": \"ConfigMap\", \"apiVersion\": \"v1\", \"metadata\": { \"name\": \"$ARGOCD_APP_NAME\", \"namespace\": \"$ARGOCD_APP_NAMESPACE\", \"annotations\": {\"Foo\": \"$ARGOCD_ENV_FOO\", \"KubeVersion\": \"$KUBE_VERSION\", \"KubeApiVersion\": \"$KUBE_API_VERSIONS\",\"Bar\": \"baz\"}}}"
-      #   discover:
-      #     fileName: "./subdir/s*.yaml"
-      #     find:
+    # my-plugin2:
+    #   init:
+    #     command: [sh]
+    #     args: [-c, 'echo "Initializing..."']
+    #   generate:
+    #     command: [sh, -c]
+    #     args:
+    #       - |
+    #         echo "{\"kind\": \"ConfigMap\", \"apiVersion\": \"v1\", \"metadata\": { \"name\": \"$ARGOCD_APP_NAME\", \"namespace\": \"$ARGOCD_APP_NAMESPACE\", \"annotations\": {\"Foo\": \"$ARGOCD_ENV_FOO\", \"KubeVersion\": \"$KUBE_VERSION\", \"KubeApiVersion\": \"$KUBE_API_VERSIONS\",\"Bar\": \"baz\"}}}"
+    #   discover:
+    #     fileName: "./subdir/s*.yaml"
+    #     find:
     #       glob: "**/Chart.yaml"
     #       command: [sh, -c, find . -name env.yaml]
 
@@ -619,18 +623,18 @@ configs:
     #   annotations: {}
     #   project: my-project1
     #   config:
-    #     bearerToken: "<authentication token>"
-    #     tlsClientConfig:
-    #       insecure: false
-    #       caData: "<base64 encoded certificate>"
-    # mycluster4-sharded:
-    #   shard: 1
-    #   server: https://mycluster4.example.com
-    #   labels: {}
-    #   annotations: {}
-    #   config:
-    #     bearerToken: "<authentication token>"
-    #     tlsClientConfig:
+  #     bearerToken: "<authentication token>"
+  #     tlsClientConfig:
+  #       insecure: false
+  #       caData: "<base64 encoded certificate>"
+  # mycluster4-sharded:
+  #   shard: 1
+  #   server: https://mycluster4.example.com
+  #   labels: {}
+  #   annotations: {}
+  #   config:
+  #     bearerToken: "<authentication token>"
+  #     tlsClientConfig:
   #       insecure: false
   #       caData: "<base64 encoded certificate>"
 
@@ -642,18 +646,18 @@ configs:
     #   githubAppID: 1
     #   githubAppInstallationID: 2
     #   githubAppEnterpriseBaseUrl: https://ghe.example.com/api/v3
-    #   githubAppPrivateKey: |
-    #     -----BEGIN OPENSSH PRIVATE KEY-----
-    #     ...
-    #     -----END OPENSSH PRIVATE KEY-----
-    # https-creds:
-    #   url: https://github.com/argoproj
-    #   password: my-password
-    #   username: my-username
-    # ssh-creds:
-    #  url: git@github.com:argoproj-labs
-    #  sshPrivateKey: |
-    #    -----BEGIN OPENSSH PRIVATE KEY-----
+  #   githubAppPrivateKey: |
+  #     -----BEGIN OPENSSH PRIVATE KEY-----
+  #     ...
+  #     -----END OPENSSH PRIVATE KEY-----
+  # https-creds:
+  #   url: https://github.com/argoproj
+  #   password: my-password
+  #   username: my-username
+  # ssh-creds:
+  #  url: git@github.com:argoproj-labs
+  #  sshPrivateKey: |
+  #    -----BEGIN OPENSSH PRIVATE KEY-----
   #    ...
   #    -----END OPENSSH PRIVATE KEY-----
 
@@ -664,16 +668,16 @@ configs:
   ## Creates a secret for each key/value specified below to create repositories
   ## Note: the last example in the list would use a repository credential template, configured under "configs.credentialTemplates".
   repositories: { }
-    # istio-helm-repo:
-    #   url: https://storage.googleapis.com/istio-prerelease/daily-build/master-latest-daily/charts
-    #   name: istio.io
-    #   type: helm
-    # private-helm-repo:
-    #   url: https://my-private-chart-repo.internal
-    #   name: private-repo
-    #   type: helm
-    #   password: my-password
-    #   username: my-username
+  # istio-helm-repo:
+  #   url: https://storage.googleapis.com/istio-prerelease/daily-build/master-latest-daily/charts
+  #   name: istio.io
+  #   type: helm
+  # private-helm-repo:
+  #   url: https://my-private-chart-repo.internal
+  #   name: private-repo
+  #   type: helm
+  #   password: my-password
+  #   username: my-username
   # private-repo:
   #   url: https://github.com/argoproj/private-repo
 
@@ -746,18 +750,18 @@ extraObjects: [ ]
   #         - objectName: "argocd"
   #           objectType: "secretsmanager"
   #           jmesPath:
-  #               - path: "client_id"
-  #                 objectAlias: "client_id"
-  #               - path: "client_secret"
-  #                 objectAlias: "client_secret"
-  #     secretObjects:
-  #     - data:
-  #       - key: client_id
-  #         objectName: client_id
-  #       - key: client_secret
-  #         objectName: client_secret
-  #       secretName: argocd-secrets-store
-  #       type: Opaque
+#               - path: "client_id"
+#                 objectAlias: "client_id"
+#               - path: "client_secret"
+#                 objectAlias: "client_secret"
+#     secretObjects:
+#     - data:
+#       - key: client_id
+#         objectName: client_id
+#       - key: client_secret
+#         objectName: client_secret
+#       secretName: argocd-secrets-store
+#       type: Opaque
 #       labels:
 #         app.kubernetes.io/part-of: argocd
 
@@ -823,11 +827,11 @@ controller:
     # -- Controls how VPA computes the recommended resources for application controller container
     ## Ref: https://github.com/kubernetes/autoscaler/blob/master/vertical-pod-autoscaler/examples/hamster.yaml
     containerPolicy: { }
-      # controlledResources: ["cpu", "memory"]
-      # minAllowed:
-      #   cpu: 250m
-      #   memory: 256Mi
-      # maxAllowed:
+    # controlledResources: ["cpu", "memory"]
+    # minAllowed:
+    #   cpu: 250m
+    #   memory: 256Mi
+    # maxAllowed:
     #   cpu: 1
     #   memory: 1Gi
 
@@ -990,7 +994,7 @@ controller:
   ## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/
   ## If labelSelector is left out, it will default to the labelSelector configuration of the deployment
   topologySpreadConstraints: [ ]
-    # - maxSkew: 1
+  # - maxSkew: 1
   #   topologyKey: topology.kubernetes.io/zone
   #   whenUnsatisfiable: DoNotSchedule
 
@@ -1406,14 +1410,14 @@ dex:
   ## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/
   ## If labelSelector is left out, it will default to the labelSelector configuration of the deployment
   topologySpreadConstraints: [ ]
-    # - maxSkew: 1
+  # - maxSkew: 1
   #   topologyKey: topology.kubernetes.io/zone
   #   whenUnsatisfiable: DoNotSchedule
 
   # -- Deployment strategy to be added to the Dex server Deployment
   deploymentStrategy: { }
-    # type: RollingUpdate
-    # rollingUpdate:
+  # type: RollingUpdate
+  # rollingUpdate:
   #   maxSurge: 25%
   #   maxUnavailable: 25%
 
@@ -1528,10 +1532,10 @@ redis:
 
     # -- Resource limits and requests for redis-exporter sidecar
     resources: { }
-      # limits:
-      #   cpu: 50m
-      #   memory: 64Mi
-      # requests:
+    # limits:
+    #   cpu: 50m
+    #   memory: 64Mi
+    # requests:
     #   cpu: 10m
     #   memory: 32Mi
 
@@ -1672,7 +1676,7 @@ redis:
   ## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/
   ## If labelSelector is left out, it will default to the labelSelector configuration of the deployment
   topologySpreadConstraints: [ ]
-    # - maxSkew: 1
+  # - maxSkew: 1
   #   topologyKey: topology.kubernetes.io/zone
   #   whenUnsatisfiable: DoNotSchedule
 
@@ -1974,16 +1978,16 @@ server:
     targetMemoryUtilizationPercentage: 80
     # -- Configures the scaling behavior of the target in both Up and Down directions.
     behavior: { }
-      # scaleDown:
-      #  stabilizationWindowSeconds: 300
-      #  policies:
-      #   - type: Pods
-      #     value: 1
-      #     periodSeconds: 180
-      # scaleUp:
-      #   stabilizationWindowSeconds: 300
-      #   policies:
-      #   - type: Pods
+    # scaleDown:
+    #  stabilizationWindowSeconds: 300
+    #  policies:
+    #   - type: Pods
+    #     value: 1
+    #     periodSeconds: 180
+    # scaleUp:
+    #   stabilizationWindowSeconds: 300
+    #   policies:
+    #   - type: Pods
     #     value: 2
     #     periodSeconds: 60
     # -- Configures custom HPA metrics for the Argo CD server
@@ -2251,14 +2255,14 @@ server:
   ## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/
   ## If labelSelector is left out, it will default to the labelSelector configuration of the deployment
   topologySpreadConstraints: [ ]
-    # - maxSkew: 1
+  # - maxSkew: 1
   #   topologyKey: topology.kubernetes.io/zone
   #   whenUnsatisfiable: DoNotSchedule
 
   # -- Deployment strategy to be added to the server Deployment
   deploymentStrategy: { }
-    # type: RollingUpdate
-    # rollingUpdate:
+  # type: RollingUpdate
+  # rollingUpdate:
   #   maxSurge: 25%
   #   maxUnavailable: 25%
 
@@ -2432,12 +2436,7 @@ server:
     labels: { }
     # -- Additional ingress annotations
     ## Ref: https://argo-cd.readthedocs.io/en/stable/operator-manual/ingress/#option-1-ssl-passthrough
-    annotations:
-      gethomepage.dev/enabled: "true"
-      gethomepage.dev/name: "ArgoCD"
-      gethomepage.dev/group: "CI/CD"
-      gethomepage.dev/icon: "argo-cd.png"
-      gethomepage.dev/ping: "https://argo.lab.kvd.studio"
+    annotations: { }
 
     # -- Defines which ingress controller will implement the resource
     ingressClassName: ""
@@ -2467,11 +2466,11 @@ server:
     # @default -- `[]` (See [values.yaml])
     ## Note: Supports use of custom Helm templates
     extraPaths: [ ]
-      # - path: /*
-      #   pathType: Prefix
-      #   backend:
-      #     service:
-      #       name: ssl-redirect
+    # - path: /*
+    #   pathType: Prefix
+    #   backend:
+    #     service:
+    #       name: ssl-redirect
     #       port:
     #         name: use-annotation
 
@@ -2479,20 +2478,20 @@ server:
     # @default -- `[]` (See [values.yaml])
     ## Note: Supports use of custom Helm templates
     extraRules: [ ]
-      # - http:
-      #     paths:
-      #     - path: /
-      #       pathType: Prefix
-      #       backend:
-      #         service:
-      #           name: '{{ include "argo-cd.server.fullname" . }}'
+    # - http:
+    #     paths:
+    #     - path: /
+    #       pathType: Prefix
+    #       backend:
+    #         service:
+    #           name: '{{ include "argo-cd.server.fullname" . }}'
     #           port:
     #             name: '{{ .Values.server.service.servicePortHttpsName }}'
 
     # -- Additional TLS configuration
     # @default -- `[]` (See [values.yaml])
     extraTls: [ ]
-      # - hosts:
+    # - hosts:
     #   - argocd.example.com
     #   secretName: your-certificate-name
 
@@ -2521,8 +2520,8 @@ server:
       # @default -- `{}` (See [values.yaml])
       ## Ref: https://cloud.google.com/kubernetes-engine/docs/how-to/ingress-features#configuring_ingress_features_through_frontendconfig_parameters
       backendConfig: { }
-        # iap:
-        #  enabled: true
+      # iap:
+      #  enabled: true
       #  oauthclientCredentials:
       #    secretName: argocd-secret
 
@@ -2530,7 +2529,7 @@ server:
       # @default -- `{}` (See [values.yaml])
       ## Ref: https://cloud.google.com/kubernetes-engine/docs/how-to/ingress-features#configuring_ingress_features_through_frontendconfig_parameters
       frontendConfig: { }
-        # redirectToHttps:
+      # redirectToHttps:
       #   enabled: true
       #   responseCodeName: RESPONSE_CODE
 
@@ -2547,17 +2546,17 @@ server:
   # Ref: https://argo-cd.readthedocs.io/en/stable/operator-manual/ingress/#option-2-multiple-ingress-objects-and-hosts
   ingressGrpc:
     # -- Enable an ingress resource for the Argo CD server for dedicated [gRPC-ingress]
-    enabled: false
+    enabled: true
     # -- Additional ingress annotations for dedicated [gRPC-ingress]
     annotations: { }
     # -- Additional ingress labels for dedicated [gRPC-ingress]
     labels: { }
     # -- Defines which ingress controller will implement the resource [gRPC-ingress]
-    ingressClassName: ""
+    ingressClassName: traefik
 
     # -- Argo CD server hostname for dedicated [gRPC-ingress]
     # @default -- `""` (defaults to grpc.`server.ingress.hostname`)
-    hostname: ""
+    hostname: argo-grpc.lab.kvd.studio
 
     # -- Argo CD server ingress path for dedicated [gRPC-ingress]
     path: /
@@ -2579,11 +2578,11 @@ server:
     # @default -- `[]` (See [values.yaml])
     ## Note: Supports use of custom Helm templates
     extraPaths: [ ]
-      # - path: /*
-      #   pathType: Prefix
-      #   backend:
-      #     service:
-      #       name: ssl-redirect
+    # - path: /*
+    #   pathType: Prefix
+    #   backend:
+    #     service:
+    #       name: ssl-redirect
     #       port:
     #         name: use-annotation
 
@@ -2591,20 +2590,20 @@ server:
     # @default -- `[]` (See [values.yaml])
     ## Note: Supports use of custom Helm templates
     extraRules: [ ]
-      # - http:
-      #     paths:
-      #     - path: /
-      #       pathType: Prefix
-      #       backend:
-      #         service:
-      #           name: '{{ include "argo-cd.server.fullname" . }}'
+    # - http:
+    #     paths:
+    #     - path: /
+    #       pathType: Prefix
+    #       backend:
+    #         service:
+    #           name: '{{ include "argo-cd.server.fullname" . }}'
     #           port:
     #             name: '{{ .Values.server.service.servicePortHttpName }}'
 
     # -- Additional TLS configuration for dedicated [gRPC-ingress]
     # @default -- `[]` (See [values.yaml])
     extraTls: [ ]
-      # - secretName: your-certificate-name
+    # - secretName: your-certificate-name
     #   hosts:
     #     - argocd.example.com
 
@@ -2640,7 +2639,7 @@ server:
     ## Must reference an existing Gateway
     # @default -- `[]` (See [values.yaml])
     parentRefs: [ ]
-      # - name: example-gateway
+    # - name: example-gateway
     #   namespace: example-gateway-namespace
     #   sectionName: https
     # -- List of hostnames for the HTTPRoute
@@ -2679,7 +2678,7 @@ server:
     ## Must reference an existing Gateway
     # @default -- `[]` (See [values.yaml])
     parentRefs: [ ]
-      # - name: example-gateway
+    # - name: example-gateway
     #   namespace: example-gateway-namespace
     #   sectionName: grpc
     # -- List of hostnames for the GRPCRoute
@@ -2713,17 +2712,17 @@ server:
     # -- Target references for the BackendTLSPolicy
     # @default -- `[]` (See [values.yaml])
     targetRefs: [ ]
-      # - group: ""
-      #   kind: Service
+    # - group: ""
+    #   kind: Service
     #   name: argocd-server
     #   sectionName: https
     # -- TLS validation configuration
     # @default -- `{}` (See [values.yaml])
     validation: { }
-      # hostname: argocd-server.argocd.svc.cluster.local
-      # caCertificateRefs:
-      #   - name: example-ca-cert
-      #     group: ""
+    # hostname: argocd-server.argocd.svc.cluster.local
+    # caCertificateRefs:
+    #   - name: example-ca-cert
+    #     group: ""
     #     kind: ConfigMap
     # wellKnownCACertificates: System
 
@@ -2767,16 +2766,16 @@ repoServer:
     targetMemoryUtilizationPercentage: 80
     # -- Configures the scaling behavior of the target in both Up and Down directions.
     behavior: { }
-      # scaleDown:
-      #  stabilizationWindowSeconds: 300
-      #  policies:
-      #   - type: Pods
-      #     value: 1
-      #     periodSeconds: 180
-      # scaleUp:
-      #   stabilizationWindowSeconds: 300
-      #   policies:
-      #   - type: Pods
+    # scaleDown:
+    #  stabilizationWindowSeconds: 300
+    #  policies:
+    #   - type: Pods
+    #     value: 1
+    #     periodSeconds: 180
+    # scaleUp:
+    #   stabilizationWindowSeconds: 300
+    #   policies:
+    #   - type: Pods
     #     value: 2
     #     periodSeconds: 60
     # -- Configures custom HPA metrics for the Argo CD repo server
@@ -3060,14 +3059,14 @@ repoServer:
   ## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/
   ## If labelSelector is left out, it will default to the labelSelector configuration of the deployment
   topologySpreadConstraints: [ ]
-    # - maxSkew: 1
+  # - maxSkew: 1
   #   topologyKey: topology.kubernetes.io/zone
   #   whenUnsatisfiable: DoNotSchedule
 
   # -- Deployment strategy to be added to the repo server Deployment
   deploymentStrategy: { }
-    # type: RollingUpdate
-    # rollingUpdate:
+  # type: RollingUpdate
+  # rollingUpdate:
   #   maxSurge: 25%
   #   maxUnavailable: 25%
 
@@ -3246,8 +3245,8 @@ applicationSet:
   # -- envFrom to pass to the ApplicationSet controller
   # @default -- `[]` (See [values.yaml])
   extraEnvFrom: [ ]
-    # - configMapRef:
-    #     name: config-map-name
+  # - configMapRef:
+  #     name: config-map-name
   # - secretRef:
   #     name: secret-name
 
@@ -3359,10 +3358,10 @@ applicationSet:
 
   # -- Resource limits and requests for the ApplicationSet controller pods.
   resources: { }
-    # limits:
-    #   cpu: 100m
-    #   memory: 128Mi
-    # requests:
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
   #   cpu: 100m
   #   memory: 128Mi
 
@@ -3442,14 +3441,14 @@ applicationSet:
   ## Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/
   ## If labelSelector is left out, it will default to the labelSelector configuration of the deployment
   topologySpreadConstraints: [ ]
-    # - maxSkew: 1
+  # - maxSkew: 1
   #   topologyKey: topology.kubernetes.io/zone
   #   whenUnsatisfiable: DoNotSchedule
 
   # -- Deployment strategy to be added to the ApplicationSet controller Deployment
   deploymentStrategy: { }
-    # type: RollingUpdate
-    # rollingUpdate:
+  # type: RollingUpdate
+  # rollingUpdate:
   #   maxSurge: 25%
   #   maxUnavailable: 25%
 
@@ -3533,11 +3532,11 @@ applicationSet:
     # -- Additional ingress paths
     # @default -- `[]` (See [values.yaml])
     extraPaths: [ ]
-      # - path: /*
-      #   pathType: Prefix
-      #   backend:
-      #     service:
-      #       name: ssl-redirect
+    # - path: /*
+    #   pathType: Prefix
+    #   backend:
+    #     service:
+    #       name: ssl-redirect
     #       port:
     #         name: use-annotation
 
@@ -3545,20 +3544,20 @@ applicationSet:
     # @default -- `[]` (See [values.yaml])
     ## Note: Supports use of custom Helm templates
     extraRules: [ ]
-      # - http:
-      #    paths:
-      #    - path: /api/webhook
-      #      pathType: Prefix
-      #      backend:
-      #        service:
-      #          name: '{{ include "argo-cd.applicationSet.fullname" . }}'
+    # - http:
+    #    paths:
+    #    - path: /api/webhook
+    #      pathType: Prefix
+    #      backend:
+    #        service:
+    #          name: '{{ include "argo-cd.applicationSet.fullname" . }}'
     #          port:
     #            name: '{{ .Values.applicationSet.service.portName }}'
 
     # -- Additional ingress TLS configuration
     # @default -- `[]` (See [values.yaml])
     extraTls: [ ]
-      # - secretName: argocd-applicationset-tls
+    # - secretName: argocd-applicationset-tls
     #   hosts:
     #     - argocd-applicationset.example.com
   # -- Enable ApplicationSet in any namespace feature
@@ -3635,8 +3634,8 @@ notifications:
   # -- envFrom to pass to the notifications controller
   # @default -- `[]` (See [values.yaml])
   extraEnvFrom: [ ]
-    # - configMapRef:
-    #     name: config-map-name
+  # - configMapRef:
+  #     name: config-map-name
   # - secretRef:
   #     name: secret-name
 
@@ -3678,15 +3677,15 @@ notifications:
     ## Can be used for templates, notification services etc. Some examples given below.
     ## For more information: https://argo-cd.readthedocs.io/en/stable/operator-manual/notifications/services/overview/
     items: { }
-      # slack-token:
-      #   # For more information: https://argo-cd.readthedocs.io/en/stable/operator-manual/notifications/services/slack/
+    # slack-token:
+    #   # For more information: https://argo-cd.readthedocs.io/en/stable/operator-manual/notifications/services/slack/
 
-      # grafana-apiKey:
-      #   # For more information: https://argo-cd.readthedocs.io/en/stable/operator-manual/notifications/services/grafana/
+    # grafana-apiKey:
+    #   # For more information: https://argo-cd.readthedocs.io/en/stable/operator-manual/notifications/services/grafana/
 
-      # webhooks-github-token:
+    # webhooks-github-token:
 
-      # email-username:
+    # email-username:
     # email-password:
     # For more information: https://argo-cd.readthedocs.io/en/stable/operator-manual/notifications/services/email/
 
@@ -3751,10 +3750,10 @@ notifications:
 
   # -- Resource limits and requests for the notifications controller
   resources: { }
-    # limits:
-    #   cpu: 100m
-    #   memory: 128Mi
-    # requests:
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
   #   cpu: 100m
   #   memory: 128Mi
 
@@ -3830,7 +3829,7 @@ notifications:
   ## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/
   ## If labelSelector is left out, it will default to the labelSelector configuration of the deployment
   topologySpreadConstraints: [ ]
-    # - maxSkew: 1
+  # - maxSkew: 1
   #   topologyKey: topology.kubernetes.io/zone
   #   whenUnsatisfiable: DoNotSchedule
 
@@ -3870,16 +3869,16 @@ notifications:
   # -- Contains centrally managed global application subscriptions
   ## For more information: https://argo-cd.readthedocs.io/en/stable/operator-manual/notifications/subscriptions/
   subscriptions: [ ]
-    # # subscription for on-sync-status-unknown trigger notifications
-    # - recipients:
-    #   - slack:test2
-    #   - email:test@gmail.com
-    #   triggers:
-    #   - on-sync-status-unknown
-    # # subscription restricted to applications with matching labels only
-    # - recipients:
-    #   - slack:test3
-    #   selector: test=true
+  # # subscription for on-sync-status-unknown trigger notifications
+  # - recipients:
+  #   - slack:test2
+  #   - email:test@gmail.com
+  #   triggers:
+  #   - on-sync-status-unknown
+  # # subscription restricted to applications with matching labels only
+  # - recipients:
+  #   - slack:test3
+  #   selector: test=true
   #   triggers:
   #   - on-sync-status-unknown
 
@@ -4085,18 +4084,18 @@ notifications:
     #         },
     #         {
     #           "title": "Repository",
-    #           "value": "{{.app.spec.source.repoURL}}",
-    #           "short": true
-    #         }
-    #         {{range $index, $c := .app.status.conditions}}
-    #         {{if not $index}},{{end}}
-    #         {{if $index}},{{end}}
-    #         {
-    #           "title": "{{$c.type}}",
-    #           "value": "{{$c.message}}",
-    #           "short": true
-    #         }
-    #         {{end}}
+  #           "value": "{{.app.spec.source.repoURL}}",
+  #           "short": true
+  #         }
+  #         {{range $index, $c := .app.status.conditions}}
+  #         {{if not $index}},{{end}}
+  #         {{if $index}},{{end}}
+  #         {
+  #           "title": "{{$c.type}}",
+  #           "value": "{{$c.message}}",
+  #           "short": true
+  #         }
+  #         {{end}}
   #         ]
   #       }]
 
@@ -4124,18 +4123,18 @@ notifications:
     #     send:
     #     - app-sync-running
     #     when: app.status.operationState.phase in ['Running']
-    # trigger.on-sync-status-unknown: |
-    #   - description: Application status is 'Unknown'
-    #     send:
-    #     - app-sync-status-unknown
-    #     when: app.status.sync.status == 'Unknown'
-    # trigger.on-sync-succeeded: |
-    #   - description: Application syncing has succeeded
-    #     send:
-    #     - app-sync-succeeded
-    #     when: app.status.operationState.phase in ['Succeeded']
-    #
-    # For more information: https://argo-cd.readthedocs.io/en/stable/operator-manual/notifications/triggers/#default-triggers
+  # trigger.on-sync-status-unknown: |
+  #   - description: Application status is 'Unknown'
+  #     send:
+  #     - app-sync-status-unknown
+  #     when: app.status.sync.status == 'Unknown'
+  # trigger.on-sync-succeeded: |
+  #   - description: Application syncing has succeeded
+  #     send:
+  #     - app-sync-succeeded
+  #     when: app.status.operationState.phase in ['Succeeded']
+  #
+  # For more information: https://argo-cd.readthedocs.io/en/stable/operator-manual/notifications/triggers/#default-triggers
   # defaultTriggers: |
   #   - on-sync-status-unknown
 
@@ -4179,8 +4178,8 @@ commitServer:
   # -- envFrom to pass to the commit server
   # @default -- `[]` (See [values.yaml])
   extraEnvFrom: [ ]
-    # - configMapRef:
-    #     name: config-map-name
+  # - configMapRef:
+  #     name: config-map-name
   # - secretRef:
   #     name: secret-name
 
@@ -4247,10 +4246,10 @@ commitServer:
 
   # -- Resource limits and requests for the commit server pods.
   resources: { }
-    # limits:
-    #   cpu: 100m
-    #   memory: 128Mi
-    # requests:
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
   #   cpu: 100m
   #   memory: 128Mi
 
@@ -4317,14 +4316,14 @@ commitServer:
   ## Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/
   ## If labelSelector is left out, it will default to the labelSelector configuration of the deployment
   topologySpreadConstraints: [ ]
-    # - maxSkew: 1
+  # - maxSkew: 1
   #   topologyKey: topology.kubernetes.io/zone
   #   whenUnsatisfiable: DoNotSchedule
 
   # -- Deployment strategy to be added to the commit server Deployment
   deploymentStrategy: { }
-    # type: RollingUpdate
-    # rollingUpdate:
+  # type: RollingUpdate
+  # rollingUpdate:
   #   maxSurge: 25%
   #   maxUnavailable: 25%
 
