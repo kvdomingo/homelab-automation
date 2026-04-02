@@ -73,10 +73,10 @@ spec:
 
               # List of servers to include in the workflow file. When set,
               # `externalConfigmap` must be empty.
-              servers:
-                - host: "k8s-example-user-code-1"
-                  port: 3030
-                  name: "user-code-example"
+              servers: [ ]
+              # - host: "k8s-example-user-code-1"
+              #   port: 3030
+              #   name: "user-code-example"
 
               # Defines the name of a configmap provisioned outside of the
               # Helm release to use as workspace file. When set, `servers`
@@ -363,159 +363,159 @@ spec:
             imagePullSecrets: [ ]
 
             # List of unique deployments
-            deployments:
-              - name: "k8s-example-user-code-1"
-                image:
-                  # When a tag is not supplied, it will default as the Helm chart version.
-                  repository: "docker.io/dagster/user-code-example"
-                  tag: ~
+            deployments: [ ]
+{{/*              - name: "k8s-example-user-code-1"*/}}
+{{/*                image:*/}}
+{{/*                  # When a tag is not supplied, it will default as the Helm chart version.*/}}
+{{/*                  repository: "docker.io/dagster/user-code-example"*/}}
+{{/*                  tag: ~*/}}
 
-                  # Change with caution! If you're using a fixed tag for pipeline run images, changing the
-                  # image pull policy to anything other than "Always" will use a cached/stale image, which is
-                  # almost certainly not what you want.
-                  pullPolicy: Always
+{{/*                  # Change with caution! If you're using a fixed tag for pipeline run images, changing the*/}}
+{{/*                  # image pull policy to anything other than "Always" will use a cached/stale image, which is*/}}
+{{/*                  # almost certainly not what you want.*/}}
+{{/*                  pullPolicy: Always*/}}
 
-                # Arguments to `dagster api grpc`.
-                # Ex: "dagster api grpc -m dagster_test.test_project.test_jobs.repo -a define_demo_execution_repo"
-                # would translate to:
-                # dagsterApiGrpcArgs:
-                #   - "-m"
-                #   - "dagster_test.test_project.test_jobs.repo"
-                #   - "-a"
-                #   - "define_demo_execution_repo"
-                #
-                # The `dagsterApiGrpcArgs` key can also be replaced with `codeServerArgs` to use a new
-                # experimental `dagster code-server start` command instead of `dagster api grpc`, which can
-                # reload its definitions from within the Dagster UI without needing to restart the user code
-                # deployment pod.
-                dagsterApiGrpcArgs:
-                  - "--python-file"
-                  - "/example_project/example_repo/repo.py"
-                port: 3030
+{{/*                # Arguments to `dagster api grpc`.*/}}
+{{/*                # Ex: "dagster api grpc -m dagster_test.test_project.test_jobs.repo -a define_demo_execution_repo"*/}}
+{{/*                # would translate to:*/}}
+{{/*                # dagsterApiGrpcArgs:*/}}
+{{/*                #   - "-m"*/}}
+{{/*                #   - "dagster_test.test_project.test_jobs.repo"*/}}
+{{/*                #   - "-a"*/}}
+{{/*                #   - "define_demo_execution_repo"*/}}
+{{/*                #*/}}
+{{/*                # The `dagsterApiGrpcArgs` key can also be replaced with `codeServerArgs` to use a new*/}}
+{{/*                # experimental `dagster code-server start` command instead of `dagster api grpc`, which can*/}}
+{{/*                # reload its definitions from within the Dagster UI without needing to restart the user code*/}}
+{{/*                # deployment pod.*/}}
+{{/*                dagsterApiGrpcArgs:*/}}
+{{/*                  - "--python-file"*/}}
+{{/*                  - "/example_project/example_repo/repo.py"*/}}
+{{/*                port: 3030*/}}
 
-                # Whether or not to include configuration specified for this user code deployment in the pods
-                # launched for runs from that deployment
-                includeConfigInLaunchedRuns:
-                  enabled: true
+{{/*                # Whether or not to include configuration specified for this user code deployment in the pods*/}}
+{{/*                # launched for runs from that deployment*/}}
+{{/*                includeConfigInLaunchedRuns:*/}}
+{{/*                  enabled: true*/}}
 
-                # Additional environment variables to set.
-                # These will be directly applied to the daemon container. See
-                # https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/
-                #
-                # Example:
-                #
-                # env:
-                # - name: ENV_ONE
-                #   value: "one"
-                # - name: ENV_TWO
-                #   value: "two"
-                env: [ ]
+{{/*                # Additional environment variables to set.*/}}
+{{/*                # These will be directly applied to the daemon container. See*/}}
+{{/*                # https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/*/}}
+{{/*                #*/}}
+{{/*                # Example:*/}}
+{{/*                #*/}}
+{{/*                # env:*/}}
+{{/*                # - name: ENV_ONE*/}}
+{{/*                #   value: "one"*/}}
+{{/*                # - name: ENV_TWO*/}}
+{{/*                #   value: "two"*/}}
+{{/*                env: [ ]*/}}
 
-                # Additional environment variables can be retrieved and set from ConfigMaps. See:
-                # https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/#configure-all-key-value-pairs-in-a-configmap-as-container-environment-variables
-                #
-                # Example:
-                #
-                # envConfigMaps:
-                #   - name: config-map
-                envConfigMaps: [ ]
+{{/*                # Additional environment variables can be retrieved and set from ConfigMaps. See:*/}}
+{{/*                # https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/#configure-all-key-value-pairs-in-a-configmap-as-container-environment-variables*/}}
+{{/*                #*/}}
+{{/*                # Example:*/}}
+{{/*                #*/}}
+{{/*                # envConfigMaps:*/}}
+{{/*                #   - name: config-map*/}}
+{{/*                envConfigMaps: [ ]*/}}
 
-                # Additional environment variables can be retrieved and set from Secrets. See:
-                # https://kubernetes.io/docs/concepts/configuration/secret/#use-case-as-container-environment-variables
-                #
-                # Example:
-                #
-                # envSecrets:
-                #   - name: secret
-                envSecrets: [ ]
+{{/*                # Additional environment variables can be retrieved and set from Secrets. See:*/}}
+{{/*                # https://kubernetes.io/docs/concepts/configuration/secret/#use-case-as-container-environment-variables*/}}
+{{/*                #*/}}
+{{/*                # Example:*/}}
+{{/*                #*/}}
+{{/*                # envSecrets:*/}}
+{{/*                #   - name: secret*/}}
+{{/*                envSecrets: [ ]*/}}
 
-                # Additional labels that should be included. See:
-                # https://kubernetes.io/docs/concepts/overview/working-with-objects/labels
-                #
-                # Example:
-                # labels:
-                #   my-label-key: my_label-value
-                labels: { }
+{{/*                # Additional labels that should be included. See:*/}}
+{{/*                # https://kubernetes.io/docs/concepts/overview/working-with-objects/labels*/}}
+{{/*                #*/}}
+{{/*                # Example:*/}}
+{{/*                # labels:*/}}
+{{/*                #   my-label-key: my_label-value*/}}
+{{/*                labels: { }*/}}
 
-                # Additional volumes that should be included. See:
-                # https://v1-18.docs.kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#volume-v1-core
-                #
-                # Example:
-                #
-                # volumes:
-                #   - name: my-volume
-                #     configMap: my-config-map
-                volumes: [ ]
+{{/*                # Additional volumes that should be included. See:*/}}
+{{/*                # https://v1-18.docs.kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#volume-v1-core*/}}
+{{/*                #*/}}
+{{/*                # Example:*/}}
+{{/*                #*/}}
+{{/*                # volumes:*/}}
+{{/*                #   - name: my-volume*/}}
+{{/*                #     configMap: my-config-map*/}}
+{{/*                volumes: [ ]*/}}
 
-                # Additional volume mounts that should be included. See:
-                # See: https://v1-18.docs.kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#volumemount-v1-core
-                #
-                # Example:
-                #
-                # volumeMounts:
-                #   - name: test-volume
-                #     mountPath: /opt/dagster/test_folder
-                #     subPath: test_file.yaml
-                volumeMounts: [ ]
+{{/*                # Additional volume mounts that should be included. See:*/}}
+{{/*                # See: https://v1-18.docs.kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#volumemount-v1-core*/}}
+{{/*                #*/}}
+{{/*                # Example:*/}}
+{{/*                #*/}}
+{{/*                # volumeMounts:*/}}
+{{/*                #   - name: test-volume*/}}
+{{/*                #     mountPath: /opt/dagster/test_folder*/}}
+{{/*                #     subPath: test_file.yaml*/}}
+{{/*                volumeMounts: [ ]*/}}
 
-                # Init containers to run before the main container. See:
-                # https://kubernetes.io/docs/concepts/workloads/pods/init-containers/
-                initContainers: [ ]
+{{/*                # Init containers to run before the main container. See:*/}}
+{{/*                # https://kubernetes.io/docs/concepts/workloads/pods/init-containers/*/}}
+{{/*                initContainers: [ ]*/}}
 
-                # Additional containers (i.e. sidecars) to run alongside the main container. See:
-                # https://kubernetes.io/docs/concepts/workloads/pods/sidecar-containers/
-                #
-                # Example:
-                #
-                # sidecarContainers:
-                #   - name: my-sidecar
-                #     image: ...
-                #     volumeMounts: []
-                #     env: []
-                sidecarContainers: [ ]
+{{/*                # Additional containers (i.e. sidecars) to run alongside the main container. See:*/}}
+{{/*                # https://kubernetes.io/docs/concepts/workloads/pods/sidecar-containers/*/}}
+{{/*                #*/}}
+{{/*                # Example:*/}}
+{{/*                #*/}}
+{{/*                # sidecarContainers:*/}}
+{{/*                #   - name: my-sidecar*/}}
+{{/*                #     image: ...*/}}
+{{/*                #     volumeMounts: []*/}}
+{{/*                #     env: []*/}}
+{{/*                sidecarContainers: [ ]*/}}
 
-                annotations:
-                  keel.sh/policy: "force"
-                  keel.sh/match-tag: "true"
-                  keel.sh/trigger: "poll"
-                  keel.sh/pollSchedule: "@every 5m"
-                  secrets.infisical.com/auto-reload: "true"
-                nodeSelector: { }
-                affinity: { }
-                tolerations: [ ]
-                podSecurityContext: { }
-                securityContext: { }
-                resources: { }
+{{/*                annotations:*/}}
+{{/*                  keel.sh/policy: "force"*/}}
+{{/*                  keel.sh/match-tag: "true"*/}}
+{{/*                  keel.sh/trigger: "poll"*/}}
+{{/*                  keel.sh/pollSchedule: "@every 5m"*/}}
+{{/*                  secrets.infisical.com/auto-reload: "true"*/}}
+{{/*                nodeSelector: { }*/}}
+{{/*                affinity: { }*/}}
+{{/*                tolerations: [ ]*/}}
+{{/*                podSecurityContext: { }*/}}
+{{/*                securityContext: { }*/}}
+{{/*                resources: { }*/}}
 
-                # Override the default K8s scheduler
-                # schedulerName: ~
+{{/*                # Override the default K8s scheduler*/}}
+{{/*                # schedulerName: ~*/}}
 
-                # Readiness probe detects when the pod is ready to serve requests.
-                # https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes
-                readinessProbe:
-                  # Readiness probes are enabled by default.
-                  enabled: true
-                  # If `readinessProbe` has no `exec` field, then the following default will be used:
-                  # exec:
-                  #   command: ["dagster", "api", "grpc-health-check", "-p", "{{ "{{" }} $deployment.port {{ "}}" }}"]
-                  periodSeconds: 20
-                  timeoutSeconds: 10
-                  successThreshold: 1
-                  # Allow roughly 300 seconds to start up by default
-                  failureThreshold: 1
+{{/*                # Readiness probe detects when the pod is ready to serve requests.*/}}
+{{/*                # https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes*/}}
+{{/*                readinessProbe:*/}}
+{{/*                  # Readiness probes are enabled by default.*/}}
+{{/*                  enabled: true*/}}
+{{/*                  # If `readinessProbe` has no `exec` field, then the following default will be used:*/}}
+{{/*                  # exec:*/}}
+{{/*                  #   command: ["dagster", "api", "grpc-health-check", "-p", "{{ "{{" }} $deployment.port {{ "}}" }}"]*/}}
+{{/*                  periodSeconds: 20*/}}
+{{/*                  timeoutSeconds: 10*/}}
+{{/*                  successThreshold: 1*/}}
+{{/*                  # Allow roughly 300 seconds to start up by default*/}}
+{{/*                  failureThreshold: 1*/}}
 
-                # As of 0.14.0, liveness probes are disabled by default. If you want to enable them, it's recommended to also
-                # enable startup probes.
-                livenessProbe: { }
-                startupProbe:
-                  enabled: false
+{{/*                # As of 0.14.0, liveness probes are disabled by default. If you want to enable them, it's recommended to also*/}}
+{{/*                # enable startup probes.*/}}
+{{/*                livenessProbe: { }*/}}
+{{/*                startupProbe:*/}}
+{{/*                  enabled: false*/}}
 
-                # Strategy to follow when replacing old pods with new pods. See:
-                # https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy
-                deploymentStrategy: { }
+{{/*                # Strategy to follow when replacing old pods with new pods. See:*/}}
+{{/*                # https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy*/}}
+{{/*                deploymentStrategy: { }*/}}
 
-                service:
-                  annotations: { }
+{{/*                service:*/}}
+{{/*                  annotations: { }*/}}
 
           ####################################################################################################
           # Scheduler: Configuration for the scheduler
