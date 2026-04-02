@@ -24,6 +24,7 @@ deploymentAnnotations:
   keel.sh/match-tag: "true"
   keel.sh/trigger: "poll"
   keel.sh/pollSchedule: "@every 5m"
+  secrets.infisical.com/auto-reload: "true"
 
 # This section builds out the service account more information can be found here: https://kubernetes.io/docs/concepts/security/service-accounts/
 serviceAccount:
@@ -74,6 +75,10 @@ ingress:
     gethomepage.dev/ping: "https://atuin.lab.kvd.studio"
   hosts:
     - host: atuin.lab.kvd.studio
+      paths:
+        - path: /
+          pathType: Prefix
+    - host: atuin.kvd.studio
       paths:
         - path: /
           pathType: Prefix
@@ -152,7 +157,7 @@ autoscaling:
   minReplicas: 2
   maxReplicas: 5
   targetCPUUtilizationPercentage: 80
-  targetMemoryUtilizationPercentage: 80
+#  targetMemoryUtilizationPercentage: 80
 
 # Additional volumes on the output Deployment definition.
 volumes: [ ]
