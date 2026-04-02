@@ -9,9 +9,9 @@ metadata:
 spec:
   project: {{ .Values.project }}
   source:
-    repoURL: https://github.com/kvdomingo/homelab-automation.git
+    repoURL: https://github.com/kvdomingo/apod.git
     targetRevision: main
-    path: apod
+    path: helm/apod
     plugin:
       name: argocd-vault-plugin-helm
   destination:
