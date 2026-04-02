@@ -9,6 +9,9 @@ metadata:
 spec:
   project: {{ .Values.project }}
   sources:
+    - repoURL: https://github.com/kvdomingo/homelab-automation
+      targetRevision: main
+      path: cert-manager
     - repoURL: https://charts.jetstack.io
       chart: cert-manager
       targetRevision: v1.20.1
@@ -1725,9 +1728,6 @@ spec:
           # for more info.
           # +docs:hidden
           enabled: true
-    - repoURL: https://github.com/kvdomingo/homelab-automation
-      targetRevision: main
-      path: cert-manager
   destination:
     server: {{ .Values.destination.server }}
     namespace: cert-manager
