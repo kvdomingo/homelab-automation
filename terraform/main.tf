@@ -8,7 +8,8 @@ locals {
   })
 
   lab_kvd_studio_subdomains = toset([
-    "git",
+    "argo",
+    "atuin",
     "infisical",
     "nocodb",
     "primerdriver",
