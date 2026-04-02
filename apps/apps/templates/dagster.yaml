@@ -1033,7 +1033,7 @@ spec:
               # Ingress hostname for the webserver e.g. dagster.mycompany.com
               # This variable allows customizing the route pattern in the ingress. Some
               # ingress controllers may only support "/", whereas some may need "/*".
-              path: "/*"
+              path: "/"
               pathType: Prefix
               # NOTE: do NOT keep trailing slash. For root configuration, set as empty string
               # See: https://github.com/dagster-io/dagster/issues/2073
@@ -1067,7 +1067,7 @@ spec:
               # Ingress hostname for read only webserver e.g. viewer.dagster.mycompany.com
               # This variable allows customizing the route pattern in the ingress. Some
               # ingress controllers may only support "/", whereas some may need "/*".
-              path: "/*"
+              path: "/"
               pathType: Prefix
               # NOTE: do NOT keep trailing slash. For root configuration, set as empty string
               # See: https://github.com/dagster-io/dagster/issues/2073
