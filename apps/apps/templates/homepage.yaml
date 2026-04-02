@@ -212,8 +212,10 @@ spec:
                 Admin:
                   style: row
                   columns: 3
-                Machines:
                 Networking:
+                  style: row
+                  columns: 2
+                Machines:
                 "CI/CD":
                 Monitoring:
                 Security:
