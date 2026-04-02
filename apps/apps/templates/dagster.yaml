@@ -198,7 +198,12 @@ spec:
             # https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#nodeselector
             # https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
             # https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
-            annotations: { }
+            annotations:
+              keel.sh/policy: "force"
+              keel.sh/match-tag: "true"
+              keel.sh/trigger: "poll"
+              keel.sh/pollSchedule: "@every 5m"
+              secrets.infisical.com/auto-reload: "true"
             nodeSelector: { }
             affinity:
               podAntiAffinity:
@@ -469,7 +474,12 @@ spec:
                 #     env: []
                 sidecarContainers: [ ]
 
-                annotations: { }
+                annotations:
+                  keel.sh/policy: "force"
+                  keel.sh/match-tag: "true"
+                  keel.sh/trigger: "poll"
+                  keel.sh/pollSchedule: "@every 5m"
+                  secrets.infisical.com/auto-reload: "true"
                 nodeSelector: { }
                 affinity: { }
                 tolerations: [ ]
@@ -1140,7 +1150,7 @@ spec:
               # When a tag is not supplied for a Dagster provided image,
               # it will default as the Helm chart version.
               repository: "docker.io/dagster/dagster-celery-k8s"
-              tag: ~
+              tag: latest
               pullPolicy: Always
 
             heartbeatTolerance: 1800
@@ -1341,7 +1351,12 @@ spec:
             #     image: busybox
             extraPrependedInitContainers: [ ]
 
-            annotations: { }
+            annotations:
+              keel.sh/policy: "force"
+              keel.sh/match-tag: "true"
+              keel.sh/trigger: "poll"
+              keel.sh/pollSchedule: "@every 5m"
+              secrets.infisical.com/auto-reload: "true"
             nodeSelector: { }
             affinity: { }
             tolerations: [ ]
