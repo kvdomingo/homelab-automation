@@ -9,11 +9,9 @@ metadata:
 spec:
   project: {{ .Values.project }}
   source:
-    repoURL: https://github.com/kvdomingo/homelab-automation.git
+    repoURL: https://github.com/kvdomingo/unreceiptify.git
     targetRevision: main
-    path: unreceiptify
-    plugin:
-      name: argocd-vault-plugin-helm
+    path: infra/helm/unreceiptify
   destination:
     server: {{ .Values.destination.server }}
     namespace: unreceiptify
