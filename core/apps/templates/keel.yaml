@@ -8,75 +8,77 @@ metadata:
     {{- include "apps.finalizers" . | nindent 4 }}
 spec:
   project: {{ .Values.project }}
-  source:
-    repoURL: https://charts.keel.sh
-    chart: keel
-    targetRevision: 1.2.0
-    plugin:
-      name: argocd-vault-plugin-helm
-      env:
-        - name: HELM_VALUES
-          value: |
-            image:
-              tag: latest
-            polling:
-              enabled: true
-              defaultSchedule: "@every 3m"
-            helmProvider:
-              enabled: true
-              version: v3
-            discord:
-              enabled: true
-              webhookUrl: "<path:kv/data/lab/keel#DISCORD_WEBHOOK>"
-            podDisruptionBudget:
-              enabled: true
-              minAvailable: 2
-            service:
-              enabled: true
-              type: ClusterIP
-            resources:
-              requests:
-                cpu: 100m
-                memory: 128Mi
-              limits:
-                cpu: 200m
-                memory: 256Mi
-            basicauth:
-              enabled: true
-              user: kvdomingo
-              password: "<path:kv/data/lab/keel#ADMIN_PASSWORD>"
-            ingress:
-              enabled: true
-              annotations:
-                gethomepage.dev/enabled: "true"
-                gethomepage.dev/name: "Keel"
-                gethomepage.dev/group: "CI/CD"
-                gethomepage.dev/icon: "si-keepachangelog"
-                gethomepage.dev/ping: "https://keel.lab.kvd.studio"
-              hosts:
-                - host: keel.lab.kvd.studio
-                  paths: [ / ]
-            persistence:
-              enabled: true
-              storageClass: "nfs-client"
-            affinity:
-              podAntiAffinity:
-                preferredDuringSchedulingIgnoredDuringExecution:
-                  - weight: 100
-                    podAffinityTerm:
-                      topologyKey: kubernetes.io/hostname
-                      labelSelector:
-                        matchExpressions:
-                          - key: app.kubernetes.io/name
-                            operator: In
-                            values: [ keel ]
-              nodeAffinity:
-                requiredDuringSchedulingIgnoredDuringExecution:
-                  nodeSelectorTerms:
-                    - matchExpressions:
-                        - key: kubernetes.io/arch
-                          operator: NotIn
-                          values: [ arm64, arm ]
+  sources:
+    - repoURL: https://github.com/kvdomingo/homelab-automation.git
+      targetRevision: main
+      path: infisical-secrets/keel
+    - repoURL: https://charts.keel.sh
+      chart: keel
+      targetRevision: 1.2.0
+      helm:
+        releaseName: keel
+        valuesObject:
+          image:
+            tag: latest
+          polling:
+            enabled: true
+            defaultSchedule: "@every 3m"
+          helmProvider:
+            enabled: true
+            version: v3
+          discord:
+            enabled: true
+          podDisruptionBudget:
+            enabled: true
+            minAvailable: 2
+          service:
+            enabled: true
+            type: ClusterIP
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 200m
+              memory: 256Mi
+          basicauth:
+            enabled: true
+            user: kvdomingo
+          secret:
+            name: keel-secrets
+            create: false
+          ingress:
+            enabled: true
+            annotations:
+              gethomepage.dev/enabled: "true"
+              gethomepage.dev/name: "Keel"
+              gethomepage.dev/group: "CI/CD"
+              gethomepage.dev/icon: "si-keepachangelog"
+              gethomepage.dev/ping: "https://keel.lab.kvd.studio"
+            hosts:
+              - host: keel.lab.kvd.studio
+                paths: [ / ]
+          persistence:
+            enabled: true
+            storageClass: "nfs-client"
+          affinity:
+            podAntiAffinity:
+              preferredDuringSchedulingIgnoredDuringExecution:
+                - weight: 100
+                  podAffinityTerm:
+                    topologyKey: kubernetes.io/hostname
+                    labelSelector:
+                      matchExpressions:
+                        - key: app.kubernetes.io/name
+                          operator: In
+                          values: [ keel ]
+            nodeAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+                nodeSelectorTerms:
+                  - matchExpressions:
+                      - key: kubernetes.io/arch
+                        operator: NotIn
+                        values: [ arm64, arm ]
   destination:
     server: {{ .Values.destination.server }}
     namespace: kube-system
