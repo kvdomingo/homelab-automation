@@ -8,90 +8,104 @@ metadata:
     {{- include "apps.finalizers" . | nindent 4 }}
 spec:
   project: {{ .Values.project }}
-  source:
-    repoURL: https://apache.github.io/superset
-    chart: superset
-    targetRevision: 0.12.11
-    plugin:
-      name: argocd-vault-plugin-helm
-      env:
-        - name: HELM_VALUES
-          value: |
-            configOverrides:
-              secret: |
-                SECRET_KEY = "<path:kv/data/lab/superset#SECRET_KEY>"
-            extraEnvRaw:
-              - name: DB_PASS
-                value: "<path:kv/data/lab/superset#POSTGRESQL_PASSWORD>"
-            init:
-              createAdmin: true
-              adminUser:
-                username: "<path:kv/data/lab/superset#ADMIN_USERNAME>"
-                firstname: Kenneth
-                lastname: Domingo
-                email: "<path:kv/data/lab/superset#ADMIN_EMAIL>"
-                password: "<path:kv/data/lab/superset#ADMIN_PASSWORD>"
+  sources:
+    - repoURL: https://github.com/kvdomingo/homelab-automation.git
+      targetRevision: main
+      path: infisical-secrets/superset
+    - repoURL: https://apache.github.io/superset
+      chart: superset
+      targetRevision: 0.12.11
+      helm:
+        releaseName: superset
+        valuesObject:
+          envFromSecrets:
+            - superset-secrets
+          configOverrides:
+            secret: |
+              import os
+              SECRET_KEY = os.environ.get("SECRET_KEY")
+          image:
+            repository: apache/superset
+            tag: 3.1.1
+          ingress:
+            enabled: true
+            annotations:
+              gethomepage.dev/enabled: "true"
+              gethomepage.dev/name: "Superset"
+              gethomepage.dev/group: "Analytics"
+              gethomepage.dev/icon: "apache.png"
+              gethomepage.dev/ping: "https://superset.{{ .Values.ingress.baseDomain }}/health"
+            pathType: Prefix
+            hosts:
+              - 'superset.{{ .Values.ingress.baseDomain }}'
+          supersetNode:
+            autoscaling:
+              enabled: true
+              minReplicas: 2
+              maxReplicas: 5
+              targetCPUUtilizationPercentage: 80
+            podDisruptionBudget:
+              enabled: true
+              minAvailable: 1
+              maxUnavailable: false
+            connections:
+              db_pass: "<path:kv/data/lab/superset#POSTGRESQL_PASSWORD>"
+          supersetWorker:
+            autoscaling:
+              enabled: true
+              minReplicas: 2
+              maxReplicas: 5
+              targetCPUUtilizationPercentage: 80
+            podDisruptionBudget:
+              enabled: true
+              minAvailable: 1
+              maxUnavailable: false
+          supersetCeleryBeat:
+            enabled: true
+            podDisruptionBudget:
+              enabled: true
+              minAvailable: 1
+              maxUnavailable: false
+          supersetCeleryFlower:
+            enabled: false
+            podDisruptionBudget:
+              enabled: false
+              minAvailable: 1
+              maxUnavailable: false
+          supersetWebsockets:
+            enabled: false
+            podDisruptionBudget:
+              enabled: false
+              minAvailable: 1
+              maxUnavailable: false
+          init:
+            createAdmin: false
+            adminUser:
+              username: admin
+              firstname: Kenneth
+              lastname: Domingo
+              email: ""
+              password: ""
+          postgresql:
+            enabled: true
             image:
-              repository: apache/superset
-              tag: 3.1.1
-            ingress:
-              enabled: true
-              annotations:
-                gethomepage.dev/enabled: "true"
-                gethomepage.dev/name: "Superset"
-                gethomepage.dev/group: "Analytics"
-                gethomepage.dev/icon: "apache.png"
-                gethomepage.dev/ping: "https://superset.{{ .Values.ingress.baseDomain }}/health"
-              pathType: Prefix
-              hosts:
-                - 'superset.{{ .Values.ingress.baseDomain }}'
-            supersetNode:
-              autoscaling:
+              repository: bitnamilegacy/postgresql
+              tag: 14.6.0-debian-11-r13
+            auth:
+              existingSecret: superset-secrets
+          redis:
+            image:
+              repository: bitnamilegacy/redis
+              tag: 7.0.10-debian-11-r4
+            master:
+              persistence:
                 enabled: true
-                minReplicas: 2
-                maxReplicas: 5
-                targetCPUUtilizationPercentage: 80
-              podDisruptionBudget:
-                enabled: true
-                minAvailable: 2
-                maxUnavailable: ~
-              connections:
-                db_pass: "<path:kv/data/lab/superset#POSTGRESQL_PASSWORD>"
-            supersetWorker:
-              autoscaling:
-                enabled: true
-                minReplicas: 2
-                maxReplicas: 5
-                targetCPUUtilizationPercentage: 80
-              podDisruptionBudget:
-                enabled: true
-                minAvailable: 2
-                maxUnavailable: ~
-            supersetCeleryBeat:
-              enabled: true
-              podDisruptionBudget:
-                enabled: true
-                minAvailable: 2
-                maxUnavailable: ~
-            postgresql:
-              image:
-                repository: bitnamilegacy/postgresql
-                tag: 14.6.0-debian-11-r13
-              auth:
-                password: "<path:kv/data/lab/superset#POSTGRESQL_PASSWORD>"
-            redis:
-              image:
-                repository: bitnamilegacy/redis
-                tag: 7.0.10-debian-11-r4
-              master:
-                persistence:
-                  enabled: true
-            bootstrapScript: |
-              #!/bin/bash
+          bootstrapScript: |
+            #!/bin/bash
 
-              pip install prophet
+            pip install prophet
 
-              if [ ! -f ~/bootstrap ]; then echo "Running Superset with uid {{ .Values.runAsUser }}" > ~/bootstrap; fi
+            if [ ! -f ~/bootstrap ]; then echo "Running Superset with uid {{ .Values.runAsUser }}" > ~/bootstrap; fi
 
   destination:
     server: {{ .Values.destination.server }}
