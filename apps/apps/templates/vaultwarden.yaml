@@ -8,91 +8,102 @@ metadata:
     {{- include "apps.finalizers" . | nindent 4 }}
 spec:
   project: {{ .Values.project }}
-  source:
-    repoURL: https://guerzon.github.io/vaultwarden
-    chart: vaultwarden
-    targetRevision: 0.34.6
-    plugin:
-      name: argocd-vault-plugin-helm
-      env:
-        - name: HELM_VALUES
-          value: |
-            image:
-              tag: latest-alpine
-            replicas: 3
-            commonAnnotations:
-              keel.sh/policy: "force"
-              keel.sh/match-tag: "true"
-              keel.sh/trigger: "poll"
-              keel.sh/pollSchedule: "@every 5m"
-            readinessProbe:
-              enabled: false
-            startupProbe:
-              enabled: true
-              failureThreshold: 60
-              timeoutSeconds: 3
-              initialDelaySeconds: 10
-            podDisruptionBudget:
-              enabled: true
-              minAvailable: 1
-            storage:
-              data:
-                name: "vaultwarden-data"
-                size: "15Gi"
-                class: nfs-client
-                path: "/data"
-                keepPvc: true
-                accessMode: "ReadWriteOnce"
-              attachments:
-                name: "vaultwarden-files"
-                size: "100Gi"
-                class: nfs-client
-                path: /files
-                keepPvc: true
-                accessMode: "ReadWriteOnce"
-            database:
-              type: postgresql
-              host: "10.10.10.103"
-              port: "5432"
-              username: vaultwarden
-              password: "<path:kv/data/lab/vaultwarden#POSTGRESQL_PASSWORD>"
-              dbName: vaultwarden
-            domain: "https://vaultwarden.{{ .Values.ingress.baseDomain }}"
-            signupsAllowed: false
-            invitationsAllowed: true
-            adminToken:
-              value: "<path:kv/data/lab/vaultwarden#ADMIN_TOKEN>"
-            timeZone: Asia/Manila
-            orgGroupsEnabled: true
-            webVaultEnabled: true
-            smtp:
-              host: "smtp.gmail.com"
-              port: "587"
-              security: starttls
-              from: vaultwarden@kvd.studio
-              fromName: Vaultwarden
-              username:
-                value: "<path:kv/data/lab/vaultwarden#SMTP_USERNAME>"
-              password:
-                value: "<path:kv/data/lab/vaultwarden#SMTP_PASSWORD>"
-            pushNotifications:
-              enabled: true
-              installationId:
-                value: "<path:kv/data/lab/vaultwarden#INSTALLATION_ID>"
-              installationKey:
-                value: "<path:kv/data/lab/vaultwarden#INSTALLATION_KEY>"
-              relayUri: "https://api.bitwarden.eu"
-              identityUri: "https://identity.bitwarden.eu"
-            ingress:
-              enabled: true
-              class: traefik
-              hostname: vaultwarden.lab.kvd.studio
-              additionalAnnotations:
-                gethomepage.dev/enabled: "true"
-                gethomepage.dev/name: "Vaultwarden"
-                gethomepage.dev/group: "Security"
-                gethomepage.dev/icon: "bitwarden.png"
-                gethomepage.dev/ping: "https://vaultwarden.{{ .Values.ingress.baseDomain }}"
+  sources:
+    - repoURL: https://github.com/kvdomingo/homelab-automation.git
+      targetRevision: main
+      path: infisical-secrets/vaultwarden
+    - repoURL: https://guerzon.github.io/vaultwarden
+      chart: vaultwarden
+      targetRevision: 0.35.1
+      helm:
+        releaseName: vaultwarden
+        valuesObject:
+          image:
+            tag: latest-alpine
+            pullPolicy: Always
+          replicas: 3
+          commonAnnotations:
+            keel.sh/policy: "force"
+            keel.sh/match-tag: "true"
+            keel.sh/trigger: "poll"
+            keel.sh/pollSchedule: "@every 5m"
+            secrets.infisical.com/auto-reload: "true"
+          readinessProbe:
+            enabled: false
+          startupProbe:
+            enabled: true
+            failureThreshold: 60
+            timeoutSeconds: 3
+            initialDelaySeconds: 10
+          podDisruptionBudget:
+            enabled: true
+            minAvailable: 1
+          webVaultEnabled: true
+          storage:
+            data:
+              name: "vaultwarden-data"
+              size: "15Gi"
+              class: nfs-client
+              path: "/data"
+              keepPvc: true
+              accessMode: "ReadWriteOnce"
+            attachments:
+              name: "vaultwarden-files"
+              size: "100Gi"
+              class: nfs-client
+              path: /files
+              keepPvc: true
+              accessMode: "ReadWriteOnce"
+          database:
+            type: postgresql
+            host: "10.10.10.103"
+            port: "5432"
+            existingSecret: vaultwarden-secrets
+            existingSecretUserKey: POSTGRESQL_USERNAME
+            existingSecretPasswordKey: POSTGRESQL_PASSWORD
+            dbName: vaultwarden
+            maxConnections: 3
+          pushNotifications:
+            enabled: true
+            existingSecret: vaultwarden-secrets
+            installationId:
+              existingSecretKey: INSTALLATION_ID
+            installationKey:
+              existingSecretKey: INSTALLATION_KEY
+            relayUri: "https://api.bitwarden.eu"
+            identityUri: "https://identity.bitwarden.eu"
+          domain: "https://vaultwarden.{{ .Values.ingress.baseDomain }}"
+          sendsAllowed: true
+          trashAutoDeleteDays: 30
+          signupsAllowed: false
+          orgEventsEnabled: true
+          invitationsAllowed: true
+          adminToken:
+            existingSecret: vaultwarden-secrets
+            existingSecretKey: ADMIN_TOKEN
+          timeZone: Asia/Manila
+          orgGroupsEnabled: true
+          smtp:
+            host: "smtp.gmail.com"
+            port: 587
+            security: starttls
+            from: vaultwarden@kvd.studio
+            fromName: Vaultwarden
+            existingSecret: vaultwarden-secrets
+            username:
+              existingSecretKey: SMTP_USERNAME
+            password:
+              existingSecretKey: SMTP_PASSWORD
+          ingress:
+            enabled: true
+            class: traefik
+            hostname: vaultwarden.lab.kvd.studio
+            additionalAnnotations:
+              gethomepage.dev/enabled: "true"
+              gethomepage.dev/name: "Vaultwarden"
+              gethomepage.dev/group: "Security"
+              gethomepage.dev/icon: "bitwarden.png"
+              gethomepage.dev/ping: "https://vaultwarden.{{ .Values.ingress.baseDomain }}"
   destination:
     server: {{ .Values.destination.server }}
     namespace: vaultwarden
