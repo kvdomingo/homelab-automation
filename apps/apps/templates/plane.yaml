@@ -12,42 +12,34 @@ spec:
     repoURL: https://helm.plane.so/
     chart: plane-ce
     targetRevision: 1.4.1
-    plugin:
-      name: argocd-vault-plugin-helm
-      env:
-        - name: HELM_VALUES
-          value: |
-            planeVersion: v1.2.0
-            ingress:
-              enabled: true
-              appHost: plane.{{ .Values.ingress.baseDomain }}
-              ingressClass: traefik
-              ingress_annotations:
-                gethomepage.dev/enabled: "true"
-                gethomepage.dev/name: "Plane"
-                gethomepage.dev/group: "Admin"
-                gethomepage.dev/icon: "plane.png"
-                gethomepage.dev/ping: "plane.{{ .Values.ingress.baseDomain }}"
-            redis:
-              storageClass: nfs-client
-            postgres:
-              local_setup: false
-            minio:
-              local_setup: false
-            rabbitmq:
-              storageClass: nfs-client
-            env:
-              pgdb_username: plane
-              pgdb_password: <path:kv/data/lab/plane#POSTGRESQL_PASSWORD>
-              pgdb_name: plane
-              pgdb_remote_url: "postgres://plane:<path:kv/data/lab/plane#POSTGRESQL_PASSWORD>@10.10.10.103:5432/plane"
-              aws_region: ap-southeast-1
-              aws_access_key: "<path:kv/data/lab/plane#MINIO_ROOT_USER>"
-              aws_secret_access_key: "<path:kv/data/lab/plane#MINIO_ROOT_PASSWORD>"
-              aws_s3_endpoint_url: "https://api-minio.lab.kvd.studio"
-              docstore_bucket: "plane"
-              doc_upload_size_limit: "10485760"
-              secret_key: "<path:kv/data/lab/plane#SECRET_KEY>"
+    helm:
+      releaseName: plane
+      valuesObject:
+        planeVersion: v1.2.0
+        ingress:
+          enabled: true
+          appHost: "plane.{{ .Values.ingress.baseDomain }}"
+          ingressClass: traefik
+          ingress_annotations:
+            gethomepage.dev/enabled: "true"
+            gethomepage.dev/name: "Plane"
+            gethomepage.dev/group: "Admin"
+            gethomepage.dev/icon: "plane.png"
+            gethomepage.dev/ping: "plane.{{ .Values.ingress.baseDomain }}"
+        redis:
+          storageClass: nfs-client
+        postgres:
+          local_setup: false
+        minio:
+          local_setup: false
+        rabbitmq:
+          storageClass: nfs-client
+        external_secrets:
+          rabbitmq_existingSecret: plane-secrets
+          pgdb_existingSecret: plane-secrets
+          doc_store_existingSecret: plane-secrets
+          app_env_existingSecret: plane-secrets
+          live_env_existingSecret: plane-secrets
   destination:
     server: {{ .Values.destination.server }}
     namespace: plane
