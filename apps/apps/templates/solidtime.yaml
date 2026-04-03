@@ -12,8 +12,6 @@ spec:
     repoURL: https://github.com/kvdomingo/homelab-automation.git
     targetRevision: main
     path: solidtime
-    plugin:
-      name: argocd-vault-plugin-helm
   destination:
     server: {{ .Values.destination.server }}
     namespace: solidtime

@@ -4,7 +4,7 @@ metadata:
   name: '{{- include "solidtime.fullname" . }}-gotenberg'
   labels:
     {{- include "solidtime-gotenberg.labels" . | nindent 4 }}
-  {{- with .Values.gotenberg.annotations }}
+  {{- with .Values.deploymentAnnotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
   {{- end }}

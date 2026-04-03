@@ -4,8 +4,10 @@ metadata:
   name: '{{ include "solidtime.fullname" . }}-queue'
   labels:
     {{ include "solidtime-queue.labels" . | nindent 4 }}
+  {{- with .Values.deploymentAnnotations }}
   annotations:
-    {{ toYaml .Values.annotations | nindent 4 }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}

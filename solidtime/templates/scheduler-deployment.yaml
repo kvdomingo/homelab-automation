@@ -4,8 +4,10 @@ metadata:
   name: '{{ include "solidtime.fullname" . }}-scheduler'
   labels:
     {{ include "solidtime-scheduler.labels" . | nindent 4 }}
+  {{- with .Values.deploymentAnnotations }}
   annotations:
-    {{ toYaml .Values.annotations | nindent 4 }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
@@ -44,7 +46,7 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           livenessProbe:
             exec:
-              command: [healthcheck]
+              command: [ healthcheck ]
             periodSeconds: 20
             timeoutSeconds: 3
             successThreshold: 1
