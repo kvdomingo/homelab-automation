@@ -8,72 +8,106 @@ metadata:
     {{- include "apps.finalizers" . | nindent 4 }}
 spec:
   project: {{ .Values.project }}
-  source:
-    repoURL: https://charts.bitnami.com/bitnami
-    chart: minio
-    targetRevision: 17.0.21
-    plugin:
-      name: argocd-vault-plugin-helm
-      env:
-        - name: HELM_VALUES
-          value: |
-            image:
-              repository: bitnamilegacy/minio
-              tag: 2025.7.23-debian-12-r5
-            clientImage:
-              repository: bitnamilegacy/minio-client
-              tag: 2025.7.21-debian-12-r3
-            auth:
-              rootUser: "<path:kv/data/lab/minio#ROOT_USERNAME>"
-              rootPassword: "<path:kv/data/lab/minio#ROOT_PASSWORD>"
-              forceNewKeys: true
-            mode: distributed
-            statefulset:
-              replicaCount: 4
-              zones: 1
-              drivesPerNode: 4
-            livenessProbe:
+  sources:
+    - repoURL: https://github.com/kvdomingo/homelab-automation.git
+      targetRevision: main
+      path: minio
+    - repoURL: https://charts.bitnami.com/bitnami
+      chart: minio
+      targetRevision: 17.0.21
+      helm:
+        releaseName: minio
+        valuesObject:
+          image:
+            repository: bitnamilegacy/minio
+            tag: 2025.7.23-debian-12-r5
+          clientImage:
+            repository: bitnamilegacy/minio-client
+            tag: 2025.7.21-debian-12-r3
+          auth:
+            existingSecret: minio-secrets
+            rootUserSecretKey: ROOT_USERNAME
+            rootPasswordSecretKey: ROOT_PASSWORD
+            forceNewKeys: true
+          mode: distributed
+          statefulset:
+            replicaCount: 4
+            zones: 1
+            drivesPerNode: 4
+          livenessProbe:
+            enabled: true
+            initialDelaySeconds: 20
+            periodSeconds: 20
+            timeoutSeconds: 3
+            failureThreshold: 3
+          readinessProbe:
+            enabled: false
+          startupProbe:
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 60
+          ingress:
+            enabled: true
+            hostname: 'api-minio.{{ .Values.ingress.baseDomain }}'
+            pathType: Prefix
+            annotations:
+              gethomepage.dev/enabled: "true"
+              gethomepage.dev/name: "MinIO API"
+              gethomepage.dev/group: "Storage"
+              gethomepage.dev/icon: "minio.png"
+              gethomepage.dev/ping: "https://api-minio.{{ .Values.ingress.baseDomain }}"
+            extraHosts:
+              - name: "*.api-minio.{{ .Values.ingress.baseDomain }}"
+                path: /
+          persistence:
+            enabled: true
+            annotations:
+              argocd.argoproj.io/sync-options: Delete=false,Prune=false
+          defaultInitPermissions:
+            volumePermissions:
               enabled: true
-              initialDelaySeconds: 20
-              periodSeconds: 20
-              timeoutSeconds: 3
-              failureThreshold: 3
-            readinessProbe:
-              enabled: false
-            startupProbe:
-              initialDelaySeconds: 30
-              periodSeconds: 10
-              timeoutSeconds: 3
-              failureThreshold: 60
-            extraEnvVars:
-              - name: MINIO_REGION
-                value: ap-southeast-1
-              - name: MINIO_REGION_NAME
-                value: ap-southeast-1
+              image:
+                repository: bitnamilegacy/os-shell
+                tag: 12-debian-12-r50
+          metrics:
+            enabled: true
+            serviceMonitor:
+              enabled: true
+          affinity:
+            nodeAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+                nodeSelectorTerms:
+                  - matchExpressions:
+                      - key: kubernetes.io/arch
+                        operator: NotIn
+                        values: [ arm64, arm ]
+          console:
+            image:
+              repository: bitnamilegacy/minio-object-browser
+              tag: 2.0.2-debian-12-r4
             ingress:
               enabled: true
-              hostname: 'api-minio.{{ .Values.ingress.baseDomain }}'
+              hostname: 'minio.{{ .Values.ingress.baseDomain }}'
               pathType: Prefix
               annotations:
                 gethomepage.dev/enabled: "true"
-                gethomepage.dev/name: "MinIO API"
+                gethomepage.dev/name: "MinIO"
                 gethomepage.dev/group: "Storage"
                 gethomepage.dev/icon: "minio.png"
-                gethomepage.dev/ping: "https://api-minio.{{ .Values.ingress.baseDomain }}"
-            persistence:
-              enabled: true
-              annotations:
-                argocd.argoproj.io/sync-options: Delete=false,Prune=false
-            defaultInitPermissions:
-              volumePermissions:
+                gethomepage.dev/ping: "https://minio.{{ .Values.ingress.baseDomain }}"
+              extraHosts:
+                - name: "*.minio.{{ .Values.ingress.baseDomain }}"
+                  path: /
+            pdb:
+              create: true
+              minAvailable: 1
+            autoscaling:
+              hpa:
                 enabled: true
-                image:
-                  repository: bitnamilegacy/os-shell
-                  tag: 12-debian-12-r50
-            metrics:
-              enabled: true
-              serviceMonitor:
-                enabled: true
+                minReplicas: 2
+                maxReplicas: 5
+                targetCPU: 80
             affinity:
               nodeAffinity:
                 requiredDuringSchedulingIgnoredDuringExecution:
@@ -82,43 +116,6 @@ spec:
                         - key: kubernetes.io/arch
                           operator: NotIn
                           values: [ arm64, arm ]
-            console:
-              image:
-                repository: bitnamilegacy/minio-object-browser
-                tag: 2.0.2-debian-12-r3
-              ingress:
-                enabled: true
-                hostname: 'minio.{{ .Values.ingress.baseDomain }}'
-                pathType: Prefix
-                annotations:
-                  gethomepage.dev/enabled: "true"
-                  gethomepage.dev/name: "MinIO"
-                  gethomepage.dev/group: "Storage"
-                  gethomepage.dev/icon: "minio.png"
-                  gethomepage.dev/ping: "https://minio.{{ .Values.ingress.baseDomain }}"
-              extraEnvVars:
-                - name: MINIO_REGION
-                  value: ap-southeast-1
-                - name: MINIO_REGION_NAME
-                  value: ap-southeast-1
-              pdb:
-                create: true
-                minAvailable: 1
-              autoscaling:
-                hpa:
-                  enabled: true
-                  minReplicas: 2
-                  maxReplicas: 5
-                  targetCPU: 80
-                  targetMemory: 80
-              affinity:
-                nodeAffinity:
-                  requiredDuringSchedulingIgnoredDuringExecution:
-                    nodeSelectorTerms:
-                      - matchExpressions:
-                          - key: kubernetes.io/arch
-                            operator: NotIn
-                            values: [ arm64, arm ]
   destination:
     server: {{ .Values.destination.server }}
     namespace: minio
