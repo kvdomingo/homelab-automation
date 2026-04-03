@@ -24,6 +24,7 @@ annotations:
   keel.sh/match-tag: "true"
   keel.sh/trigger: "poll"
   keel.sh/pollSchedule: "@every 5m"
+  secrets.infisical.com/auto-reload: "true"
 
 # This section builds out the service account more information can be found here: https://kubernetes.io/docs/concepts/security/service-accounts/
 serviceAccount:
