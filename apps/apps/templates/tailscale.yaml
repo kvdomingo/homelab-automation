@@ -8,33 +8,31 @@ metadata:
     {{- include "apps.finalizers" . | nindent 4 }}
 spec:
   project: {{ .Values.project }}
-  source:
-    repoURL: https://pkgs.tailscale.com/helmcharts
-    chart: tailscale-operator
-    targetRevision: 1.70.0
-    plugin:
-      name: argocd-vault-plugin-helm
-      env:
-        - name: HELM_VALUES
-          value: |
-            oauth:
-              clientId: "<path:kv/data/lab/tailscale#OAUTH_CLIENT_ID>"
-              clientSecret: "<path:kv/data/lab/tailscale#OAUTH_CLIENT_SECRET>"
-            installCRDs: true
-            operatorConfig:
-              defaultTags:
-                - "tag:k8s-operator"
-              image:
-                repository: tailscale/k8s-operator
-                tag: v1.70.0
-            apiServerProxyConfig:
-              mode: "true"
-            proxyConfig:
-              image:
-                repository: tailscale/tailscale
-                tag: v1.70.0
-              defaultTags:
-                - "tag:k8s"
+  sources:
+    - repoURL: https://github.com/kvdomingo/homelab-automation.git
+      targetRevision: main
+      path: infisical-secrets/tailscale
+    - repoURL: https://pkgs.tailscale.com/helmcharts
+      chart: tailscale-operator
+      targetRevision: 1.94.2
+      helm:
+        releaseName: tailscale
+        valuesObject:
+          installCRDs: true
+          operatorConfig:
+            defaultTags:
+              - "tag:k8s-operator"
+            image:
+              repository: tailscale/k8s-operator
+              tag: stable
+              pullPolicy: Always
+          apiServerProxyConfig:
+            mode: "true"
+          proxyConfig:
+            image:
+              repository: tailscale/tailscale
+              tag: stable
+            defaultTags: "tag:k8s"
   destination:
     server: {{ .Values.destination.server }}
     namespace: tailscale
