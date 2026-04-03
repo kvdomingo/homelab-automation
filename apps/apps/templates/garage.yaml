@@ -9,71 +9,84 @@ metadata:
 spec:
   project: {{ .Values.project }}
   sources:
+    - repoURL: https://github.com/kvdomingo/homelab-automation.git
+      targetRevision: main
+      path: garage
     - repoURL: https://github.com/deuxfleurs-org/garage
       targetRevision: main-v2
       path: script/helm/garage
-      plugin:
-        name: argocd-vault-plugin-helm
-        env:
-          - name: HELM_VALUES
-            value: |
-              garage:
-                rpcSecret: "<path:kv/data/lab/garage#RPC_SECRET>"
-                s3:
-                  api:
-                    region: ap-southeast-1
-                    rootDomain: garage-api.lab.kvd.studio
-                  web:
-                    rootDomain: garage.lab.kvd.studio
-              persistence:
+      helm:
+        releaseName: garage
+        valuesObject:
+          garage:
+            blockSize: "10485760"
+            replicationFactor: "3"
+            existingRpcSecret: garage-secrets
+            s3:
+              api:
+                region: asia-southeast-1
+                rootDomain: "garage-api.{{ .Values.ingress.baseDomain }}"
+              web:
+                rootDomain: "garage.{{ .Values.ingress.baseDomain }}"
+          persistence:
+            enabled: true
+            meta:
+              size: 100Mi
+            data:
+              size: 100Mi
+          deployment:
+            kind: StatefulSet
+            replicaCount: 4
+            podManagementPolicy: OrderedReady
+          affinity:
+            nodeAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+                nodeSelectorTerms:
+                  - matchExpressions:
+                      - key: kubernetes.io/arch
+                        operator: NotIn
+                        values: [ arm64, arm ]
+          ingress:
+            s3:
+              api:
                 enabled: true
-                meta:
-                  size: 100Mi
-                data:
-                  size: 100Mi
-              deployment:
-                replicaCount: 4
-              affinity:
-                nodeAffinity:
-                  requiredDuringSchedulingIgnoredDuringExecution:
-                    nodeSelectorTerms:
-                      - matchExpressions:
-                          - key: kubernetes.io/arch
-                            operator: NotIn
-                            values: [ arm64, arm ]
-              ingress:
-                s3:
-                  api:
-                    enabled: true
-                    annotations:
-                      gethomepage.dev/enabled: "true"
-                      gethomepage.dev/name: "Garage API"
-                      gethomepage.dev/group: "Storage"
-                      gethomepage.dev/icon: "garage.png"
-                      gethomepage.dev/ping: "https://garage-api.{{ .Values.ingress.baseDomain }}"
-                    hosts:
-                      - host: "garage-api.{{ .Values.ingress.baseDomain }}"
-                        paths:
-                          - path: /
-                            pathType: Prefix
-                  web:
-                    enabled: true
-                    annotations:
-                      gethomepage.dev/enabled: "true"
-                      gethomepage.dev/name: "Garage"
-                      gethomepage.dev/group: "Storage"
-                      gethomepage.dev/icon: "garage.png"
-                      gethomepage.dev/ping: "https://garage.{{ .Values.ingress.baseDomain }}"
-                    hosts:
-                      - host: "garage.{{ .Values.ingress.baseDomain }}"
-                        paths:
-                          - path: /
-                            pathType: Prefix
-              monitoring:
-                metrics:
-                  enabled: true
-                  serviceMonitor:
-                    enabled: true
+                annotations:
+                  gethomepage.dev/enabled: "true"
+                  gethomepage.dev/name: "Garage API"
+                  gethomepage.dev/group: "Storage"
+                  gethomepage.dev/icon: "garage.png"
+                  gethomepage.dev/ping: "https://garage-api.{{ .Values.ingress.baseDomain }}"
+                hosts:
+                  - host: "garage-api.{{ .Values.ingress.baseDomain }}"
+                    paths:
+                      - path: /
+                        pathType: Prefix
+                  - host: "*.garage-api.{{ .Values.ingress.baseDomain }}"
+                    paths:
+                      - path: /
+                        pathType: Prefix
+              web:
+                enabled: true
+                annotations:
+                  gethomepage.dev/enabled: "true"
+                  gethomepage.dev/name: "Garage"
+                  gethomepage.dev/group: "Storage"
+                  gethomepage.dev/icon: "garage.png"
+                  gethomepage.dev/ping: "https://garage.{{ .Values.ingress.baseDomain }}"
+                hosts:
+                  - host: "garage.{{ .Values.ingress.baseDomain }}"
+                    paths:
+                      - path: /
+                        pathType: Prefix
+                  - host: "*.garage.{{ .Values.ingress.baseDomain }}"
+                    paths:
+                      - path: /
+                        pathType: Prefix
+          monitoring:
+            metrics:
+              enabled: true
+              serviceMonitor:
+                enabled: true
   destination:
     server: {{ .Values.destination.server }}
     namespace: garage
