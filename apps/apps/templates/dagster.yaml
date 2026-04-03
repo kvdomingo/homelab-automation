@@ -1401,7 +1401,7 @@ spec:
                 name: dagster-inf-secret
                 labels: { }
                 annotations:
-                  helm.sh/hook: pre-install,pre-upgrade
+                  helm.sh/hook: pre-install
                   helm.sh/hook-weight: "-5"
                   helm.sh/hook-delete-policy: before-hook-creation
               spec:
@@ -1427,7 +1427,7 @@ spec:
                       includeAllSecrets: true
                       metadata:
                         annotations:
-                          helm.sh/hook: pre-install,pre-upgrade
+                          helm.sh/hook: pre-install
                           helm.sh/hook-weight: "-5"
                           helm.sh/hook-delete-policy: before-hook-creation
 
