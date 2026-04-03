@@ -8,78 +8,77 @@ metadata:
     {{- include "apps.finalizers" . | nindent 4 }}
 spec:
   project: {{ .Values.project }}
-  source:
-    repoURL: https://robjuz.github.io/helm-charts/
-    chart: kimai2
-    targetRevision: 5.0.4
-    plugin:
-      name: argocd-vault-plugin-helm
-      env:
-        - name: HELM_VALUES
-          value: |
-            image:
-              tag: apache-2.48.0
-            kimaiAppSecret: "<path:kv/data/lab/kimai#APP_SECRET>"
-            kimaiAdminEmail: "<path:kv/data/lab/kimai#ADMIN_EMAIL>"
-            kimaiAdminPassword: "<path:kv/data/lab/kimai#ADMIN_PASSWORD>"
-            kimaiMailerFrom: "<path:kv/data/lab/kimai#MAILER_FROM>"
-            kimaiMailerUrl: smtp.gmail.com
-            podSecurityContext:
-              enabled: true
-            containerSecurityContext:
-              enabled: true
-            livenessProbe:
-              enabled: true
-              initialDelaySeconds: 60
-              periodSeconds: 20
-              timeoutSeconds: 5
-              failureThreshold: 3
-              successThreshold: 1
-            readinessProbe:
-              enabled: false
-            startupProbe:
-              enabled: true
-              initialDelaySeconds: 10
-              periodSeconds: 10
-              timeoutSeconds: 5
-              failureThreshold: 60
-              successThreshold: 1
-            service:
-              type: ClusterIP
-            ingress:
-              enabled: true
-              pathType: Prefix
-              hostname: kimai.lab.kvd.studio
-              annotations:
-                gethomepage.dev/enabled: "true"
-                gethomepage.dev/name: "Kimai"
-                gethomepage.dev/group: "Admin"
-                gethomepage.dev/icon: "kimai.png"
-                gethomepage.dev/ping: "https://kimai.lab.kvd.studio"
-            persistence:
-              enabled: true
-              annotations:
-                helm.sh/resource-policy: keep
-            volumePermissions:
-              enabled: true
-            serviceAccount:
-              create: true
-            pdb:
-              create: true
-              minAvailable: 1
-            autoscaling:
-              enabled: true
-              minReplicas: 2
-              maxReplicas: 5
-              targetCPU: 80
-              targetMemory: 80
-            mariadb:
-              enabled: true
-              auth:
-                rootPassword: "<path:kv/data/lab/kimai#MARIADB_ROOT_PASSWORD>"
-                database: kimai
-                username: kimai
-                password: "<path:kv/data/lab/kimai#MARIADB_PASSWORD>"
+  sources:
+    - repoURL: https://github.com/kvdomingo/homelab-automation.git
+      targetRevision: main
+      path: infisical-secrets/kimai
+    - repoURL: https://robjuz.github.io/helm-charts/
+      chart: kimai2
+      targetRevision: 5.0.4
+      helm:
+        releaseName: kimai
+        valuesObject:
+          image:
+            tag: apache-2.48.0
+          kimaiAdminEmail: "hello@kvd.studio"
+          kimaiMailerFrom: "hello@kvd.studio"
+          existingSecret: kimai-secrets
+          podSecurityContext:
+            enabled: true
+          containerSecurityContext:
+            enabled: true
+          livenessProbe:
+            enabled: true
+            initialDelaySeconds: 60
+            periodSeconds: 20
+            timeoutSeconds: 5
+            failureThreshold: 3
+            successThreshold: 1
+          readinessProbe:
+            enabled: false
+          startupProbe:
+            enabled: true
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 60
+            successThreshold: 1
+          service:
+            type: ClusterIP
+          ingress:
+            enabled: true
+            pathType: Prefix
+            hostname: kimai.lab.kvd.studio
+            annotations:
+              gethomepage.dev/enabled: "true"
+              gethomepage.dev/name: "Kimai"
+              gethomepage.dev/group: "Admin"
+              gethomepage.dev/icon: "kimai.png"
+              gethomepage.dev/ping: "https://kimai.lab.kvd.studio"
+          persistence:
+            enabled: true
+            annotations:
+              helm.sh/resource-policy: keep
+              argocd.argoproj.io/sync-options: Delete=false,Prune=false
+          volumePermissions:
+            enabled: true
+          serviceAccount:
+            create: true
+          pdb:
+            create: true
+            minAvailable: 1
+          autoscaling:
+            enabled: true
+            minReplicas: 2
+            maxReplicas: 5
+            targetCPU: 80
+            targetMemory: 80
+          mariadb:
+            enabled: true
+            auth:
+              username: kimai
+              database: kimai
+              existingSecret: kimai-secrets
   destination:
     server: {{ .Values.destination.server }}
     namespace: kimai
