@@ -6,9 +6,16 @@ replicaCount: 1
 
 image:
   repository: ihatemoney/ihatemoney
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: stable-6.1
+  tag: latest
+
+deploymentAnnotations:
+  keel.sh/policy: "force"
+  keel.sh/match-tag: "true"
+  keel.sh/trigger: "poll"
+  keel.sh/pollSchedule: "@every 5m"
+  secrets.infisical.com/auto-reload: "true"
 
 imagePullSecrets: [ ]
 nameOverride: ""
@@ -103,7 +110,8 @@ volumeMounts: [ ]
 envFrom:
   - secretRef:
       name: ihatemoney-secrets
-      key: POSTGRESQL_PASSWORD
+  - configMapRef:
+      name: ihatemoney-configmap
 
 nodeSelector: { }
 
