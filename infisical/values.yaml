@@ -48,14 +48,14 @@ infisical:
     # -- Creates a new service account if true, with necessary permissions for this chart. If false and `serviceAccount.name` is not defined, the chart will attempt to use the Default service account
     create: true
     # -- Custom annotations for the auto-created service account
-    annotations: {}
+    annotations: { }
     # -- Optional custom service account name, if existing service account is used
     name: null
 
   # -- Override for the full name of Infisical resources in this deployment
   fullnameOverride: ""
   # -- Custom annotations for Infisical pods
-  podAnnotations: {}
+  podAnnotations: { }
   # -- Custom annotations for Infisical deployment
   deploymentAnnotations:
     keel.sh/policy: "force"
@@ -71,26 +71,26 @@ infisical:
     # -- Specific version tag of the Infisical image. View the latest version here https://hub.docker.com/r/infisical/infisical
     tag: latest
     # -- Pulls image only if not already present on the node
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
     # -- Secret references for pulling the image, if needed
-    imagePullSecrets: []
+    imagePullSecrets: [ ]
 
   # -- Node affinity settings for pod placement
-  affinity: {}
+  affinity: { }
   # -- Tolerations definitions
-  tolerations: []
+  tolerations: [ ]
   # -- Node selector for pod placement
-  nodeSelector: {}
+  nodeSelector: { }
   # -- Topology spread constraints for multi-zone deployments
   # -- Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/
-  topologySpreadConstraints: []
+  topologySpreadConstraints: [ ]
 
   # -- Kubernetes Secret reference containing Infisical root credentials
   kubeSecretRef: "infisical-secrets"
 
   service:
     # -- Custom annotations for Infisical service
-    annotations: {}
+    annotations: { }
     # -- Service type, can be changed based on exposure needs (e.g., LoadBalancer)
     type: ClusterIP
     # -- Optional node port for service when using NodePort type
@@ -101,7 +101,7 @@ infisical:
   # -- extraEnv:
   # --   - name: NODE_EXTRA_CA_CERTS
   # --     value: /etc/ssl/certs/ca-certificates.crt
-  extraEnv: []
+  extraEnv: [ ]
 
   resources:
     limits:
@@ -131,12 +131,12 @@ ingress:
     gethomepage.dev/icon: "mdi-allinclusive-#e1eb55"
     gethomepage.dev/ping: "https://infisical.lab.kvd.studio/"
   # -- TLS settings for HTTPS access
-  tls: []
-    # -- TLS secret name for HTTPS
-    # - secretName: letsencrypt-prod
-    # -- Domain name to associate with the TLS certificate
-    #   hosts:
-    #     - some.domain.com
+  tls: [ ]
+  # -- TLS secret name for HTTPS
+  # - secretName: letsencrypt-prod
+  # -- Domain name to associate with the TLS certificate
+  #   hosts:
+  #     - some.domain.com
 
 postgresql:
   # -- Enables an in-cluster PostgreSQL deployment. To achieve HA for Postgres, we recommend deploying https://github.com/zalando/postgres-operator instead.

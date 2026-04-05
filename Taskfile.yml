@@ -20,6 +20,7 @@ tasks:
       - task: setup-k8s-master
       - task: setup-k8s-workers
       - task: setup-traefik
+      - task: setup-infisical
       - task: setup-argocd
 
   bootstrap-vms:
@@ -97,6 +98,11 @@ tasks:
   setup-monitoring:
     desc: Setup monitoring
     dir: promstack
+    cmd: helmfile apply
+
+  setup-infisical:
+    desc: Setup Infisical
+    dir: infisical
     cmd: helmfile apply
 
   setup-core:

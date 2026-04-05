@@ -69,6 +69,7 @@ base_system_packages:
   - ncat
   - net-tools
   - pass
+  - pgcli
   - portaudio19-dev
   - powertop
   - pv
@@ -94,6 +95,7 @@ base_system_packages:
 base_brew_taps:
   - treeverse/lakefs
 base_brew_packages:
+  - argoproj/tap/kubectl-argo-rollouts
   - git-xet
   - lakefs
   - sqlc
