@@ -8,13 +8,12 @@ image:
   repository: docker.umami.is/umami-software/umami
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: postgresql-latest
+  tag: 3
 
 annotations:
   keel.sh/policy: "force"
   keel.sh/match-tag: "true"
   keel.sh/trigger: "poll"
-  keel.sh/pollSchedule: "@every 5m"
   secrets.infisical.com/auto-reload: "true"
 
 imagePullSecrets: [ ]

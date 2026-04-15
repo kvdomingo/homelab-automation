@@ -15,6 +15,7 @@ base_system_packages:
   - clang-17
   - cmake
   - cowsay
+  - cron
   - curl
   - direnv
   - dvipng
@@ -44,6 +45,7 @@ base_system_packages:
   - libgl1
   - libglib2.0-0
   - libgtk-3-dev
+  - libheif-dev
   - libicu-dev
   - liblzma-dev
   - libncursesw5-dev
