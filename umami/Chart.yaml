@@ -22,3 +22,8 @@ version: 0.1.0
 # follow Semantic Versioning. They should reflect the version the application is using.
 # It is recommended to use it with quotes.
 appVersion: "v2.12.1"
+
+dependencies:
+  - name: redis
+    version: 25.3.11
+    repository: https://charts.bitnami.com/bitnami

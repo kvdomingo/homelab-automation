@@ -122,3 +122,28 @@ nodeSelector: { }
 tolerations: [ ]
 
 affinity: { }
+
+redis:
+  global:
+    security:
+      allowInsecureImages: true
+  image:
+    repository: bitnamilegacy/redis
+    tag: 8.2.1-debian-12-r0
+  architecture: standalone
+  master:
+    startupProbe:
+      enabled: true
+      failureThreshold: 30
+    readinessProbe:
+      enabled: false
+    persistence:
+      enabled: true
+      annotations:
+        argocd.argoproj.io/sync-options: Delete=false,Prune=false
+    pdb:
+      create: false
+  auth:
+    enabled: false
+  volumePermissions:
+    enabled: true
