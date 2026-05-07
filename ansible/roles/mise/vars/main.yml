@@ -1,11 +1,10 @@
 mise_global_node_packages:
   - npm
-  - yarn
-  - pnpm
   - corepack
   - vercel
   - vsce
   - "@fission-ai/openspec"
+  - get-shit-done-cc
 mise_global_go_packages:
   - github.com/air-verse/air@latest
   - github.com/golang-migrate/migrate/v4/cmd/migrate@latest

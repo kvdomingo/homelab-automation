@@ -1,0 +1,45 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "renovate.fullname" . }}
+  labels:
+    {{- include "renovate.labels" . | nindent 4 }}
+  {{- with .Values.jobAnnotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  schedule: "@hourly"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 5
+  startingDeadlineSeconds: 300
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: {{ include "renovate.fullname" . }}
+              image: {{ .Values.image.repository }}
+              env:
+                - name: LOG_LEVEL
+                  value: INFO
+                - name: RENOVATE_BASE_DIR
+                  value: /tmp/renovate
+                - name: RENOVATE_CONFIG_FILE
+                  value: /opt/renovate/config.json5
+              envFrom:
+                - secretRef:
+                    name: {{ include "renovate.fullname" . }}-secrets
+              volumeMounts:
+                - mountPath: /opt/renovate
+                  name: config-volume
+                - mountPath: /tmp/renovate
+                  name: work-volume
+          restartPolicy: Never
+          volumes:
+            - name: config-volume
+              configMap:
+                name: {{ include "renovate.fullname" . }}-configmap
+            - name: work-volume
+              emptyDir: { }
