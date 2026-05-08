@@ -19,8 +19,7 @@ data:
       "separateMinorPatch": true,
       "packageRules": [
         {
-          "matchManagers": ["pep621", "mise", "dockerfile", "docker-compose"],
-          "matchPackageNames": ["python"],
+          "matchDatasources": ["python-version"],
           "matchUpdateTypes": ["major", "minor"],
           "enabled": false,
         },
