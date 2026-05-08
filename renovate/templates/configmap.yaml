@@ -16,9 +16,16 @@ data:
         "kvdomingo/banyuhay",
         "kvdomingo/hannibot",
       ],
+      "separateMinorPatch": true,
       "packageRules": [
         {
-          "matchCategories": ["python"],
+          "matchLanguages": ["python"],
+          "matchUpdateTypes": ["major", "minor"],
+          "enabled": false,
+        },
+        {
+          "matchDatasources": ["docker"],
+          "matchPackageNames": ["python"],
           "matchUpdateTypes": ["major", "minor"],
           "enabled": false,
         },
