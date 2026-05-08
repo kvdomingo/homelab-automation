@@ -21,6 +21,10 @@ spec:
           containers:
             - name: {{ include "renovate.fullname" . }}
               image: {{ .Values.image.repository }}
+              resources:
+                limits:
+                  cpu: 1
+                  memory: 2Gi
               env:
                 - name: LOG_LEVEL
                   value: INFO
