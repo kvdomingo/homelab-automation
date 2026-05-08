@@ -18,13 +18,15 @@ data:
       ],
       "packageRules": [
         {
-          "matchPackageNames": [
-            "python",
-          ],
-          "matchUpdateTypes": [
-            "minor",
-          ],
+          "matchCategories": ["python"],
+          "matchUpdateTypes": ["major", "minor"],
           "enabled": false,
-        }
+        },
+        {
+          "matchManagers": ["terraform"],
+          "matchDepTypes": ["provider"],
+          "matchUpdateTypes": ["major"],
+          "enabled": false,
+        },
       ]
     }
