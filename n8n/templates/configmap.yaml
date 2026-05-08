@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "n8n.fullname" . }}-configmap
+  labels:
+    {{- include "n8n.labels" . | nindent 4 }}
+  annotations:
+    helm.sh/hook: pre-install,pre-upgrade
+    helm.sh/hook-weight: "-5"
+    helm.sh/hook-delete-policy: before-hook-creation
+data:
+  DB_TYPE: "postgresdb"
+  DB_POSTGRESDB_DATABASE: "n8n"
+  DB_POSTGRESDB_HOST: "10.10.10.103"
+  DB_POSTGRESDB_PORT: "5432"
+  N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS: "true"
+  N8N_HOST: "{{ (index .Values.ingress.hosts 0).host }}"
+  N8N_PORT: "{{ .Values.service.port }}"
+  N8N_EDITOR_BASE_URL: "{{ (index .Values.ingress.hosts 0).host }}"
+  N8N_PROTOCOL: "https"
+  N8N_SAMESITE_COOKIE: "strict"
+  N8N_SECURE_COOKIE: "true"
+  N8N_SMTP_HOST: "smtp.gmail.com"
+  N8N_SMTP_PORT: "465"
+  N8N_INVITE_LINKS_EMAIL_ONLY: "true"
+  N8N_INSTANCE_OWNER_MANAGED_BY_ENV: "true"
+  N8N_INSTANCE_OWNER_FIRST_NAME: "Kenneth"
+  N8N_INSTANCE_OWNER_LAST_NAME: "Domingo"
+  N8N_EXTERNAL_STORAGE_S3_HOST: "https://api-minio.lab.kvd.studio"
+  N8N_EXTERNAL_STORAGE_S3_BUCKET_NAME: "n8n"
+  N8N_DIAGNOSTICS_ENABLED: "false"
+  OFFLOAD_MANUAL_EXECUTIONS_TO_WORKERS: "true"
+  QUEUE_BULL_REDIS_HOST: "{{ .Release.Name }}-redis-headless"
+  QUEUE_BULL_REDIS_PORT: "{{ .Values.redis.master.service.ports.redis }}"
+  NODE_ENV: "production"
+  GENERIC_TIMEZONE: "Asia/Manila"
+  TZ: "Asia/Manila"
