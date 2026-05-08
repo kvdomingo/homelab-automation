@@ -17,17 +17,25 @@ data:
         "kvdomingo/hannibot",
       ],
       "separateMinorPatch": true,
-      "packageRules": [
-        {
-          "matchDatasources": ["python-version"],
-          "matchUpdateTypes": ["major", "minor"],
-          "enabled": false,
-        },
-        {
-          "matchManagers": ["terraform"],
-          "matchDepTypes": ["provider"],
-          "matchUpdateTypes": ["major"],
-          "enabled": false,
-        },
-      ]
+      "force": {
+        "packageRules": [
+          {
+            "matchDatasources": ["python-version"],
+            "matchUpdateTypes": ["major", "minor"],
+            "enabled": false,
+          },
+          {
+            "matchManagers": ["pep621", "mise", "docker", "docker-compose"],
+            "matchPackageNames": ["python"],
+            "matchUpdateTypes": ["major", "minor"],
+            "enabled": false,
+          },
+          {
+            "matchManagers": ["terraform"],
+            "matchDepTypes": ["provider"],
+            "matchUpdateTypes": ["major"],
+            "enabled": false,
+          },
+        ]
+      },
     }
