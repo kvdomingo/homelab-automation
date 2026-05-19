@@ -145,7 +145,7 @@ http:
     pihole2:
       loadBalancer:
         servers:
-          - url: "http://10.10.2.53"
+          - url: "http://10.10.2.53:8080"
         passHostHeader: true
     wings:
       loadBalancer:
