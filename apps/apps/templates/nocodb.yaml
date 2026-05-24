@@ -1,0 +1,24 @@
+{{- if not .Values.disableNocoDB }}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: nocodb
+  namespace: {{ include "apps.argocdNamespace" . | quote }}
+  finalizers:
+    {{- include "apps.finalizers" . | nindent 4 }}
+spec:
+  project: {{ .Values.project }}
+  source:
+    repoURL: https://github.com/kvdomingo/homelab-automation.git
+    targetRevision: main
+    path: nocodb
+  destination:
+    server: {{ .Values.destination.server }}
+    namespace: nocodb
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+    automated:
+      selfHeal: true
+      prune: true
+{{- end }}

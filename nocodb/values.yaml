@@ -183,6 +183,7 @@ redis:
   volumePermissions:
     enabled: true
   master:
+    disableCommands: [ ]
     persistence:
       enabled: true
       annotations:

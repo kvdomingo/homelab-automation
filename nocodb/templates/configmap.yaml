@@ -12,6 +12,6 @@ data:
   NC_S3_ENDPOINT: "https://minio-api.lab.kvd.studio"
   NC_S3_FORCE_PATH_STYLE: "true"
   PORT: "{{ .Values.service.port }}"
-  NC_SITE_URL: "{{ (index .Values.ingress.hosts 0).host }}"
-  NC_CACHE_REDIS_URL: "redis://{{ include "nocodb.fullname" }}-redis-headless:6379/0"
+  NC_SITE_URL: "https://{{ (index .Values.ingress.hosts 0).host }}"
+  NC_CACHE_REDIS_URL: "redis://{{ include "nocodb.fullname" . }}-redis-headless:6379/0"
   NC_DISABLE_TELE: "true"
