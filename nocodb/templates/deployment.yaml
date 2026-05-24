@@ -1,16 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "supertokens.fullname" . }}
+  name: {{ include "nocodb.fullname" . }}
   labels:
-    {{- include "supertokens.labels" . | nindent 4 }}
+    {{- include "nocodb.labels" . | nindent 4 }}
+  {{- with .Values.deploymentAnnotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
-      {{- include "supertokens.selectorLabels" . | nindent 6 }}
+      {{- include "nocodb.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -18,7 +22,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "supertokens.labels" . | nindent 8 }}
+        {{- include "nocodb.labels" . | nindent 8 }}
         {{- with .Values.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
@@ -27,48 +31,44 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "supertokens.serviceAccountName" . }}
+      serviceAccountName: {{ include "nocodb.serviceAccountName" . }}
+      {{- with .Values.podSecurityContext }}
       securityContext:
-        {{- toYaml .Values.podSecurityContext | nindent 8 }}
-      initContainers:
-        - name: wait-db
-          image: "{{ .Values.postgresql.image.repository }}:{{ .Values.postgresql.image.tag }}"
-          envFrom:
-            - secretRef:
-                name: '{{- include "supertokens.fullname" . }}-secrets'
-          command:
-            - /bin/sh
-            - -c
-            - >
-              until pg_isready --host {{ .Release.Name }}-postgresql --username {{ .Values.postgresql.auth.username }};
-              do echo waiting for database;
-              sleep 2;
-              done;
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       containers:
         - name: {{ .Chart.Name }}
+          {{- with .Values.securityContext }}
           securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}
               protocol: TCP
+          {{- with .Values.livenessProbe }}
           livenessProbe:
-            {{- toYaml .Values.livenessProbe | nindent 12 }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.readinessProbe }}
           readinessProbe:
-            {{- toYaml .Values.readinessProbe | nindent 12 }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.resources }}
           resources:
-            {{- toYaml .Values.resources | nindent 12 }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           {{- with .Values.volumeMounts }}
           volumeMounts:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           envFrom:
             - secretRef:
-                name: '{{- include "supertokens.fullname" . }}-secrets'
+                name: {{ include "nocodb.fullname" . }}-secrets
             - configMapRef:
-                name: '{{- include "supertokens.fullname" . }}-configmap'
+                name: {{ include "nocodb.fullname" . }}-configmap
       {{- with .Values.volumes }}
       volumes:
         {{- toYaml . | nindent 8 }}

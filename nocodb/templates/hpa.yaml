@@ -2,14 +2,14 @@
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: {{ include "supertokens.fullname" . }}
+  name: {{ include "nocodb.fullname" . }}
   labels:
-    {{- include "supertokens.labels" . | nindent 4 }}
+    {{- include "nocodb.labels" . | nindent 4 }}
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: {{ include "supertokens.fullname" . }}
+    name: {{ include "nocodb.fullname" . }}
   minReplicas: {{ .Values.autoscaling.minReplicas }}
   maxReplicas: {{ .Values.autoscaling.maxReplicas }}
   metrics:

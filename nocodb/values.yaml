@@ -1,4 +1,4 @@
-# Default values for supertokens.
+# Default values for nocodb.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
@@ -7,28 +7,34 @@ replicaCount: 1
 
 # This sets the container image more information can be found here: https://kubernetes.io/docs/concepts/containers/images/
 image:
-  repository: registry.supertokens.io/supertokens/supertokens-postgresql
+  repository: nocodb/nocodb
   # This sets the pull policy for images.
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: 9.2.2
+  tag: latest
 
-# This is for the secretes for pulling an image from a private repository more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+deploymentAnnotations:
+  keel.sh/policy: "force"
+  keel.sh/match-tag: "true"
+  keel.sh/trigger: "poll"
+  secrets.infisical.com/auto-reload: "true"
+
+# This is for the secrets for pulling an image from a private repository more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
 imagePullSecrets: [ ]
 # This is to override the chart name.
 nameOverride: ""
 fullnameOverride: ""
 
-#This section builds out the service account more information can be found here: https://kubernetes.io/docs/concepts/security/service-accounts/
+# This section builds out the service account more information can be found here: https://kubernetes.io/docs/concepts/security/service-accounts/
 serviceAccount:
-  # Specifies whether a service account should be created
+  # Specifies whether a service account should be created.
   create: true
   # Automatically mount a ServiceAccount's API credentials?
   automount: true
-  # Annotations to add to the service account
+  # Annotations to add to the service account.
   annotations: { }
   # The name of the service account to use.
-  # If not set and create is true, a name is generated using the fullname template
+  # If not set and create is true, a name is generated using the fullname template.
   name: ""
 
 # This is for setting Kubernetes Annotations to a Pod.
@@ -54,7 +60,7 @@ service:
   # This sets the service type more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types
   type: ClusterIP
   # This sets the ports more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#field-spec-ports
-  port: 3567
+  port: 8080
 
 # This block is for setting up the ingress for more information can be found here: https://kubernetes.io/docs/concepts/services-networking/ingress/
 ingress:
@@ -62,19 +68,57 @@ ingress:
   className: ""
   annotations:
     gethomepage.dev/enabled: "true"
-    gethomepage.dev/name: "Supertokens"
-    gethomepage.dev/group: "Admin"
-    gethomepage.dev/icon: "si-wprocket"
-    gethomepage.dev/ping: "supertokens.lab.kvd.studio"
+    gethomepage.dev/name: "NocoDB"
+    gethomepage.dev/group: "Documents"
+    gethomepage.dev/icon: "nocodb.png"
+    gethomepage.dev/ping: "nocodb.lab.kvd.studio"
   hosts:
-    - host: supertokens.lab.kvd.studio
+    - host: nocodb.lab.kvd.studio
       paths:
         - path: /
           pathType: Prefix
   tls: [ ]
-  #  - secretName: chart-example-tls
-  #    hosts:
-  #      - chart-example.local
+  # - secretName: chart-example-tls
+  #   hosts:
+  #     - chart-example.local
+
+# -- Expose the service via gateway-api HTTPRoute
+# Requires Gateway API resources and suitable controller installed within the cluster
+# (see: https://gateway-api.sigs.k8s.io/guides/)
+httpRoute:
+  # HTTPRoute enabled.
+  enabled: false
+  # HTTPRoute annotations.
+  annotations: { }
+  # Which Gateways this Route is attached to.
+  parentRefs:
+    - name: gateway
+      sectionName: http
+      # namespace: default
+  # Hostnames matching HTTP header.
+  hostnames:
+    - chart-example.local
+  # List of rules and filters applied.
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /headers
+  #   filters:
+  #   - type: RequestHeaderModifier
+  #     requestHeaderModifier:
+  #       set:
+  #       - name: My-Overwrite-Header
+  #         value: this-is-the-only-value
+  #       remove:
+  #       - User-Agent
+  # - matches:
+  #   - path:
+  #       type: PathPrefix
+  #       value: /echo
+  #     headers:
+  #     - name: version
+  #       value: v2
 
 resources: { }
 # We usually recommend not to specify default resources and to leave this as a conscious
@@ -90,29 +134,25 @@ resources: { }
 
 # This is to setup the liveness and readiness probes more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
 livenessProbe:
-  #  httpGet:
-  #    path: /
-  #    port: http
-  tcpSocket:
-    port: 3567
+  httpGet:
+    path: /
+    port: http
 readinessProbe:
-  #  httpGet:
-  #    path: /
-  #    port: http
-  tcpSocket:
-    port: 3567
+  httpGet:
+    path: /
+    port: http
 
-#This section is for setting up autoscaling more information can be found here: https://kubernetes.io/docs/concepts/workloads/autoscaling/
+# This section is for setting up autoscaling more information can be found here: https://kubernetes.io/docs/concepts/workloads/autoscaling/
 autoscaling:
-  enabled: false
-  minReplicas: 1
-  maxReplicas: 100
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 5
   targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80
 
 pdb:
-  enabled: false
-  minAvailable: 2
+  enabled: true
+  minAvailable: 1
 
 # Additional volumes on the output Deployment definition.
 volumes: [ ]
@@ -133,24 +173,20 @@ tolerations: [ ]
 
 affinity: { }
 
-postgresql:
+redis:
+  global:
+    security:
+      allowInsecureImages: true
   image:
-    repository: bitnamilegacy/postgresql
-    tag: 16.4.0-debian-12-r8
-  auth:
-    username: supertokens
-    database: supertokens
-    existingSecret: supertokens-secrets
-    secretKeys:
-      adminPasswordKey: POSTGRESQL_PASSWORD
-      userPasswordKey: POSTGRESQL_PASSWORD
-      replicationPasswordKey: POSTGRESQL_PASSWORD
-  primary:
-    persistence:
-      enabled: true
-    readinessProbe:
-      enabled: false
-    livenessProbe:
-      enabled: false
+    repository: bitnamilegacy/redis
+    tag: 8.2.1-debian-12-r0
   volumePermissions:
     enabled: true
+  master:
+    persistence:
+      enabled: true
+      annotations:
+        argocd.argoproj.io/sync-options: Delete=false,Prune=false
+  auth:
+    enabled: false
+  architecture: standalone
