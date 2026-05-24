@@ -1,0 +1,24 @@
+{{- if not .Values.disableBytebase }}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: bytebase
+  namespace: {{ include "apps.argocdNamespace" . | quote }}
+  finalizers:
+    {{- include "apps.finalizers" . | nindent 4 }}
+spec:
+  project: {{ .Values.project }}
+  source:
+    repoURL: https://github.com/kvdomingo/homelab-automation.git
+    targetRevision: main
+    path: bytebase
+  destination:
+    server: {{ .Values.destination.server }}
+    namespace: bytebase
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+    automated:
+      selfHeal: true
+      prune: true
+{{- end }}
