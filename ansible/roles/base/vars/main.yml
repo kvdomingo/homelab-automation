@@ -86,6 +86,7 @@ base_system_packages:
   - upx-ucl
   - uuid-dev
   - uuid-runtime
+  - wafw00f
   - wget
   - xsel
   - xz-utils
