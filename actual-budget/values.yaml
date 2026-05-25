@@ -1,0 +1,109 @@
+# Default values for actual-budget.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: docker.io/actualbudget/actual-server
+  pullPolicy: Always
+  tag: latest
+
+deploymentAnnotations:
+  keel.sh/policy: "force"
+  keel.sh/match-tag: "true"
+  keel.sh/trigger: "poll"
+  secrets.infisical.com/auto-reload: "true"
+
+imagePullSecrets: [ ]
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: { }
+  name: ""
+
+podAnnotations: { }
+podLabels: { }
+
+podSecurityContext: { }
+securityContext: { }
+
+env: { }
+  # ACTUAL_PORT: "5006"
+  # ACTUAL_UPLOAD_FILE_SYNC_SIZE_LIMIT_MB: "20"
+  # ACTUAL_UPLOAD_SYNC_ENCRYPTED_FILE_SYNC_SIZE_LIMIT_MB: "50"
+# ACTUAL_UPLOAD_FILE_SIZE_LIMIT_MB: "20"
+
+service:
+  type: ClusterIP
+  port: 5006
+
+ingress:
+  enabled: true
+  className: ""
+  annotations:
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/name: "Actual Budget"
+    gethomepage.dev/group: "Finances"
+    gethomepage.dev/icon: "actual-budget.svg"
+    gethomepage.dev/ping: "actual.lab.kvd.studio"
+  hosts:
+    - host: actual.lab.kvd.studio
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: [ ]
+
+httpRoute:
+  enabled: false
+  annotations: { }
+  parentRefs:
+    - name: gateway
+      sectionName: http
+  hostnames:
+    - chart-example.local
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+
+resources: { }
+
+livenessProbe:
+  exec:
+    command: [ "node", "scripts/health-check.js" ]
+  periodSeconds: 60
+  timeoutSeconds: 10
+  failureThreshold: 3
+
+startupProbe:
+  exec:
+    command: [ "node", "scripts/health-check.js" ]
+  initialDelaySeconds: 20
+  periodSeconds: 5
+  failureThreshold: 12
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+
+persistence:
+  data:
+    size: 1Gi
+    storageClass: ""
+    annotations:
+      helm.sh/resource-policy: keep
+      argocd.argoproj.io/sync-options: Delete=false,Prune=false
+
+volumes: [ ]
+volumeMounts: [ ]
+
+nodeSelector: { }
+tolerations: [ ]
+affinity: { }
