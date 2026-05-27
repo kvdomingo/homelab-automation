@@ -103,5 +103,6 @@ base_brew_packages:
   - lakefs
   - rtk
   - sqlc
+  - whosthere
 base_brew_casks:
   - amir20/homebrew-dtop/dtop
