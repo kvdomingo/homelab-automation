@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: '{{- include "invoice-builder.fullname" . }}-configmap'
+  labels:
+    {{- include "invoice-builder.labels" . | nindent 4 }}
+  annotations:
+    helm.sh/hook: pre-install,pre-upgrade
+    helm.sh/hook-weight: "-5"
+    helm.sh/hook-delete-policy: before-hook-creation
+data:
+  SERVICE: "all"
+  NODE_ENV: "docker"
+  DB_DIRECTORY: "/data"
+  PORT: "3000"
+  DEV_SERVER_URL: "0.0.0.0"
+  FE_SERVER_URL: "https://{{ (index .Values.ingress.hosts 0).host }}"
+  MIGRATIONS_PATH: "/app/dist-be/backend/server/shared/migrations"
+  BACKEND_HOST: "localhost"
+  BACKEND_PORT: "3000"

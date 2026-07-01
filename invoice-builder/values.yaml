@@ -1,4 +1,4 @@
-# Default values for solidtime.
+# Default values for invoice-builder.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
@@ -7,24 +7,23 @@ replicaCount: 1
 
 # This sets the container image more information can be found here: https://kubernetes.io/docs/concepts/containers/images/
 image:
-  repository: solidtime/solidtime
+  repository: ghcr.io/piratuks/invoice-builder
   # This sets the pull policy for images.
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
   tag: latest
-
-deploymentAnnotations:
-  keel.sh/policy: "force"
-  keel.sh/match-tag: "true"
-  keel.sh/trigger: "poll"
-  keel.sh/pollSchedule: "@every 5m"
-  secrets.infisical.com/auto-reload: "true"
 
 # This is for the secrets for pulling an image from a private repository more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
 imagePullSecrets: [ ]
 # This is to override the chart name.
 nameOverride: ""
 fullnameOverride: ""
+
+deploymentAnnotations:
+  keel.sh/policy: "force"
+  keel.sh/match-tag: "true"
+  keel.sh/trigger: "poll"
+  secrets.infisical.com/auto-reload: "true"
 
 # This section builds out the service account more information can be found here: https://kubernetes.io/docs/concepts/security/service-accounts/
 serviceAccount:
@@ -45,23 +44,23 @@ podAnnotations: { }
 # For more information checkout: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
 podLabels: { }
 
-podSecurityContext:
-  fsGroup: 1000
+podSecurityContext: { }
+# fsGroup: 2000
 
-securityContext:
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  runAsNonRoot: true
-  runAsUser: 1000
+securityContext: { }
+# capabilities:
+#   drop:
+#   - ALL
+# readOnlyRootFilesystem: true
+# runAsNonRoot: true
+# runAsUser: 1000
 
 # This is for setting up a service more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/
 service:
   # This sets the service type more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types
   type: ClusterIP
   # This sets the ports more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#field-spec-ports
-  port: 8000
+  port: 3001
 
 # This block is for setting up the ingress for more information can be found here: https://kubernetes.io/docs/concepts/services-networking/ingress/
 ingress:
@@ -69,16 +68,16 @@ ingress:
   className: ""
   annotations:
     gethomepage.dev/enabled: "true"
-    gethomepage.dev/name: "Solidtime"
+    gethomepage.dev/name: "Invoice Builder"
     gethomepage.dev/group: "Admin"
-    gethomepage.dev/icon: "solidtime.webp"
-    gethomepage.dev/ping: "https://solidtime.lab.kvd.studio"
+    gethomepage.dev/icon: "solid-invoice.webp"
+    gethomepage.dev/ping: "https://solidinvoice.lab.kvd.studio"
   hosts:
-    - host: solidtime.lab.kvd.studio
+    - host: solidinvoice.lab.kvd.studio
       paths:
         - path: /
           pathType: Prefix
-    - host: solidtime.kvd.studio
+    - host: solidinvoice.kvd.studio
       paths:
         - path: /
           pathType: Prefix
@@ -125,17 +124,17 @@ httpRoute:
   #     - name: version
   #       value: v2
 
-resources: { }
-# We usually recommend not to specify default resources and to leave this as a conscious
-# choice for the user. This also increases chances charts run on environments with little
-# resources, such as Minikube. If you do want to specify resources, uncomment the following
-# lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-# limits:
-#   cpu: 100m
-#   memory: 128Mi
-# requests:
-#   cpu: 100m
-#   memory: 128Mi
+resources:
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  limits:
+    cpu: 100m
+    memory: 256Mi
+#  requests:
+#    cpu: 100m
+#    memory: 128Mi
 
 # This is to setup the liveness and readiness probes more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
 livenessProbe:
@@ -145,7 +144,7 @@ livenessProbe:
   failureThreshold: 3
   initialDelaySeconds: 30
   httpGet:
-    path: /health-check/up
+    path: /
     port: http
 startupProbe:
   periodSeconds: 10
@@ -154,16 +153,20 @@ startupProbe:
   failureThreshold: 60
   initialDelaySeconds: 10
   httpGet:
-    path: /health-check/up
+    path: /
     port: http
 
 # This section is for setting up autoscaling more information can be found here: https://kubernetes.io/docs/concepts/workloads/autoscaling/
 autoscaling:
-  enabled: false
-  minReplicas: 1
-  maxReplicas: 100
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 5
   targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80
+
+pdb:
+  enabled: true
+  minAvailable: 1
 
 # Additional volumes on the output Deployment definition.
 volumes: [ ]
@@ -183,31 +186,3 @@ nodeSelector: { }
 tolerations: [ ]
 
 affinity: { }
-
-gotenberg:
-  image:
-    repository: gotenberg/gotenberg
-    # This sets the pull policy for images.
-    pullPolicy: IfNotPresent
-    # Overrides the image tag whose default is the chart appVersion.
-    tag: 8
-  service:
-    port: 3000
-  livenessProbe:
-    periodSeconds: 20
-    timeoutSeconds: 3
-    successThreshold: 1
-    failureThreshold: 3
-    initialDelaySeconds: 30
-    httpGet:
-      path: /health
-      port: 3000
-  startupProbe:
-    periodSeconds: 10
-    timeoutSeconds: 3
-    successThreshold: 1
-    failureThreshold: 60
-    initialDelaySeconds: 10
-    httpGet:
-      path: /health
-      port: 3000
