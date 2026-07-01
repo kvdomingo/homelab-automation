@@ -1,4 +1,4 @@
-# Default values for invoice-builder.
+# Default values for solidinvoice.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
@@ -7,7 +7,7 @@ replicaCount: 1
 
 # This sets the container image more information can be found here: https://kubernetes.io/docs/concepts/containers/images/
 image:
-  repository: ghcr.io/piratuks/invoice-builder
+  repository: solidinvoice/solidinvoice
   # This sets the pull policy for images.
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
@@ -60,7 +60,7 @@ service:
   # This sets the service type more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types
   type: ClusterIP
   # This sets the ports more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#field-spec-ports
-  port: 3001
+  port: 8765
 
 # This block is for setting up the ingress for more information can be found here: https://kubernetes.io/docs/concepts/services-networking/ingress/
 ingress:
@@ -68,7 +68,7 @@ ingress:
   className: ""
   annotations:
     gethomepage.dev/enabled: "true"
-    gethomepage.dev/name: "Invoice Builder"
+    gethomepage.dev/name: "SolidInvoice"
     gethomepage.dev/group: "Admin"
     gethomepage.dev/icon: "solid-invoice.webp"
     gethomepage.dev/ping: "https://solidinvoice.lab.kvd.studio"
@@ -124,48 +124,38 @@ httpRoute:
   #     - name: version
   #       value: v2
 
-resources:
-  # We usually recommend not to specify default resources and to leave this as a conscious
-  # choice for the user. This also increases chances charts run on environments with little
-  # resources, such as Minikube. If you do want to specify resources, uncomment the following
-  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  limits:
-    cpu: 100m
-    memory: 256Mi
-#  requests:
-#    cpu: 100m
-#    memory: 128Mi
+resources: { }
+# We usually recommend not to specify default resources and to leave this as a conscious
+# choice for the user. This also increases chances charts run on environments with little
+# resources, such as Minikube. If you do want to specify resources, uncomment the following
+# lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+#  limits:
+#    cpu: 250m
+#    memory: 1Gi
+# requests:
+#   cpu: 100m
+#   memory: 128Mi
 
 # This is to setup the liveness and readiness probes more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
-livenessProbe:
-  periodSeconds: 20
-  timeoutSeconds: 3
-  successThreshold: 1
-  failureThreshold: 3
-  initialDelaySeconds: 30
-  httpGet:
-    path: /
-    port: http
-startupProbe:
-  periodSeconds: 10
-  timeoutSeconds: 3
-  successThreshold: 1
-  failureThreshold: 60
-  initialDelaySeconds: 10
-  httpGet:
-    path: /
-    port: http
+#livenessProbe:
+#  httpGet:
+#    path: /
+#    port: http
+#readinessProbe:
+#  httpGet:
+#    path: /
+#    port: http
 
 # This section is for setting up autoscaling more information can be found here: https://kubernetes.io/docs/concepts/workloads/autoscaling/
 autoscaling:
-  enabled: true
+  enabled: false
   minReplicas: 2
   maxReplicas: 5
   targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80
 
 pdb:
-  enabled: true
+  enabled: false
   minAvailable: 1
 
 # Additional volumes on the output Deployment definition.
@@ -185,11 +175,4 @@ nodeSelector: { }
 
 tolerations: [ ]
 
-affinity:
-  nodeAffinity:
-    requiredDuringSchedulingIgnoredDuringExecution:
-      nodeSelectorTerms:
-        - matchExpressions:
-            - key: kubernetes.io/arch
-              operator: NotIn
-              values: [ arm64, arm ]
+affinity: { }

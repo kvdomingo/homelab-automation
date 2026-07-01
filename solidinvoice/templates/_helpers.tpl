@@ -1,7 +1,7 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "invoice-builder.name" -}}
+{{- define "solidinvoice.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
@@ -10,7 +10,7 @@ Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
 */}}
-{{- define "invoice-builder.fullname" -}}
+{{- define "solidinvoice.fullname" -}}
 {{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -26,16 +26,16 @@ If release name contains chart name it will be used as a full name.
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "invoice-builder.chart" -}}
+{{- define "solidinvoice.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
 Common labels
 */}}
-{{- define "invoice-builder.labels" -}}
-helm.sh/chart: {{ include "invoice-builder.chart" . }}
-{{ include "invoice-builder.selectorLabels" . }}
+{{- define "solidinvoice.labels" -}}
+helm.sh/chart: {{ include "solidinvoice.chart" . }}
+{{ include "solidinvoice.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
@@ -45,17 +45,17 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{/*
 Selector labels
 */}}
-{{- define "invoice-builder.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "invoice-builder.name" . }}
+{{- define "solidinvoice.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "solidinvoice.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
 Create the name of the service account to use
 */}}
-{{- define "invoice-builder.serviceAccountName" -}}
+{{- define "solidinvoice.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create }}
-{{- default (include "invoice-builder.fullname" .) .Values.serviceAccount.name }}
+{{- default (include "solidinvoice.fullname" .) .Values.serviceAccount.name }}
 {{- else }}
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}

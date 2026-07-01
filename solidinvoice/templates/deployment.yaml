@@ -1,9 +1,9 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "invoice-builder.fullname" . }}
+  name: {{ include "solidinvoice.fullname" . }}
   labels:
-    {{- include "invoice-builder.labels" . | nindent 4 }}
+    {{- include "solidinvoice.labels" . | nindent 4 }}
   {{- with .Values.deploymentAnnotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
@@ -14,7 +14,7 @@ spec:
   {{- end }}
   selector:
     matchLabels:
-      {{- include "invoice-builder.selectorLabels" . | nindent 6 }}
+      {{- include "solidinvoice.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -22,7 +22,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "invoice-builder.labels" . | nindent 8 }}
+        {{- include "solidinvoice.labels" . | nindent 8 }}
         {{- with .Values.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
@@ -31,7 +31,7 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "invoice-builder.serviceAccountName" . }}
+      serviceAccountName: {{ include "solidinvoice.serviceAccountName" . }}
       {{- with .Values.podSecurityContext }}
       securityContext:
         {{- toYaml . | nindent 8 }}
@@ -44,16 +44,22 @@ spec:
           {{- end }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command:
+            - /bin/sh
+            - -eu
+            - -c
+            - >-
+              solidinvoice run
+              --disable-https
+              --enable-metrics
+              --server-ip 0.0.0.0
+              --port "{{ .Values.service.port }}"
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}
               protocol: TCP
           {{- with .Values.livenessProbe }}
           livenessProbe:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
-          {{- with .Values.startupProbe }}
-          startupProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           {{- with .Values.readinessProbe }}
@@ -66,17 +72,17 @@ spec:
           {{- end }}
           volumeMounts:
             - name: data
-              mountPath: /data
+              mountPath: /etc/solidinvoice
           {{- with .Values.volumeMounts }}
             {{- toYaml . | nindent 12 }}
           {{- end }}
           envFrom:
             - configMapRef:
-                name: '{{- include "invoice-builder.fullname" . }}-configmap'
+                name: '{{- include "solidinvoice.fullname" . }}-configmap'
       volumes:
         - name: data
           persistentVolumeClaim:
-            claimName: '{{ include "invoice-builder.fullname" . }}-data'
+            claimName: '{{ include "solidinvoice.fullname" . }}-data'
       {{- with .Values.volumes }}
         {{- toYaml . | nindent 8 }}
       {{- end }}

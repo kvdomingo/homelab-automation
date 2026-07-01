@@ -1,8 +1,8 @@
-{{- if not .Values.disableInvoiceBuilder }}
+{{- if not .Values.disableSolidInvoice }}
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: invoice-builder
+  name: solidinvoice
   namespace: {{ include "apps.argocdNamespace" . | quote }}
   finalizers:
     {{- include "apps.finalizers" . | nindent 4 }}
@@ -11,10 +11,10 @@ spec:
   source:
     repoURL: https://github.com/kvdomingo/homelab-automation.git
     targetRevision: main
-    path: invoice-builder
+    path: solidinvoice
   destination:
     server: {{ .Values.destination.server }}
-    namespace: invoice-builder
+    namespace: solidinvoice
   syncPolicy:
     syncOptions:
       - CreateNamespace=true

@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: '{{ include "invoice-builder.fullname" . }}-data'
+  name: '{{ include "solidinvoice.fullname" . }}-data'
   labels:
-    {{ include "invoice-builder.labels" . | nindent 4 }}
+    {{ include "solidinvoice.labels" . | nindent 4 }}
   annotations:
     helm.sh/resource-policy: keep
 spec:
