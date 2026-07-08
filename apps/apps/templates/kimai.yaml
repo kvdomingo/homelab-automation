@@ -25,8 +25,13 @@ spec:
           existingSecret: kimai-secrets
           podSecurityContext:
             enabled: true
+            fsGroup: 33
           containerSecurityContext:
             enabled: true
+            runAsUser: 33
+          resources:
+            limits:
+              memory: 1Gi
           livenessProbe:
             enabled: true
             initialDelaySeconds: 60
