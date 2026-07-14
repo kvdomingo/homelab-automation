@@ -12,8 +12,6 @@ spec:
     repoURL: https://github.com/kvdomingo/homelab-automation
     targetRevision: main
     path: traefik/argocd
-    plugin:
-      name: argocd-vault-plugin
   destination:
     server: {{ .Values.destination.server }}
     namespace: traefik
