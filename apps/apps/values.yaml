@@ -6,3 +6,5 @@ destination:
 ingress:
   baseDomain: lab.kvd.studio
   externalDomain: kvd.studio
+
+disableSolidInvoice: true

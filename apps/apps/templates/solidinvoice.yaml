@@ -8,74 +8,10 @@ metadata:
     {{- include "apps.finalizers" . | nindent 4 }}
 spec:
   project: {{ .Values.project }}
-  sources:
-    - repoURL: https://github.com/kvdomingo/homelab-automation.git
-      targetRevision: main
-      path: infisical-secrets/solidinvoice
-    - repoURL: https://charts.solidinvoice.co
-      chart: solidinvoice
-      targetRevision: 3.0.1
-      helm:
-        releaseName: solidinvoice
-        valuesObject:
-          tag: latest
-          app:
-            allowRegistration: true
-            extraEnvFrom:
-              - secretRef:
-                  name: solidinvoice-secrets
-          install:
-            enabled: false
-            existingSecret: solidinvoice-secrets
-          externalDatabase:
-            existingSecret: solidinvoice-secrets
-          mailer:
-            existingSecret: solidinvoice-secrets
-            sender: "SolidInvoice <hello+solidinvoice@kvd.studio>"
-          worker:
-            enabled: true
-          persistence:
-            enabled: true
-            annotations:
-              helm.sh/hook: pre-install
-              helm.sh/hook-weight: "-5"
-              helm.sh/resource-policy: keep
-              argocd.argoproj.io/sync-options: Delete=false,Prune=false
-          ingress:
-            enabled: true
-            annotations:
-              gethomepage.dev/enabled: "true"
-              gethomepage.dev/name: "SolidInvoice"
-              gethomepage.dev/group: "Admin"
-              gethomepage.dev/icon: "solid-invoice.webp"
-              gethomepage.dev/ping: "https://solidinvoice.lab.kvd.studio"
-            hosts:
-              - host: solidinvoice.lab.kvd.studio
-                paths:
-                  - path: /
-                    pathType: Prefix
-              - host: solidinvoice.kvd.studio
-                paths:
-                  - path: /
-                    pathType: Prefix
-          redis:
-            enabled: true
-            auth:
-              enabled: false
-            replica:
-              replicaCount: 1
-          autoscaling:
-            enabled: true
-            minReplicas: 2
-            maxReplicas: 5
-          podDisruptionBudget:
-            enabled: true
-            minAvailable: 1
-          serviceAccount:
-            create: true
-            annotations:
-              helm.sh/hook: pre-install
-              helm.sh/hook-weight: "-5"
+  source:
+    repoURL: https://charts.solidinvoice.co
+    targetRevision: 3.0.1
+    path: solidinvoice
   destination:
     server: {{ .Values.destination.server }}
     namespace: solidinvoice
