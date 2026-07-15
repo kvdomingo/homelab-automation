@@ -38,7 +38,7 @@ data:
   SESSION_PATH: "/"
   FILESYSTEM_DISK: "local"
   PUBLIC_FILESYSTEM_DISK: "public"
-  GOTENBERG_URL: "http://gotenberg.solidtime.svc.cluster.local:3000"
+  GOTENBERG_URL: "http://gotenberg.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.gotenberg.service.port }}"
   MAIL_MAILER: "smtp"
   MAIL_HOST: "smtp.gmail.com"
   MAIL_PORT: "587"

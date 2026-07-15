@@ -31,6 +31,9 @@ spec:
             existingSecret: solidinvoice-secrets
           mailer:
             existingSecret: solidinvoice-secrets
+            sender: "SolidInvoice <hello+solidinvoice@kvd.studio>"
+          worker:
+            enabled: true
           persistence:
             enabled: true
             annotations:
