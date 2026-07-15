@@ -54,6 +54,7 @@ spec:
               --enable-metrics
               --server-ip 0.0.0.0
               --port "{{ .Values.service.port }}"
+              --log-format console
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}
@@ -64,6 +65,10 @@ spec:
           {{- end }}
           {{- with .Values.readinessProbe }}
           readinessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.startupProbe }}
+          startupProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           {{- with .Values.resources }}
@@ -79,6 +84,8 @@ spec:
           envFrom:
             - configMapRef:
                 name: '{{- include "solidinvoice.fullname" . }}-configmap'
+            - secretRef:
+                name: '{{ include "solidinvoice.fullname" . }}-secrets'
       volumes:
         - name: data
           persistentVolumeClaim:

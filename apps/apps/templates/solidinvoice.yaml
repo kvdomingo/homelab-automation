@@ -9,8 +9,8 @@ metadata:
 spec:
   project: {{ .Values.project }}
   source:
-    repoURL: https://charts.solidinvoice.co
-    targetRevision: 3.0.1
+    repoURL: https://github.com/kvdomingo/homelab-automation.git
+    targetRevision: main
     path: solidinvoice
   destination:
     server: {{ .Values.destination.server }}

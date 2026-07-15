@@ -10,3 +10,6 @@ metadata:
     helm.sh/hook-delete-policy: before-hook-creation
 data:
   APP_PORT: "{{ .Values.service.port }}"
+  SOLIDINVOICE_ENV: "prod"
+  SOLIDINVOICE_APPLICATION_URL: "https://{{ (index .Values.ingress.hosts 0).host }}"
+  SOLIDINVOICE_LOCALE: "en"

@@ -6,6 +6,7 @@ metadata:
     {{ include "solidinvoice.labels" . | nindent 4 }}
   annotations:
     helm.sh/resource-policy: keep
+    argocd.argoproj.io/sync-options: Delete=false,Prune=false
 spec:
   accessModes:
     - ReadWriteOnce
