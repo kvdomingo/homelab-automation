@@ -70,6 +70,7 @@ base_system_packages:
   - neofetch
   - ncat
   - net-tools
+  - nmap
   - pass
   - pgcli
   - portaudio19-dev

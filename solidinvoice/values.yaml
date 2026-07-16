@@ -20,8 +20,9 @@ nameOverride: ""
 fullnameOverride: ""
 
 deploymentAnnotations:
-  keel.sh/policy: "minor"
+  keel.sh/policy: "force"
   keel.sh/trigger: "poll"
+  keel.sh/match-tag: "true"
   secrets.infisical.com/auto-reload: "true"
 
 # This section builds out the service account more information can be found here: https://kubernetes.io/docs/concepts/security/service-accounts/
