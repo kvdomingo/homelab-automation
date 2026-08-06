@@ -1,0 +1,11 @@
+{{- if .Values.pdb.enabled }}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "lubelogger.fullname" . }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "lubelogger.selectorLabels" . | nindent 6 }}
+  minAvailable: {{ .Values.pdb.minAvailable }}
+{{- end }}

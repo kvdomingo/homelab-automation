@@ -1,0 +1,109 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: '{{- include "lubelogger.fullname" . }}-configmap'
+  labels:
+    {{- include "lubelogger.labels" . | nindent 4 }}
+  annotations:
+    helm.sh/hook: pre-install,pre-upgrade
+    helm.sh/hook-weight: "-5"
+    helm.sh/hook-delete-policy: before-hook-creation
+data:
+  LC_ALL: "en_PH.UTF-8"
+  LANG: "en_US.UTF-8"
+  LUBELOGGER_ALLOWED_FILE_EXTENSIONS: "*"
+  LUBELOGGER_OPEN_REGISTRATION: "false"
+  LUBELOGGER_DOMAIN: "{{ (index .Values.ingress.hosts 0).host }}"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: '{{- include "lubelogger.fullname" . }}-appsettings'
+  labels:
+    {{- include "lubelogger.labels" . | nindent 4 }}
+  annotations:
+    helm.sh/hook: pre-install,pre-upgrade
+    helm.sh/hook-weight: "-5"
+    helm.sh/hook-delete-policy: before-hook-creation
+data:
+  userConfig.json: |
+    {
+      "UseDarkMode": true,
+      "UseSystemColorMode": true,
+      "EnableCsvImports": true,
+      "UseMPG": false,
+      "UseDescending": true,
+      "EnableAuth": true,
+      "HideZero": true,
+      "UseUKMPG": false,
+      "UseThreeDecimalGasCost": true,
+      "UseThreeDecimalGasConsumption": true,
+      "UseMarkDownOnSavedNotes": true,
+      "EnableAutoReminderRefresh": false,
+      "EnableAutoOdometerInsert": false,
+      "EnableShopSupplies": true,
+      "EnableExtraFieldColumns": false,
+      "HideSoldVehicles": false,
+      "AutomaticDecimalFormat": true,
+      "PreferredGasUnit": "l",
+      "PreferredGasMileageUnit": "km/l",
+      "UseUnitForFuelCost": false,
+      "ShowCalendar": true,
+      "ShowVehicleThumbnail": true,
+      "ShowSearch": true,
+      "UserColumnPreferences": [
+        {
+          "Tab": 2,
+          "VisibleColumns": [
+            "daterefueled",
+            "odometer",
+            "delta",
+            "consumption",
+            "fueleconomy",
+            "cost",
+            "unitcost"
+          ],
+          "ColumnOrder": [
+            "daterefueled",
+            "odometer",
+            "delta",
+            "consumption",
+            "fueleconomy",
+            "cost",
+            "unitcost",
+            "attachments",
+            "notes"
+          ]
+        }
+      ],
+      "UserLanguage": "en_US",
+      "VisibleTabs": [
+        8,
+        0,
+        1,
+        4,
+        2,
+        10,
+        3,
+        6,
+        5,
+        7,
+        9,
+        12
+      ],
+      "DefaultTab": 8,
+      "TabOrder": [
+        8,
+        9,
+        10,
+        0,
+        1,
+        4,
+        2,
+        7,
+        3,
+        6,
+        12,
+        5
+      ]
+    }

@@ -58,7 +58,7 @@
 - name: Get kubeconfig
   ansible.builtin.fetch:
     src: /etc/rancher/k3s/k3s.yaml
-    dest: ./outputs/kubeconfig.yamlk
+    dest: ./outputs/kubeconfig.yaml
     flat: true
 
 - name: Get node token

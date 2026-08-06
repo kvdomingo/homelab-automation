@@ -186,6 +186,16 @@ spec:
                         type: wallos
                         url: https://wallos.lab.kvd.studio
                         key: "{{"{{"}}HOMEPAGE_VAR_WALLOS_API_KEY{{"}}"}}"
+                  - LubeLogger:
+                      icon: lubelogger.webp
+                      href: https://lubelogger.lab.kvd.studio
+                      ping: https://lubelogger.lab.kvd.studio
+                      widget:
+                        type: lubelogger
+                        url: https://lubelogger.lab.kvd.studio
+                        username: "{{"{{"}}HOMEPAGE_VAR_LUBELOGGER_USERNAME{{"}}"}}"
+                        password: "{{"{{"}}HOMEPAGE_VAR_LUBELOGGER_PASSWORD{{"}}"}}"
+                        vehicleID: 1
             widgets:
               - logo:
                   icon: https://res.cloudinary.com/kdphotography-assets/image/upload/v1597254769/logo/logo-white.png
