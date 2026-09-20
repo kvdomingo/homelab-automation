@@ -83,6 +83,10 @@ http:
       rule: "Host(`readarr.dev.kvd.studio`)"
       service: readarr
       <<: *common-http-router
+    sabnzbd:
+      rule: "Host(`sabnzbd.dev.kvd.studio`)"
+      service: sabnzbd
+      <<: *common-http-router
     portainer:
       rule: "Host(`portainer.dev.kvd.studio`)"
       service: portainer
@@ -191,6 +195,11 @@ http:
       loadBalancer:
         servers:
           - url: "http://10.10.10.100:30045"
+        passHostHeader: true
+    sabnzbd:
+      loadBalancer:
+        servers:
+          - url: "http://10.10.10.100:30055"
         passHostHeader: true
     portainer:
       loadBalancer:

@@ -112,6 +112,14 @@ spec:
                         url: https://qbittorrent.dev.kvd.studio
                         username: "{{"{{"}}HOMEPAGE_VAR_QBITTORRENT_USERNAME{{"}}"}}"
                         password: "{{"{{"}}HOMEPAGE_VAR_QBITTORRENT_PASSWORD{{"}}"}}"
+                  - SABnzbd:
+                      icon: sabnzbd.png
+                      href: https://sabnzbd.dev.kvd.studio
+                      ping: https://sabnzbd.dev.kvd.studio
+                      widget:
+                        type: sabnzbd
+                        url: https://sabnzbd.dev.kvd.studio
+                        key: "{{"{{"}}HOMEPAGE_VAR_SABNZBD_KEY{{"}}"}}"
                   - Sonarr:
                       icon: sonarr.png
                       href: https://sonarr.dev.kvd.studio
