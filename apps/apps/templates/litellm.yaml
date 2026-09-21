@@ -83,6 +83,15 @@ spec:
             image:
               repository: bitnamilegacy/redis
               tag: 7.2.4-debian-12-r9
+            master:
+              affinity:
+                nodeAffinity:
+                  requiredDuringSchedulingIgnoredDuringExecution:
+                    nodeSelectorTerms:
+                      - matchExpressions:
+                          - key: kubernetes.io/arch
+                            operator: NotIn
+                            values: [ arm64, arm ]
             sentinel:
               image:
                 repository: bitnamilegacy/redis-sentinel
