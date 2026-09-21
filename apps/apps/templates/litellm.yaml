@@ -45,19 +45,10 @@ spec:
                     pathType: Prefix
           masterkeySecretName: litellm-secrets
           masterkeySecretKey: MASTER_KEY
-          proxy_config:
-            model_list:
-              - model_name: gpt-3.5-turbo
-                litellm_params:
-                  model: gpt-3.5-turbo
-                  api_key: eXaMpLeOnLy
-              - model_name: fake-openai-endpoint
-                litellm_params:
-                  model: openai/fake
-                  api_key: fake-key
-                  api_base: https://exampleopenaiendpoint-production.up.railway.app/
-            general_settings:
-              master_key: os.environ/PROXY_MASTER_KEY
+          proxyConfigMap:
+            create: false
+            name: litellm-configmap
+            key: config.yaml
           metricsServer:
             enabled: true
           collector:
