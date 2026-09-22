@@ -151,12 +151,12 @@ spec:
                         enableUser: true
                         showEpisodeNumber: true
                         expandOneStreamToTwoRows: true
-                  - Jellyseerr:
-                      icon: jellyseerr.png
+                  - Seerr:
+                      icon: seerr.webp
                       href: https://jellyseerr.dev.kvd.studio
                       ping: https://jellyseerr.dev.kvd.studio
                       widget:
-                        type: jellyseerr
+                        type: seerr
                         url: https://jellyseerr.dev.kvd.studio
                         key: "{{"{{"}}HOMEPAGE_VAR_JELLYSEERR_API_KEY{{"}}"}}"
                   - Calendar:
