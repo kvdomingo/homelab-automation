@@ -22,10 +22,15 @@ spec:
             - name: {{ include "renovate.fullname" . }}
               image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
               resources:
+                requests:
+                  memory: 2Gi
                 limits:
                   cpu: 1
-                  memory: 2Gi
+                  memory: 4Gi
               env:
+                # V8 defaults to ~1GB heap regardless of the container limit.
+                - name: NODE_OPTIONS
+                  value: --max-old-space-size=3072
                 - name: LOG_LEVEL
                   value: INFO
                 - name: RENOVATE_BASE_DIR
