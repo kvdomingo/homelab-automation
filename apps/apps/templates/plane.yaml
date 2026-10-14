@@ -16,6 +16,12 @@ spec:
       releaseName: plane
       valuesObject:
         planeVersion: v1.2.0
+        api:
+          # The chart names the migrate Job by Release.Revision (always 1 under
+          # ArgoCD), so a changed Job can only be applied by recreating it.
+          # api.annotations also lands on the api Deployment.
+          annotations:
+            argocd.argoproj.io/sync-options: Force=true,Replace=true
         ingress:
           enabled: true
           appHost: "plane.{{ .Values.ingress.baseDomain }}"
@@ -43,9 +49,16 @@ spec:
   destination:
     server: {{ .Values.destination.server }}
     namespace: plane
+  # The chart stamps the migrate Job's pod template with `now` on every render.
+  ignoreDifferences:
+    - group: batch
+      kind: Job
+      jsonPointers:
+        - /spec/template/metadata/annotations/timestamp
   syncPolicy:
     syncOptions:
       - CreateNamespace=true
+      - RespectIgnoreDifferences=true
     automated:
       selfHeal: true
       prune: true
