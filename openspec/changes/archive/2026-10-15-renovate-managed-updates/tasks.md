@@ -86,23 +86,23 @@
       `secrets.infisical.com/auto-reload` and the Keel `Application`. Verify
       that `grep -rn 'keel.sh' --include='*.yaml' .` returns nothing and that
       `core/apps/templates/keel.yaml` still exists
-- [ ] 4.2 Run `pre-commit run --all-files`. Verify that it passes
+- [x] 4.2 Run `pre-commit run --all-files`. Verify that it passes
 
 ## 5. Rollout and verification
 
-- [ ] 5.1 Push sections 1–2. After the next hourly run, verify that the
+- [x] 5.1 Push sections 1–2. After the next hourly run, verify that the
       Dependency Dashboard issue exists on `homelab-automation` and lists every
       chart and image, with no errors or undetected deps
-- [ ] 5.2 Push the pinning and Keel batches one at a time (3.3 → 3.4 → 3.5/3.6
+- [x] 5.2 Push the pinning and Keel batches one at a time (3.3 → 3.4 → 3.5/3.6
       with 4.1). Verify after each that every affected ArgoCD app is
       Synced/Healthy, with no unexpected image changes beyond the 3.1 table
-- [ ] 5.3 Verify that the first patch and minor group PRs are auto-merged and
+- [x] 5.3 Verify that the first patch and minor group PRs are auto-merged and
       deployed by ArgoCD, and that a major PR stays open for manual merge
-- [ ] 5.4 After the next commit to an own image's repo (e.g. delphitools),
+- [x] 5.4 After the next commit to an own image's repo (e.g. delphitools),
       verify that Renovate opens and auto-merges a PR changing just that app's
       `sha-` tag, and that ArgoCD rolls it out. After the next weekly
       `postgresql-pig` rebuild, verify the same for its digest
-- [ ] 5.5 Verify Keel is idle: Keel logs show no updates after rollout
+- [x] 5.5 Verify Keel is idle: Keel logs show no updates after rollout
 
 ## 6. Docs
 

@@ -47,9 +47,17 @@ spec:
   destination:
     server: {{ .Values.destination.server }}
     namespace: vault
+  # The injector patches its own caBundle at runtime.
+  ignoreDifferences:
+    - group: admissionregistration.k8s.io
+      kind: MutatingWebhookConfiguration
+      name: vault-agent-injector-cfg
+      jqPathExpressions:
+        - .webhooks[].clientConfig.caBundle
   syncPolicy:
     syncOptions:
       - CreateNamespace=true
+      - RespectIgnoreDifferences=true
     automated:
       selfHeal: true
       prune: true
