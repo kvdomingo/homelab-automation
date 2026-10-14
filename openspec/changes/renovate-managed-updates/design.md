@@ -122,14 +122,15 @@ with both a patch and a minor available only gets the minor, in the minor PR.
 *Alternative*: majors per package, which is Renovate's default. Rejected
 because one app with a chart major and an image major would get two PRs.
 
-### D4: Auto-merge without CI
+### D4: Auto-merge gated on `helm template`
 
-Patch and minor groups set `automerge: true`, `ignoreTests: true`,
-`automergeType: "pr"`. With no status checks, Renovate would otherwise wait
-forever. Nothing in the repo blocks a merge, and ArgoCD sync health acts as the
-post-merge check.
-*Alternative*: add a `helm template` / kubeconform workflow first. That's
-deferred, and adding one later only means removing `ignoreTests`.
+Patch and minor groups set `automerge: true`, `automergeType: "pr"`.
+`.github/workflows/helm-template.yaml` runs `helm dependency build` and
+`helm template` on every in-house chart and both app-of-apps charts for each PR,
+and Renovate merges only when it passes. ArgoCD sync health is the post-merge
+check.
+*Alternative*: `ignoreTests: true` with no PR CI. Rejected because a broken
+template would merge and fail only at sync time.
 
 ### D5: Choosing pinned versions
 

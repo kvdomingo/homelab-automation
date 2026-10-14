@@ -7,8 +7,6 @@
   separateMinorPatch: false,
   // config:recommended skips **/tests/**, which hides Helm test-hook images.
   ignorePaths: ["**/node_modules/**"],
-  // No PR checks exist; ArgoCD health after merge is the check.
-  ignoreTests: true,
   automergeType: "pr",
   kubernetes: {
     managerFilePatterns: [

@@ -29,8 +29,8 @@
       scratch log) that every vendor chart in `apps/apps/templates` and
       `core/apps/templates` is detected, e.g. `litellm-helm 1.102.0`,
       `vaultwarden 0.35.1`, `dagster 1.12.21`
-- [x] 2.3 Add `packageRules` for the patch group (patch/pin/digest, automerge,
-      `ignoreTests`), the minor group (automerge, `ignoreTests`), and per-app
+- [x] 2.3 Add `packageRules` for the patch group (patch/pin/digest,
+      automerge), the minor group (automerge), and per-app
       majors (no automerge, `additionalBranchPrefix` per D3, app named in the
       title). Verify with the local dry run: proposed branches are
       `renovate/patch-updates`, `renovate/minor-updates`, and one major branch
