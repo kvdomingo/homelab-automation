@@ -14,13 +14,13 @@ spec:
       path: infisical-secrets/keel
     - repoURL: https://charts.keel.sh
       chart: keel
-      targetRevision: 1.2.0
+      targetRevision: 1.2.3
       helm:
         releaseName: keel
         valuesObject:
           image:
             # renovate: datasource=docker depName=ghcr.io/keel-hq/keel
-            tag: "0.22.3"
+            tag: "0.22.4"
           polling:
             enabled: true
             defaultSchedule: "@every 3m"

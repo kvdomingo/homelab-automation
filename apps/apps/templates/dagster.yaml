@@ -949,7 +949,7 @@ spec:
 
             image:
               repository: "docker.io/mher/flower"
-              tag: "0.9.5"
+              tag: "0.9.7"
               pullPolicy: Always
 
             service:

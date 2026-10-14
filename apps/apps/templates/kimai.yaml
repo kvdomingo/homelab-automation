@@ -14,7 +14,7 @@ spec:
       path: infisical-secrets/kimai
     - repoURL: https://robjuz.github.io/helm-charts/
       chart: kimai2
-      targetRevision: 5.0.4
+      targetRevision: 5.0.15
       helm:
         releaseName: kimai
         valuesObject:
