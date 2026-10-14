@@ -40,8 +40,20 @@ Never apply changes by hand (`kubectl apply`, `helm upgrade`, `scp`). Push to
 - Ingress: `<app>.lab.kvd.studio` (internal). Add `<app>.kvd.studio` only if the
   app is exposed externally. Ingress class is `traefik`. Add `gethomepage.dev/*`
   annotations so the app shows up on the Homepage dashboard.
-- Images use `tag: latest` and are updated by Keel (`keel.sh/policy: force`,
-  `match-tag`, `trigger: poll`).
+- Pin every image and chart to a concrete version. Never use `latest`,
+  `stable`, or a bare major. Renovate (`renovate.json5`) opens the update PRs:
+  one PR for all patch updates and one for all minor updates, both
+  auto-merged; majors get one PR per app and need a manual merge. Don't add
+  `keel.sh/*` annotations.
+- Where only `tag:` is set (the repository comes from the chart), put
+  `# renovate: datasource=docker depName=<image>` on the line above it.
+- Own `ghcr.io/kvdomingo/*` images are pinned to their commit tag, e.g.
+  `tag: "sha-cf6d19f" # renovate: datasource=git-refs depName=https://github.com/kvdomingo/<repo> branch=main`.
+  Renovate moves the tag to the branch head in an auto-merged PR per app. An
+  image rebuilt from the same commit (`postgresql-pig`) is pinned as
+  `<tag>@sha256:<digest>` instead.
+- After merging an update to a helmfile component (`argocd/`, `infisical/`,
+  `promstack/`, `core-services/`, `arrstack/`), run `helmfile apply` there.
 - Cluster mixes amd64 and arm64 (Pi 5 agents). Images that are amd64-only need
   node affinity `kubernetes.io/arch NotIn [arm64, arm]`.
 - Bitnami images come from `bitnamilegacy/*`.

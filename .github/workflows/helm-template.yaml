@@ -1,0 +1,26 @@
+name: Validate Helm templates
+
+on:
+  pull_request:
+
+jobs:
+  helm-template:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+
+      - uses: azure/setup-helm@v5.0.1
+
+      - name: Render charts
+        run: |
+          helm repo add bitnami https://charts.bitnami.com/bitnami
+          status=0
+          for chart in $(git ls-files '*Chart.yaml' | grep -v '/charts/' | xargs -n1 dirname); do
+            echo "::group::$chart"
+            if ! { helm dependency build "$chart" && helm template "$chart" > /dev/null; }; then
+              echo "::error::helm template failed for $chart"
+              status=1
+            fi
+            echo "::endgroup::"
+          done
+          exit $status

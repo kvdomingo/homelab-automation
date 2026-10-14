@@ -48,7 +48,7 @@ spec:
             replicaCount: 1
             image:
               repository: "docker.io/dagster/dagster-celery-k8s"
-              tag: latest
+              tag: "1.13.26"
               pullPolicy: Always
 
             # Support overriding the name prefix of the webserver pods
@@ -199,10 +199,6 @@ spec:
             # https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
             # https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
             annotations:
-              keel.sh/policy: "force"
-              keel.sh/match-tag: "true"
-              keel.sh/trigger: "poll"
-              keel.sh/pollSchedule: "@every 5m"
               secrets.infisical.com/auto-reload: "true"
             nodeSelector: { }
             affinity:
@@ -475,10 +471,6 @@ spec:
 {{/*                sidecarContainers: [ ]*/}}
 
 {{/*                annotations:*/}}
-{{/*                  keel.sh/policy: "force"*/}}
-{{/*                  keel.sh/match-tag: "true"*/}}
-{{/*                  keel.sh/trigger: "poll"*/}}
-{{/*                  keel.sh/pollSchedule: "@every 5m"*/}}
 {{/*                  secrets.infisical.com/auto-reload: "true"*/}}
 {{/*                nodeSelector: { }*/}}
 {{/*                affinity: { }*/}}
@@ -849,7 +841,7 @@ spec:
             image:
               registry: "docker.io"
               repository: "library/postgres"
-              tag: "18"
+              tag: "18.6"
               pullPolicy: IfNotPresent
 
             # set this PostgreSQL hostname when using an external PostgreSQL database
@@ -911,7 +903,7 @@ spec:
               enabled: true
               image:
                 repository: bitnami/minideb
-                tag: stretch
+                tag: stretch@sha256:a6f24bce85d037d47cc552635b0f0a3623472bbcf16b33711fb0fe4e6a34480f
                 pullPolicy: IfNotPresent
 
           ####################################################################################################
@@ -1150,7 +1142,7 @@ spec:
               # When a tag is not supplied for a Dagster provided image,
               # it will default as the Helm chart version.
               repository: "docker.io/dagster/dagster-celery-k8s"
-              tag: latest
+              tag: "1.13.26"
               pullPolicy: Always
 
             heartbeatTolerance: 1800
@@ -1352,10 +1344,6 @@ spec:
             extraPrependedInitContainers: [ ]
 
             annotations:
-              keel.sh/policy: "force"
-              keel.sh/match-tag: "true"
-              keel.sh/trigger: "poll"
-              keel.sh/pollSchedule: "@every 5m"
               secrets.infisical.com/auto-reload: "true"
             nodeSelector: { }
             affinity: { }

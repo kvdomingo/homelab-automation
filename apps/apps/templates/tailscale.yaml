@@ -24,14 +24,12 @@ spec:
               - "tag:k8s-operator"
             image:
               repository: tailscale/k8s-operator
-              tag: stable
               pullPolicy: Always
           apiServerProxyConfig:
             mode: "true"
           proxyConfig:
             image:
               repository: tailscale/tailscale
-              tag: stable
             defaultTags: "tag:k8s"
   destination:
     server: {{ .Values.destination.server }}

@@ -14,10 +14,6 @@ infisical:
     # -- Enable auto-bootstrap of the Infisical instance
     enabled: false
 
-    image:
-      # -- Infisical Infisical CLI image tag version
-      tag: latest
-
     # -- Template for the data/stringData section of the Kubernetes secret. Available functions: encodeBase64
     secretTemplate: '{"data":{"token":"{{.Identity.Credentials.Token}}"}}'
 
@@ -57,11 +53,6 @@ infisical:
   # -- Custom annotations for Infisical pods
   podAnnotations: { }
   # -- Custom annotations for Infisical deployment
-  deploymentAnnotations:
-    keel.sh/policy: "force"
-    keel.sh/match-tag: "true"
-    keel.sh/trigger: "poll"
-    keel.sh/pollSchedule: "@every 5m"
   # -- Number of pod replicas for high availability
   replicaCount: 2
 
@@ -69,7 +60,7 @@ infisical:
     # -- Image repository for the Infisical service
     repository: infisical/infisical
     # -- Specific version tag of the Infisical image. View the latest version here https://hub.docker.com/r/infisical/infisical
-    tag: latest
+    tag: v0.166.6
     # -- Pulls image only if not already present on the node
     pullPolicy: Always
     # -- Secret references for pulling the image, if needed

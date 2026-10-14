@@ -19,7 +19,8 @@ spec:
         releaseName: keel
         valuesObject:
           image:
-            tag: latest
+            # renovate: datasource=docker depName=ghcr.io/keel-hq/keel
+            tag: "0.22.3"
           polling:
             enabled: true
             defaultSchedule: "@every 3m"

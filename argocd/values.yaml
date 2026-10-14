@@ -2888,7 +2888,7 @@ repoServer:
   # -- Init containers to add to the repo server pods
   initContainers:
     - name: download-tools
-      image: registry.access.redhat.com/ubi8
+      image: registry.access.redhat.com/ubi8:8.10-1772639305
       env:
         - name: AVP_VERSION
           value: 1.18.1

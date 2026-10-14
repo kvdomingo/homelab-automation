@@ -11,13 +11,9 @@ image:
   # This sets the pull policy for images.
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: latest
+  tag: "0.21.0"
 
 deploymentAnnotations:
-  keel.sh/policy: "force"
-  keel.sh/match-tag: "true"
-  keel.sh/trigger: "poll"
-  keel.sh/pollSchedule: "@every 5m"
   secrets.infisical.com/auto-reload: "true"
 
 # This is for the secrets for pulling an image from a private repository more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
@@ -190,7 +186,7 @@ gotenberg:
     # This sets the pull policy for images.
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
-    tag: 8
+    tag: "8.27.0"
   service:
     port: 3000
   livenessProbe:

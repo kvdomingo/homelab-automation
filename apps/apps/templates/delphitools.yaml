@@ -19,12 +19,7 @@ spec:
           value: |
             image:
               repository: ghcr.io/kvdomingo/delphitools
-              tag: latest
-            deploymentAnnotations:
-              keel.sh/policy: "force"
-              keel.sh/match-tag: "true"
-              keel.sh/trigger: "poll"
-              keel.sh/pollSchedule: "@every 5m"
+              tag: "sha-097f270" # renovate: datasource=git-refs depName=https://github.com/kvdomingo/delphitools branch=main
             ingress:
               enabled: true
               annotations:

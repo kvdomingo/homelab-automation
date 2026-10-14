@@ -24,7 +24,7 @@ spec:
             registry: "docker.io"
             repository: "fireflyiii/core"
             pullPolicy: IfNotPresent
-            tag: "version-6"
+            tag: "version-6.5.1"
 
           persistence:
             # -- If you set this to false, uploaded attachments are not stored persistently and will be lost with every restart of the pod
@@ -250,6 +250,7 @@ spec:
         releaseName: importer
         valuesObject:
           image:
+            # renovate: datasource=docker depName=fireflyiii/data-importer
             tag: version-1.6.1
           trustedProxies: "**"
           fireflyiii:

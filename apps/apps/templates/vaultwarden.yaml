@@ -19,14 +19,11 @@ spec:
         releaseName: vaultwarden
         valuesObject:
           image:
-            tag: latest-alpine
+            # renovate: datasource=docker depName=vaultwarden/server
+            tag: "1.37.4-alpine"
             pullPolicy: Always
           replicas: 3
           commonAnnotations:
-            keel.sh/policy: "force"
-            keel.sh/match-tag: "true"
-            keel.sh/trigger: "poll"
-            keel.sh/pollSchedule: "@every 5m"
             secrets.infisical.com/auto-reload: "true"
           readinessProbe:
             enabled: false
