@@ -1,16 +1,20 @@
 repos:
+  - repo: https://github.com/rvben/rumdl-pre-commit
+    rev: v0.2.77
+    hooks:
+      - id: rumdl-fmt
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
     hooks:
       - id: check-added-large-files
-        args: ["--maxkb=500"]
+        args: [ "--maxkb=500" ]
       - id: trailing-whitespace
       - id: end-of-file-fixer
       - id: mixed-line-ending
-        args: ["--fix=lf"]
+        args: [ "--fix=lf" ]
       - id: check-merge-conflict
       - id: check-yaml
-        args: ["--allow-multiple-documents"]
+        args: [ "--allow-multiple-documents" ]
         exclude: templates/.+\.ya?ml$
       - id: check-json
       - id: check-toml
@@ -19,4 +23,4 @@ repos:
     rev: v8.30.0
     hooks:
       - id: gitleaks
-        args: ["--verbose"]
+        args: [ "--verbose" ]

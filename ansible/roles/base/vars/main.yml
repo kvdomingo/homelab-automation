@@ -49,6 +49,7 @@ base_system_packages:
   - libicu-dev
   - liblzma-dev
   - libncursesw5-dev
+  - libnotify4
   - libnotify-dev
   - libnss3
   - libnss3-tools
