@@ -11,7 +11,7 @@ image:
   # This sets the pull policy for images.
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: latest
+  tag: "sha-c87a38b" # renovate: datasource=git-refs depName=https://github.com/kvdomingo/primerdriver branch=main
 
 # This is for the secretes for pulling an image from a private repository more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
 imagePullSecrets: [ ]
@@ -31,11 +31,6 @@ serviceAccount:
   # If not set and create is true, a name is generated using the fullname template
   name: ""
 
-annotations:
-  keel.sh/policy: "force"
-  keel.sh/match-tag: "true"
-  keel.sh/trigger: "poll"
-  keel.sh/pollSchedule: "@every 5m"
 
 # This is for setting Kubernetes Annotations to a Pod.
 # For more information checkout: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/

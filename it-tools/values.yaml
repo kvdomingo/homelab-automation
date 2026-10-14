@@ -11,7 +11,7 @@ image:
   # This sets the pull policy for images.
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: latest
+  tag: "2024.10.22-7ca5933"
 
 # This is for the secretes for pulling an image from a private repository more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
 imagePullSecrets: [ ]
@@ -19,11 +19,6 @@ imagePullSecrets: [ ]
 nameOverride: ""
 fullnameOverride: ""
 
-annotations:
-  keel.sh/policy: "force"
-  keel.sh/match-tag: "true"
-  keel.sh/trigger: "poll"
-  keel.sh/pollSchedule: "@every 5m"
 
 #This section builds out the service account more information can be found here: https://kubernetes.io/docs/concepts/security/service-accounts/
 serviceAccount:

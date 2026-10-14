@@ -15,6 +15,7 @@ data:
       "repositories": [
         "kvdomingo/banyuhay",
         "kvdomingo/hannibot",
+        "kvdomingo/homelab-automation",
       ],
       "separateMinorPatch": true,
       "force": {

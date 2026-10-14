@@ -35,11 +35,13 @@
 ## Goals / Non-Goals
 
 **Goals:**
+
 - Put the whole config in one repo-level file, using built-in managers wherever
   they parse the file and regex managers only where they don't.
 - Make the move to pinned versions without surprise up- or downgrades.
 
 **Non-Goals:**
+
 - Uninstalling Keel.
 - Adding PR CI such as `helm template` or kubeconform. Auto-merge doesn't
   depend on it (see D4).
@@ -52,6 +54,7 @@
 ## Decisions
 
 ### D1: Repo-level `renovate.json5`, plus adding the repo to the global list
+
 The repo's rules go in `renovate.json5` at the repo root. Global settings stay
 in the ConfigMap, which only gains `kvdomingo/homelab-automation` under
 `repositories`. Because a config file already exists, Renovate skips the
@@ -61,6 +64,7 @@ apply these rules to the other two repos, and changing it means an ArgoCD sync
 rather than just a commit.
 
 ### D2: Managers
+
 | Format | Manager |
 |---|---|
 | `<app>/values.yaml` | built-in `helm-values` (matches by default) |
@@ -74,44 +78,52 @@ rather than just a commit.
 | `repository` + `tag` in `valuesObject` | `customManagers` regex on adjacent `repository:` / `tag:` lines in `apps/*/templates/*.yaml`, datasource `docker` |
 | `tag: <tag>@sha256:<digest>` | all of the above capture an optional `@(?<currentDigest>sha256:[a-f0-9]+)` after the tag |
 | `tag:` with no `repository:` | one-line `# renovate: datasource=docker depName=<repo>` comment above the tag, caught by a generic annotation regex manager |
-| Own `tag: sha-<short>` | the same annotation comment with `datasource=git-refs depName=https://github.com/kvdomingo/<repo> branch=<default branch>`. The manager captures the short SHA as `currentDigest`, sets `currentValue` to the branch, and writes back `sha-{{newDigestShort}}` via `autoReplaceStringTemplate` |
+| Own `tag: sha-<short>` | a trailing `# renovate: datasource=git-refs depName=https://github.com/kvdomingo/<repo> branch=<default branch>` comment on the `tag:` line. The manager captures the short SHA as `currentDigest`, sets `currentValue` to the branch, and writes back `sha-{{newDigestShort}}` via `autoReplaceStringTemplate`. The comment sits on the same line because the replacement template can't carry a captured indent (Renovate only passes its own fields to templates) |
 
-The regex managers allow keys in either order (`chart` before or after
-`targetRevision`). The implementer checks the Dependency Dashboard for
-undetected deps and fixes key order or regexes until every Application is
-listed.
+All Application templates write `repoURL` → `chart`/`path` → `targetRevision`
+in that order, and `repository:` → (`pullPolicy:`/comment lines) → `tag:`, so
+the regexes only accept that order. Renovate uses RE2, which has no lookahead.
+`config:recommended` ignores `**/tests/**`, so the repo config resets
+`ignorePaths` to keep Helm test-hook images tracked.
 *Alternative*: fix the YAML validity so the built-in `argocd` manager works
 (move the `if` into the app-of-apps values). Rejected: it changes the pattern
 used by all 50 templates, and it still wouldn't cover `valuesObject` images.
 
 ### D3: Grouping
+
 `packageRules`:
+
 1. `matchUpdateTypes: [patch, pin, digest]` → `groupName: "patch updates"`,
    `automerge: true`.
 2. `matchUpdateTypes: [minor]` → `groupName: "minor updates"`,
    `automerge: true`.
 3. `matchUpdateTypes: [major]` → `automerge: false`, grouped per app:
-   - `apps/*/templates/*.yaml`: `groupName: "major updates"` with
-     `additionalBranchPrefix: "{{packageFile}}-"`. Each Application file is its
-     own app.
-   - Everything else: `additionalBranchPrefix: "{{packageFileDir}}-"`.
-     `values.yaml` and `Chart.yaml` of one in-house chart share a directory,
-     so they land in one PR.
-   - The PR title includes the app (`commitMessageSuffix` with the file or
-     directory) so that major PRs can be told apart.
+   `groupName: "major updates"`, `groupSlug: "updates"`, and an
+   `additionalBranchPrefix` naming the app, computed from `packageFile` with
+   Renovate's `replace` helper:
+   - `apps/*/templates/<app>.yaml` and `core/apps/templates/<app>.yaml` →
+     `<app>`. Each Application file is its own app.
+   - Anything else → its top-level directory, so `<app>/values.yaml`,
+     `<app>/Chart.yaml`, and `<app>/templates/**` land in one PR.
+   - `commitMessageSuffix` adds the same name to the PR title.
 
 4. `matchPackageNames: ["ghcr.io/kvdomingo/**", "https://github.com/kvdomingo/**"]`,
-   `matchUpdateTypes: [digest]` → `automerge: true`, `ignoreTests: true`, with
-   no `groupName` and the same per-app `additionalBranchPrefix` as majors. This
-   rule comes after rule 1 so it overrides the patch group's `digest` match,
-   giving one PR per app.
+   `matchUpdateTypes: [digest]` → `automerge: true`, `groupName: "own image"`,
+   and the same per-app `additionalBranchPrefix` as majors, giving
+   `renovate/<app>-own-image`. This rule comes after rule 1 so it overrides the
+   patch group's `digest` match. A rule before it disables the `docker` lookup
+   of `ghcr.io/kvdomingo/*` deps whose tag is `sha-*`, since `git-refs` tracks
+   those.
 
-`separateMinorPatch: true` is already global. The repo config sets it again so
-it doesn't depend on the ConfigMap.
+The repo config sets `separateMinorPatch: false`, overriding the global `true`.
+With `true`, Renovate prefixes patch branches with `patch-` but not digest or
+pin branches, so the patch group would split into two PRs. The cost: a dep
+with both a patch and a minor available only gets the minor, in the minor PR.
 *Alternative*: majors per package, which is Renovate's default. Rejected
 because one app with a chart major and an image major would get two PRs.
 
 ### D4: Auto-merge without CI
+
 Patch and minor groups set `automerge: true`, `ignoreTests: true`,
 `automergeType: "pr"`. With no status checks, Renovate would otherwise wait
 forever. Nothing in the repo blocks a merge, and ArgoCD sync health acts as the
@@ -120,6 +132,7 @@ post-merge check.
 deferred, and adding one later only means removing `ignoreTests`.
 
 ### D5: Choosing pinned versions
+
 For each floating tag, pin the version the workload is running now. Find it by
 matching the running pod's `imageID` digest to a registry tag (`crane ls` /
 `crane digest`). If no versioned tag has that digest, use the newest stable
@@ -128,6 +141,7 @@ pinning commit hiding them.
 Own images (`ghcr.io/kvdomingo/*`) publish no versions. Their CI
 (`docker/metadata-action` `type=sha`) tags each build with the 7-character
 commit SHA, plus `latest`:
+
 - `primerdriver` (`main`), `delphitools` (`main`), and `excalidraw` (`master`)
   build on every push to the default branch, so each commit has a `sha-<short>`
   tag. They are pinned to the `sha-` tag whose digest matches the running pod,
@@ -144,14 +158,17 @@ Any other third-party image with no version tags is settled one at a time with
 the user.
 
 ### D6: Removing Keel
+
 Delete every `keel.sh/*` annotation and every now-empty `deploymentAnnotations`
 / `jobAnnotations` map. Keep `secrets.infisical.com/auto-reload`. Leave
 `core/apps/templates/keel.yaml` in place, pinning its image under D5.
 
 ### D7: Renovate pins itself
-The CronJob image becomes `{{ .Values.image.repository }}:{{ .Values.image.tag }}`,
-and `tag: "43"` becomes a full `43.x.y`, so Renovate also updates its own image
-through the same groups.
+
+The CronJob image becomes
+`{{ .Values.image.repository }}:{{ .Values.image.tag }}`, and `tag: "43"`
+becomes the running `44.157.0` (the implicit `latest` had already moved to
+44), so Renovate also updates its own image through the same groups.
 
 ## Risks / Trade-offs
 

@@ -1,0 +1,123 @@
+{
+  $schema: "https://docs.renovatebot.com/renovate-schema.json",
+  extends: ["config:recommended", ":semanticCommits"],
+  // With true, patch branches get a `patch-` prefix that digest/pin don't, so
+  // the patch group would split into two PRs. A dep with both a patch and a
+  // minor available only gets the minor.
+  separateMinorPatch: false,
+  // config:recommended skips **/tests/**, which hides Helm test-hook images.
+  ignorePaths: ["**/node_modules/**"],
+  // No PR checks exist; ArgoCD health after merge is the check.
+  ignoreTests: true,
+  automergeType: "pr",
+  kubernetes: {
+    managerFilePatterns: [
+      "/^longhorn/.+\\.ya?ml$/",
+      "/^argo-rollouts/.+\\.ya?ml$/",
+      "/(^|/)templates/.+\\.ya?ml$/",
+    ],
+  },
+  // The `{{- if }}` wrapper makes Application templates invalid YAML, so the
+  // argocd and helm-values managers can't read them.
+  customManagers: [
+    {
+      customType: "regex",
+      description: "Application Helm-repo chart",
+      managerFilePatterns: ["/^(apps|core)/apps/templates/.+\\.yaml$/"],
+      matchStrings: [
+        "repoURL:\\s*(?<registryUrl>https?://\\S+)\\s+chart:\\s*(?<depName>\\S+)\\s+targetRevision:\\s*(?<currentValue>\\S+)",
+      ],
+      datasourceTemplate: "helm",
+    },
+    {
+      customType: "regex",
+      description: "Application OCI chart",
+      managerFilePatterns: ["/^(apps|core)/apps/templates/.+\\.yaml$/"],
+      matchStrings: [
+        "repoURL:\\s*oci://(?<depName>\\S+)\\s+path:\\s*\\.\\s+targetRevision:\\s*(?<currentValue>\\S+)",
+      ],
+      datasourceTemplate: "docker",
+    },
+    {
+      customType: "regex",
+      description: "Application valuesObject image repository + tag",
+      managerFilePatterns: ["/^(apps|core)/apps/templates/.+\\.yaml$/"],
+      matchStrings: [
+        "repository:\\s*\"?(?<depName>[^\"\\s]+)\"?\\s*\\n(?:[ \\t]+(?:pullPolicy:|#)[^\\n]*\\n){0,3}[ \\t]+tag:\\s*\"?(?<currentValue>[^\"@\\s]+)(?:@(?<currentDigest>sha256:[a-f0-9]+))?\"?",
+      ],
+      datasourceTemplate: "docker",
+    },
+    {
+      customType: "regex",
+      description: "`# renovate: datasource=docker depName=<image>` above a bare tag",
+      managerFilePatterns: ["/\\.ya?ml$/"],
+      matchStrings: [
+        "#\\s*renovate:\\s*datasource=docker\\s+depName=(?<depName>\\S+)\\s*\\n[ \\t]*tag:\\s*\"?(?<currentValue>[^\"@\\s]+)(?:@(?<currentDigest>sha256:[a-f0-9]+))?\"?",
+      ],
+      datasourceTemplate: "docker",
+    },
+    {
+      customType: "regex",
+      description: "Own image `sha-<commit>` tag, following the source repo branch",
+      managerFilePatterns: ["/\\.ya?ml$/"],
+      matchStrings: [
+        "tag:\\s*\"sha-(?<currentDigest>[a-f0-9]{7,40})\"\\s*#\\s*renovate:\\s*datasource=git-refs\\s+depName=(?<depName>\\S+)\\s+branch=(?<currentValue>\\S+)",
+      ],
+      datasourceTemplate: "git-refs",
+      autoReplaceStringTemplate: "tag: \"sha-{{{newDigestShort}}}\" # renovate: datasource=git-refs depName={{{depName}}} branch={{{currentValue}}}",
+    },
+  ],
+  packageRules: [
+    {
+      description: "sha- tags are tracked through git-refs instead",
+      matchDatasources: ["docker"],
+      matchPackageNames: ["ghcr.io/kvdomingo/**"],
+      matchCurrentValue: "/^sha-/",
+      enabled: false,
+    },
+    {
+      matchUpdateTypes: ["patch", "pin", "digest"],
+      groupName: "patch updates",
+      automerge: true,
+    },
+    {
+      matchUpdateTypes: ["minor"],
+      groupName: "minor updates",
+      automerge: true,
+    },
+    {
+      description: "One major PR per app: an Application template file, or a top-level directory",
+      matchUpdateTypes: ["major"],
+      groupName: "major updates",
+      groupSlug: "updates",
+      automerge: false,
+      additionalBranchPrefix: "{{replace '^([^/]+)/.*$' '$1' (replace '^(?:apps|core)/apps/templates/([^/]+)\\.yaml$' '$1' packageFile)}}-",
+      commitMessageSuffix: "({{replace '^([^/]+)/.*$' '$1' (replace '^(?:apps|core)/apps/templates/([^/]+)\\.yaml$' '$1' packageFile)}})",
+    },
+    {
+      description: "Own images: one auto-merged PR per app, outside the patch group",
+      matchPackageNames: ["ghcr.io/kvdomingo/**", "https://github.com/kvdomingo/**"],
+      matchUpdateTypes: ["digest"],
+      groupName: "own image",
+      automerge: true,
+      additionalBranchPrefix: "{{replace '^([^/]+)/.*$' '$1' (replace '^(?:apps|core)/apps/templates/([^/]+)\\.yaml$' '$1' packageFile)}}-",
+      commitMessageSuffix: "({{replace '^([^/]+)/.*$' '$1' (replace '^(?:apps|core)/apps/templates/([^/]+)\\.yaml$' '$1' packageFile)}})",
+    },
+    {
+      matchPackageNames: ["fireflyiii/**"],
+      versioning: "regex:^version-(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)$",
+    },
+    {
+      matchPackageNames: ["corentinth/it-tools"],
+      versioning: "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)-[0-9a-f]+$",
+    },
+    {
+      matchPackageNames: ["registry.access.redhat.com/ubi8"],
+      versioning: "regex:^(?<major>\\d+)\\.(?<minor>\\d+)-(?<patch>\\d+)$",
+    },
+    {
+      matchPackageNames: ["kimai/kimai2"],
+      versioning: "regex:^apache-(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)$",
+    },
+  ],
+}

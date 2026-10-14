@@ -7,12 +7,9 @@ replicaCount: 1
 image:
   repository: docker.io/actualbudget/actual-server
   pullPolicy: Always
-  tag: latest
+  tag: "26.10.0"
 
 deploymentAnnotations:
-  keel.sh/policy: "force"
-  keel.sh/match-tag: "true"
-  keel.sh/trigger: "poll"
   secrets.infisical.com/auto-reload: "true"
 
 imagePullSecrets: [ ]

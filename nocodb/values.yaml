@@ -11,12 +11,9 @@ image:
   # This sets the pull policy for images.
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: latest
+  tag: "2026.09.1"
 
 deploymentAnnotations:
-  keel.sh/policy: "force"
-  keel.sh/match-tag: "true"
-  keel.sh/trigger: "poll"
   secrets.infisical.com/auto-reload: "true"
 
 # This is for the secrets for pulling an image from a private repository more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
@@ -186,6 +183,9 @@ redis:
     tag: 8.2.1-debian-12-r0
   volumePermissions:
     enabled: true
+    image:
+      repository: bitnami/os-shell
+      tag: latest@sha256:85cd536585c25c4bb689c5510cfa8480acc947d7b7e62529816770be3df68d5c
   master:
     disableCommands: [ ]
     persistence:

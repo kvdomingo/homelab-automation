@@ -18,10 +18,9 @@ spec:
         replicaCount: 1
         enterpriseEdition:
           enabled: false
-          image:
-            tag: latest
         image:
-          tag: latest
+          # renovate: datasource=docker depName=portainer/portainer-ce
+          tag: "2.39.1"
         service:
           type: ClusterIP
         localMgmt: true

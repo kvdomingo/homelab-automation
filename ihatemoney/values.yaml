@@ -8,13 +8,9 @@ image:
   repository: ihatemoney/ihatemoney
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: latest
+  tag: "7.2.1"
 
 deploymentAnnotations:
-  keel.sh/policy: "force"
-  keel.sh/match-tag: "true"
-  keel.sh/trigger: "poll"
-  keel.sh/pollSchedule: "@every 5m"
   secrets.infisical.com/auto-reload: "true"
 
 imagePullSecrets: [ ]

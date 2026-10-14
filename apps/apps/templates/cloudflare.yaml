@@ -24,7 +24,8 @@ spec:
             enableWarp: true
           image:
             pullPolicy: Always
-            tag: latest
+            # renovate: datasource=docker depName=cloudflare/cloudflared
+            tag: "2026.10.0"
   destination:
     server: {{ .Values.destination.server }}
     namespace: cloudflare

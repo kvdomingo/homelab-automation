@@ -38,6 +38,7 @@ other change, they show up in history, and a revert rolls them back.
 ## Capabilities
 
 ### New Capabilities
+
 - `dependency-updates`: how image and chart versions in this repo are pinned,
   tracked, grouped into PRs, auto-merged or gated, and deployed.
 
@@ -49,7 +50,8 @@ other change, they show up in history, and a revert rolls them back.
 - `renovate/` chart: global `repositories` list, CronJob image reference, Keel
   annotation removal.
 - ~25 files with Keel annotations: in-house `<app>/values.yaml`, and
-  `apps/apps/templates/*.yaml` / `core/apps/templates/*.yaml` with inline values.
+  `apps/apps/templates/*.yaml` / `core/apps/templates/*.yaml` with inline
+  values.
 - ~26 floating-tag occurrences and untagged `image:` refs (e.g. `busybox` in
   Helm test hooks, `traefik:v3` in `bind9/docker-compose.yaml`).
 - Deployment flow: merged Renovate PRs reach the cluster through ArgoCD

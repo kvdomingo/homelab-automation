@@ -8,17 +8,12 @@ image:
   repository: dpage/pgadmin4
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "9"
+  tag: "9.18.0"
 
 imagePullSecrets: [ ]
 nameOverride: ""
 fullnameOverride: ""
 
-annotations:
-  keel.sh/policy: "force"
-  keel.sh/match-tag: "true"
-  keel.sh/trigger: "poll"
-  keel.sh/pollSchedule: "@every 5m"
 
 serviceAccount:
   # Specifies whether a service account should be created
