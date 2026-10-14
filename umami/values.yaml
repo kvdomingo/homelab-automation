@@ -153,4 +153,4 @@ redis:
     enabled: true
     image:
       repository: bitnami/os-shell
-      tag: latest@sha256:abeb5b689fb0e9257a6289df69e4e49960298c635128f09de53d07f26d8aa45d
+      tag: latest@sha256:c596a0cd6054322dc6ff09f192cfd3d3b619bbe649444c2522340d3739108b3d
