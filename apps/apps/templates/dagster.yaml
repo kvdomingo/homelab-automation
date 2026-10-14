@@ -888,7 +888,7 @@ spec:
 
             image:
               repository: "bitnamilegacy/rabbitmq"
-              tag: "3.13.7"
+              tag: "4.1.3"
               pullPolicy: IfNotPresent
 
             rabbitmq:
@@ -918,7 +918,7 @@ spec:
             internal: false
             image:
               repository: "bitnamilegacy/redis"
-              tag: "6.2.16"
+              tag: "8.2.1"
               pullPolicy: IfNotPresent
 
             usePassword: false
@@ -949,7 +949,7 @@ spec:
 
             image:
               repository: "docker.io/mher/flower"
-              tag: "0.9.7"
+              tag: "2.2.0"
               pullPolicy: Always
 
             service:
