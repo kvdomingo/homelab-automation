@@ -8,6 +8,9 @@
   // config:recommended skips **/tests/**, which hides Helm test-hook images.
   ignorePaths: ["**/node_modules/**"],
   automergeType: "pr",
+  // config:recommended caps PRs at 2/hour and 10 open.
+  prHourlyLimit: 0,
+  prConcurrentLimit: 0,
   kubernetes: {
     managerFilePatterns: [
       "/^longhorn/.+\\.ya?ml$/",

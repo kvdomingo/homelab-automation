@@ -18,25 +18,24 @@ data:
         "kvdomingo/homelab-automation",
       ],
       "separateMinorPatch": true,
-      "force": {
-        "packageRules": [
-          {
-            "matchDatasources": ["python-version"],
-            "matchUpdateTypes": ["major", "minor"],
-            "enabled": false,
-          },
-          {
-            "matchManagers": ["pep621", "mise", "docker", "docker-compose"],
-            "matchPackageNames": ["python"],
-            "matchUpdateTypes": ["major", "minor"],
-            "enabled": false,
-          },
-          {
-            "matchManagers": ["terraform"],
-            "matchDepTypes": ["provider"],
-            "matchUpdateTypes": ["major"],
-            "enabled": false,
-          },
-        ]
-      },
+      // Not under "force": forced packageRules replace each repo's own rules.
+      "packageRules": [
+        {
+          "matchDatasources": ["python-version"],
+          "matchUpdateTypes": ["major", "minor"],
+          "enabled": false,
+        },
+        {
+          "matchManagers": ["pep621", "mise", "docker", "docker-compose"],
+          "matchPackageNames": ["python"],
+          "matchUpdateTypes": ["major", "minor"],
+          "enabled": false,
+        },
+        {
+          "matchManagers": ["terraform"],
+          "matchDepTypes": ["provider"],
+          "matchUpdateTypes": ["major"],
+          "enabled": false,
+        },
+      ],
     }
