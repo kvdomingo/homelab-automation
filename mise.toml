@@ -3,6 +3,6 @@ argocd = "latest"
 helm = "latest"
 helmfile = { version = "latest", workflow = "releaser.yaml" }
 infisical = { version = "latest", asset_pattern = "cli_{{ version }}_linux_amd64.tar.gz" }
-kubectl = "1.32"
+kubectl = "1.37.1"
 prek = "latest"
 rumdl = "latest"

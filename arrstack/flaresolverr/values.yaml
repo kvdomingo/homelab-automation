@@ -8,7 +8,7 @@ image:
   repository: ghcr.io/flaresolverr/flaresolverr
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "v3.3.12"
+  tag: "v3.5.2"
 
 imagePullSecrets: [ ]
 nameOverride: ""

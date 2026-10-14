@@ -8,7 +8,7 @@ image:
   repository: docker.umami.is/umami-software/umami
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "3.0.3"
+  tag: "3.4.0"
 
 annotations:
   secrets.infisical.com/auto-reload: "true"

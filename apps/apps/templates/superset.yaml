@@ -14,7 +14,7 @@ spec:
       path: infisical-secrets/superset
     - repoURL: https://apache.github.io/superset
       chart: superset
-      targetRevision: 0.12.11
+      targetRevision: 0.22.8
       helm:
         releaseName: superset
         valuesObject:
@@ -90,13 +90,13 @@ spec:
             enabled: true
             image:
               repository: bitnamilegacy/postgresql
-              tag: 14.6.0-debian-11-r13
+              tag: 14.11.0-debian-11-r13
             auth:
               existingSecret: superset-secrets
           redis:
             image:
               repository: bitnamilegacy/redis
-              tag: 7.0.10-debian-11-r4
+              tag: 7.2.4-debian-11-r4
             master:
               persistence:
                 enabled: true

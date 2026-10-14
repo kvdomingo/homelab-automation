@@ -9,7 +9,7 @@ metadata:
 spec:
   containers:
     - name: wget
-      image: busybox:1.37.0
+      image: busybox:1.38.0
       command: ['wget']
       args: ['{{ include "flaresolverr.fullname" . }}:{{ .Values.service.port }}']
   restartPolicy: Never

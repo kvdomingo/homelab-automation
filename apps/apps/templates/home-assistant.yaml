@@ -19,7 +19,7 @@ spec:
           value: |
             image:
               # renovate: datasource=docker depName=ghcr.io/home-assistant/home-assistant
-              tag: "2026.7.4"
+              tag: "2026.10.1"
             env:
               - name: TZ
                 value: Asia/Manila
