@@ -18,12 +18,7 @@ spec:
       helm:
         releaseName: litellm
         valuesObject:
-          image:
-            tag: latest
           deploymentAnnotations:
-            keel.sh/policy: "force"
-            keel.sh/trigger: "poll"
-            keel.sh/match-tag: "true"
             secrets.infisical.com/auto-reload: "true"
           ingress:
             enabled: true
