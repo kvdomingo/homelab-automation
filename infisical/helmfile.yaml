@@ -8,13 +8,13 @@ releases:
     chart: ./manifests
   - name: infisical
     chart: infisical/infisical-standalone
-    version: 1.7.3
+    version: 1.11.0
     namespace: infisical2
     values:
       - values.yaml
   - name: infisical-operator
     chart: infisical/secrets-operator
-    version: 0.10.28
+    version: 0.11.11
     namespace: infisical2
     values:
       - operator-values.yaml

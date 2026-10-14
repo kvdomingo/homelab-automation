@@ -8,10 +8,10 @@ releases:
   - name: metrics-server
     namespace: kube-system
     chart: metrics-server/metrics-server
-    version: 3.12.2
+    version: 3.14.0
     values: [ metrics-server.yaml ]
   - name: coredns
     namespace: kube-system
     chart: coredns/coredns
-    version: 1.39.1
+    version: 1.48.2
     values: [ coredns.yaml ]

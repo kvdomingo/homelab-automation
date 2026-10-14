@@ -59,7 +59,7 @@ global:
     # -- If defined, a repository applied to all Argo CD deployments
     repository: quay.io/argoproj/argocd
     # -- Overrides the global Argo CD image tag whose default is the chart appVersion
-    tag: v3.3.3
+    tag: v3.5.5
     # -- If defined, a imagePullPolicy applied to all Argo CD deployments
     imagePullPolicy: IfNotPresent
 
@@ -1193,7 +1193,7 @@ dex:
     # -- Dex image repository
     repository: ghcr.io/dexidp/dex
     # -- Dex image tag
-    tag: v2.44.0
+    tag: v2.46.0
     # -- Dex imagePullPolicy
     # @default -- `""` (defaults to global.image.imagePullPolicy)
     imagePullPolicy: ""
@@ -1468,7 +1468,7 @@ redis:
     repository: ecr-public.aws.com/docker/library/redis
     # -- Redis tag
     ## Do not use 7.4.0 <= v < 8.0.0, otherwise you are no longer using an open source version of Redis
-    tag: 8.2.3-alpine
+    tag: 8.10.2-alpine
     # -- Redis image pull policy
     # @default -- `""` (defaults to global.image.imagePullPolicy)
     imagePullPolicy: ""
@@ -1484,7 +1484,7 @@ redis:
       # -- Repository to use for the redis-exporter
       repository: ghcr.io/oliver006/redis_exporter
       # -- Tag to use for the redis-exporter
-      tag: v1.81.0
+      tag: v1.93.0
       # -- Image pull policy for the redis-exporter
       # @default -- `""` (defaults to global.image.imagePullPolicy)
       imagePullPolicy: ""
@@ -1764,7 +1764,7 @@ redis-ha:
     repository: ecr-public.aws.com/docker/library/redis
     # -- Redis tag
     ## Do not upgrade to >= 7.4.0, otherwise you are no longer using an open source version of Redis
-    tag: 8.2.3-alpine
+    tag: 8.10.2-alpine
   ## Prometheus redis-exporter sidecar
   exporter:
     # -- Enable Prometheus redis-exporter sidecar
@@ -1772,7 +1772,7 @@ redis-ha:
     # -- Repository to use for the redis-exporter
     image: ghcr.io/oliver006/redis_exporter
     # -- Tag to use for the redis-exporter
-    tag: v1.75.0
+    tag: v1.93.0
   persistentVolume:
     # -- Configures persistence on Redis nodes
     enabled: false
@@ -2838,7 +2838,7 @@ repoServer:
     # argocd-vault-plugin with plain YAML
     - name: avp
       command: [ /var/run/argocd/argocd-cmp-server ]
-      image: quay.io/argoproj/argocd:v3.3.3
+      image: quay.io/argoproj/argocd:v3.5.5
       securityContext:
         runAsNonRoot: true
         runAsUser: 999
@@ -2864,7 +2864,7 @@ repoServer:
           mountPath: /usr/local/bin/yq
     - name: avp-helm
       command: [ /var/run/argocd/argocd-cmp-server ]
-      image: quay.io/argoproj/argocd:v3.3.3
+      image: quay.io/argoproj/argocd:v3.5.5
       securityContext:
         runAsNonRoot: true
         runAsUser: 999

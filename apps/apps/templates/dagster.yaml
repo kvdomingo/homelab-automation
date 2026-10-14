@@ -11,7 +11,7 @@ spec:
   sources:
     - repoURL: https://dagster-io.github.io/helm
       chart: dagster
-      targetRevision: 1.12.21
+      targetRevision: 1.13.26
       helm:
         releaseName: dagster
         valuesObject:
@@ -888,7 +888,7 @@ spec:
 
             image:
               repository: "bitnamilegacy/rabbitmq"
-              tag: "3.8.12"
+              tag: "3.13.7"
               pullPolicy: IfNotPresent
 
             rabbitmq:
@@ -918,7 +918,7 @@ spec:
             internal: false
             image:
               repository: "bitnamilegacy/redis"
-              tag: "6.0.16"
+              tag: "6.2.16"
               pullPolicy: IfNotPresent
 
             usePassword: false
@@ -1371,7 +1371,7 @@ spec:
           busybox:
             image:
               repository: "docker.io/busybox"
-              tag: "1.28"
+              tag: "1.38"
               pullPolicy: "IfNotPresent"
 
           ####################################################################################################

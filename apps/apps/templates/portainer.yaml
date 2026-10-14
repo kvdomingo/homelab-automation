@@ -11,7 +11,7 @@ spec:
   source:
     repoURL: https://portainer.github.io/k8s/
     chart: portainer
-    targetRevision: 239.1.0
+    targetRevision: 239.7.0
     helm:
       releaseName: portainer
       valuesObject:
@@ -20,7 +20,7 @@ spec:
           enabled: false
         image:
           # renovate: datasource=docker depName=portainer/portainer-ce
-          tag: "2.39.1"
+          tag: "2.45.2"
         service:
           type: ClusterIP
         localMgmt: true

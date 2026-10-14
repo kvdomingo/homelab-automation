@@ -14,7 +14,7 @@ spec:
       path: infisical-secrets/tailscale
     - repoURL: https://pkgs.tailscale.com/helmcharts
       chart: tailscale-operator
-      targetRevision: 1.94.2
+      targetRevision: 1.104.1
       helm:
         releaseName: tailscale
         valuesObject:

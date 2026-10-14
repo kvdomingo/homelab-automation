@@ -8,7 +8,7 @@ image:
   repository: lscr.io/linuxserver/prowlarr
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "1.10.5"
+  tag: "1.37.0"
 
 imagePullSecrets: [ ]
 nameOverride: ""

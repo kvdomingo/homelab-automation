@@ -14,7 +14,7 @@ spec:
       path: firefly
     - repoURL: https://firefly-iii.github.io/kubernetes/
       chart: firefly-iii
-      targetRevision: 1.9.3
+      targetRevision: 1.10.1
       helm:
         releaseName: firefly
         valuesObject:
@@ -24,7 +24,7 @@ spec:
             registry: "docker.io"
             repository: "fireflyiii/core"
             pullPolicy: IfNotPresent
-            tag: "version-6.5.1"
+            tag: "version-6.7.9"
 
           persistence:
             # -- If you set this to false, uploaded attachments are not stored persistently and will be lost with every restart of the pod
@@ -106,7 +106,7 @@ spec:
               registry: docker.io
               repository: curlimages/curl
               pullPolicy: IfNotPresent
-              tag: 8.12.0
+              tag: 8.23.0
 
             imagePullSecrets: [ ]
 
@@ -214,7 +214,7 @@ spec:
             periodSeconds: 10
     - repoURL: https://charts.bitnami.com/bitnami
       chart: redis
-      targetRevision: 21.1.6
+      targetRevision: 21.2.14
       helm:
         releaseName: redis
         valuesObject:
@@ -245,13 +245,13 @@ spec:
               tag: 12-debian-12-r45
     - repoURL: https://firefly-iii.github.io/kubernetes/
       chart: importer
-      targetRevision: 1.4.1
+      targetRevision: 1.6.0
       helm:
         releaseName: importer
         valuesObject:
           image:
             # renovate: datasource=docker depName=fireflyiii/data-importer
-            tag: version-1.6.1
+            tag: version-1.9.1
           trustedProxies: "**"
           fireflyiii:
             url: http://firefly-firefly-iii
