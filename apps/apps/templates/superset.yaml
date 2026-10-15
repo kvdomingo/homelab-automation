@@ -103,9 +103,16 @@ spec:
           bootstrapScript: |
             #!/bin/bash
 
-            uv pip install --no-cache --python /app/.venv/bin/python psycopg2-binary prophet
+            uv pip install \
+              --no-cache \
+              --python /app/.venv/bin/python \
+              fastmcp \
+              prophet \
+              psycopg2-binary
 
-            if [ ! -f ~/bootstrap ]; then echo "Running Superset with uid {{ .Values.runAsUser }}" > ~/bootstrap; fi
+            if [ ! -f ~/bootstrap ]; then
+              echo "Running Superset with uid {{ .Values.runAsUser }}" > ~/bootstrap;
+            fi
 
   destination:
     server: {{ .Values.destination.server }}
