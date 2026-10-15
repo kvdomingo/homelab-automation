@@ -11,6 +11,7 @@ locals {
     "argo",
     "atuin",
     "infisical",
+    "litellm",
     "lubelogger",
     "nocodb",
     "primerdriver",
