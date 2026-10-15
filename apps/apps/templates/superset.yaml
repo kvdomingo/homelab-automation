@@ -98,6 +98,15 @@ spec:
             master:
               persistence:
                 enabled: true
+              # jemalloc crashes on the Pi 5's 16K page size
+              affinity:
+                nodeAffinity:
+                  requiredDuringSchedulingIgnoredDuringExecution:
+                    nodeSelectorTerms:
+                      - matchExpressions:
+                          - key: kubernetes.io/arch
+                            operator: NotIn
+                            values: [ arm64, arm ]
           bootstrapScript: |
             #!/bin/bash
 
