@@ -26,7 +26,7 @@ spec:
         localMgmt: true
         trusted_origins:
           enabled: true
-          domains: "portainer.kvd.studio,portainer.lab.kvd.studio"
+          domains: "https://portainer.kvd.studio,https://portainer.lab.kvd.studio"
         ingress:
           enabled: true
           annotations:
