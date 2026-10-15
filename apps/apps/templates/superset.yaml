@@ -103,7 +103,7 @@ spec:
           bootstrapScript: |
             #!/bin/bash
 
-            pip install prophet
+            uv pip install --no-cache --python /app/.venv/bin/python psycopg2-binary prophet
 
             if [ ! -f ~/bootstrap ]; then echo "Running Superset with uid {{ .Values.runAsUser }}" > ~/bootstrap; fi
 
