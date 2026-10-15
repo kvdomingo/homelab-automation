@@ -90,7 +90,7 @@ spec:
             enabled: true
             image:
               repository: bitnamilegacy/postgresql
-              tag: 16.2.0-debian-11-r13
+              tag: 14.11.0-debian-11-r13
             auth:
               existingSecret: superset-secrets
           redis:
