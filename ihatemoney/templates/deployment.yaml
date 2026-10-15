@@ -69,7 +69,7 @@ spec:
             - /bin/sh
             - -c
             - >
-              until pg_isready -h ihatemoney-postgresql-hl -U ihatemoney -d ihatemoney; do
+              until pg_isready -h 10.10.10.103 -U ihatemoney -d ihatemoney; do
               sleep 2;
               done;
       {{- with .Values.volumes }}

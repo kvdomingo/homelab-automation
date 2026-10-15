@@ -49,7 +49,10 @@ spec:
               minAvailable: 1
               maxUnavailable: false
             connections:
-              db_pass: "<path:kv/data/lab/superset#POSTGRESQL_PASSWORD>"
+              db_host: 10.10.10.103
+              db_port: "5432"
+              db_user: superset
+              db_name: superset
           supersetWorker:
             autoscaling:
               enabled: true
@@ -87,12 +90,7 @@ spec:
               email: ""
               password: ""
           postgresql:
-            enabled: true
-            image:
-              repository: bitnamilegacy/postgresql
-              tag: 14.11.0-debian-11-r13
-            auth:
-              existingSecret: superset-secrets
+            enabled: false
           redis:
             image:
               repository: bitnamilegacy/redis

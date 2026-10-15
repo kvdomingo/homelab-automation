@@ -114,32 +114,3 @@ nodeSelector: { }
 tolerations: [ ]
 
 affinity: { }
-
-postgresql:
-  image:
-    repository: bitnamilegacy/postgresql
-    # renovate: datasource=docker depName=bitnamilegacy/postgresql
-    tag: 16.4.0-debian-12-r14
-  auth:
-    username: ihatemoney
-    database: ihatemoney
-    existingSecret: ihatemoney-secrets
-    secretKeys:
-      adminPasswordKey: POSTGRESQL_PASSWORD
-      replicationPasswordKey: POSTGRESQL_PASSWORD
-      userPasswordKey: POSTGRESQL_PASSWORD
-  volumePermissions:
-    enabled: true
-    image:
-      repository: bitnamilegacy/os-shell
-      # renovate: datasource=docker depName=bitnamilegacy/os-shell
-      tag: 12-debian-12-r30
-  primary:
-    persistence:
-      enabled: true
-      annotations:
-        argocd.argoproj.io/sync-options: Delete=false,Prune=false
-    livenessProbe:
-      enabled: false
-    readinessProbe:
-      enabled: false
