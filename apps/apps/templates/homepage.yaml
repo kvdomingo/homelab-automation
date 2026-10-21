@@ -146,6 +146,7 @@ spec:
                         type: jellyfin
                         url: https://jellyfin.dev.kvd.studio
                         key: "{{"{{"}}HOMEPAGE_VAR_JELLYFIN_API_KEY{{"}}"}}"
+                        version: 2
                         enableBlocks: true
                         enableNowPlaying: true
                         enableUser: true
