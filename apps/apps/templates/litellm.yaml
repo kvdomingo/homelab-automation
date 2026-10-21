@@ -14,7 +14,7 @@ spec:
       path: infisical-secrets/litellm
     - repoURL: oci://ghcr.io/berriai/litellm-helm
       path: .
-      targetRevision: 1.105.1
+      targetRevision: 1.106.2
       helm:
         releaseName: litellm
         valuesObject:

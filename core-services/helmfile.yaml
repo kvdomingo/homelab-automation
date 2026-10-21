@@ -13,5 +13,5 @@ releases:
   - name: coredns
     namespace: kube-system
     chart: coredns/coredns
-    version: 1.48.2
+    version: 1.49.0
     values: [ coredns.yaml ]
