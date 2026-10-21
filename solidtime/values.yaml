@@ -11,7 +11,7 @@ image:
   # This sets the pull policy for images.
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "0.21.0"
+  tag: "0.22.1"
 
 deploymentAnnotations:
   secrets.infisical.com/auto-reload: "true"
@@ -186,7 +186,7 @@ gotenberg:
     # This sets the pull policy for images.
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
-    tag: "8.37.0"
+    tag: "8.38.1"
   service:
     port: 3000
   livenessProbe:

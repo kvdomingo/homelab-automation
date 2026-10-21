@@ -6,7 +6,7 @@ releases:
   - name: promstack
     namespace: monitoring
     chart: prometheus/kube-prometheus-stack
-    version: 92.7.0
+    version: 92.11.0
     values:
       - ./values.yaml
       - alertmanager:
