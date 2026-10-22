@@ -11,6 +11,11 @@
   // config:recommended caps PRs at 2/hour and 10 open.
   prHourlyLimit: 0,
   prConcurrentLimit: 0,
+  // The default `stable` alias makes lock-file updates fetch the deprecated
+  // charts.helm.sh index, which times out. Renovate drops non-URL aliases.
+  helmv3: {
+    registryAliases: { stable: "" },
+  },
   kubernetes: {
     managerFilePatterns: [
       "/^longhorn/.+\\.ya?ml$/",
