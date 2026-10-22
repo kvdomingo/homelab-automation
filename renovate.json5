@@ -13,7 +13,12 @@
   prConcurrentLimit: 0,
   // The default `stable` alias makes lock-file updates fetch the deprecated
   // charts.helm.sh index, which times out. Renovate drops non-URL aliases.
+  // helmfile needs it too: a grouped branch can pass a helmfile dep's config
+  // to the Chart.lock update.
   helmv3: {
+    registryAliases: { stable: "" },
+  },
+  helmfile: {
     registryAliases: { stable: "" },
   },
   kubernetes: {
