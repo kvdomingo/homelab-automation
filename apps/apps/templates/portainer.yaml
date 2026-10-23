@@ -20,7 +20,7 @@ spec:
           enabled: false
         image:
           # renovate: datasource=docker depName=portainer/portainer-ce
-          tag: "2.45.2"
+          tag: "2.45.3"
         service:
           type: ClusterIP
         localMgmt: true
