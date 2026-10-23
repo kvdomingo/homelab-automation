@@ -14,7 +14,7 @@ spec:
       path: firefly
     - repoURL: https://firefly-iii.github.io/kubernetes/
       chart: firefly-iii
-      targetRevision: 1.10.1
+      targetRevision: 1.10.2
       helm:
         releaseName: firefly
         valuesObject:

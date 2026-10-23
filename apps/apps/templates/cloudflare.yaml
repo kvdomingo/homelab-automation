@@ -25,7 +25,7 @@ spec:
           image:
             pullPolicy: Always
             # renovate: datasource=docker depName=cloudflare/cloudflared
-            tag: "2026.10.0"
+            tag: "2026.10.3"
   destination:
     server: {{ .Values.destination.server }}
     namespace: cloudflare
