@@ -11,7 +11,7 @@ image:
   # This sets the pull policy for images.
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "5.10.1"
+  tag: "5.10.2"
 
 deploymentAnnotations:
   secrets.infisical.com/auto-reload: "true"

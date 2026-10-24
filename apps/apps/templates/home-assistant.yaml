@@ -11,7 +11,7 @@ spec:
   source:
     repoURL: http://pajikos.github.io/home-assistant-helm-chart/
     chart: home-assistant
-    targetRevision: 0.3.87
+    targetRevision: 0.3.88
     plugin:
       name: argocd-vault-plugin-helm
       env:
@@ -19,7 +19,7 @@ spec:
           value: |
             image:
               # renovate: datasource=docker depName=ghcr.io/home-assistant/home-assistant
-              tag: "2026.10.2"
+              tag: "2026.10.3"
             env:
               - name: TZ
                 value: Asia/Manila
