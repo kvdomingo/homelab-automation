@@ -25,5 +25,5 @@ appVersion: "1.16.0"
 
 dependencies:
   - name: postgresql
-    version: 18.12.14
+    version: 18.12.15
     repository: https://charts.bitnami.com/bitnami
