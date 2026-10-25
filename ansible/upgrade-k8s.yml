@@ -1,6 +1,21 @@
-- name: Upgrade K3s
-  hosts: k8s
+# k3s upgrades by re-running the installer with the original flags.
+- name: Upgrade K3s initial node
+  hosts: k8s_primary
   become: true
+  serial: 1
   roles:
-    - k8s-server-upgrade
-    - k8s-agent-upgrade
+    - k8s-server-initial
+
+- name: Upgrade K3s server nodes
+  hosts: k8s_servers
+  become: true
+  serial: 1
+  roles:
+    - k8s-server-add
+
+- name: Upgrade K3s agent nodes
+  hosts: k8s_agents
+  become: true
+  serial: 1
+  roles:
+    - k8s-agent-add
