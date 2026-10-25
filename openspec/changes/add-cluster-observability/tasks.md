@@ -65,7 +65,7 @@
 - [ ] 4.3 After sync, verify: `monitoring` app Healthy/Synced; every target in
       Prometheus is up; Grafana login works with Infisical credentials; deleting
       the Grafana pod keeps datasources and dashboards
-- [ ] 4.4 Verify alert delivery: Discord receives a test alert
+- [x] 4.4 Verify alert delivery: Discord receives a test alert
       (`amtool alert add` or a temporary rule) firing and resolved, and the
       healthchecks.io check stays green from `Watchdog`; `Watchdog` does not
       appear in Discord
@@ -93,7 +93,7 @@
       namespace/pod/container/node labels, and `alloy-events` single-replica
       Deployment with `loki.source.kubernetes_events`; verify
       `helm template core/apps` renders both
-- [ ] 6.3 After sync, verify in Grafana Explore: logs from a pod on an amd64
+- [x] 6.3 After sync, verify in Grafana Explore: logs from a pod on an amd64
       node and one on a Pi; a `kubectl run` failing pod's events appear once
       (not once per node); `aws ... s3 ls s3://loki/` shows chunks
 
