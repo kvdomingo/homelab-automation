@@ -58,7 +58,7 @@
       Homepage annotations, auto-reload annotation), cert-manager webhook certs,
       k3s control-plane endpoints; verify `helm template core/apps` renders it
       and `prek run --all-files` passes
-- [ ] 4.2 Add the `object-storage` `PrometheusRule`
+- [x] 4.2 Add the `object-storage` `PrometheusRule`
       (`ThanosSidecarUploadFailing`, `ThanosCompactHalted`) via
       `additionalPrometheusRulesMap`; verify it appears in
       `kubectl get prometheusrule -n monitoring` after sync
