@@ -14,7 +14,7 @@ releases:
       - values.yaml
   - name: infisical-operator
     chart: infisical/secrets-operator
-    version: 0.11.14
+    version: 0.11.15
     namespace: infisical2
     values:
       - operator-values.yaml
