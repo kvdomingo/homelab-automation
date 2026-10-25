@@ -126,11 +126,13 @@ http:
         servers:
           - url: "https://10.10.0.200:8006"
         passHostHeader: true
+        serversTransport: proxmox
     aurora:
       loadBalancer:
         servers:
           - url: "https://10.10.10.99:8006"
         passHostHeader: true
+        serversTransport: proxmox
     truenas:
       loadBalancer:
         servers:
@@ -216,6 +218,10 @@ http:
         servers:
           - url: "http://10.10.10.103:2346"
         passHostHeader: true
+
+  serversTransports:
+    proxmox:
+      insecureSkipVerify: true
 
   middlewares:
     default-headers:
