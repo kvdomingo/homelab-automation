@@ -27,4 +27,4 @@ jobs:
         run: |
           docker compose pull
           docker compose up --wait --remove-orphans
-          docker compose restart master
+          docker compose restart master traefik
