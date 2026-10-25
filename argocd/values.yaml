@@ -372,12 +372,10 @@ configs:
     # -- Resource Exclusion/Inclusion
     # @default -- See [values.yaml]
     resource.exclusions: |
-      ### Network resources created by the Kubernetes control plane and excluded to reduce the number of watched events and UI clutter
+      ### Endpoints are not excluded: kube-prometheus-stack declares static ones for the k3s control plane
       - apiGroups:
-        - ''
         - discovery.k8s.io
         kinds:
-        - Endpoints
         - EndpointSlice
       ### Internal Kubernetes resources excluded reduce the number of watched events
       - apiGroups:
