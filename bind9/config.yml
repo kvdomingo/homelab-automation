@@ -99,6 +99,14 @@ http:
       rule: "Host(`dblab.dev.kvd.studio`)"
       service: dblab
       <<: *common-http-router
+    versity-api:
+      rule: "Host(`versity-api.dev.kvd.studio`)"
+      service: versity-api
+      <<: *common-http-router
+    versity:
+      rule: "Host(`versity.dev.kvd.studio`)"
+      service: versity
+      <<: *common-http-router
 
   services:
     homepage:
@@ -217,6 +225,16 @@ http:
       loadBalancer:
         servers:
           - url: "http://10.10.10.103:2346"
+        passHostHeader: true
+    versity-api:
+      loadBalancer:
+        servers:
+          - url: "http://10.10.10.100:7071"
+        passHostHeader: true
+    versity:
+      loadBalancer:
+        servers:
+          - url: "http://10.10.10.100:7070"
         passHostHeader: true
 
   serversTransports:
