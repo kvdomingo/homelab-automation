@@ -11,13 +11,16 @@
 ## Goals / Non-Goals
 
 **Goals:**
+
 - One S3 endpoint that writes straight to ZFS.
 - Garage fully removed from git and the cluster.
 
 **Non-Goals:**
+
 - GitOps for TrueNAS apps. The app is configured by hand.
 - TLS, a DNS hostname, per-consumer IAM users. Add when a consumer needs them.
-- Creating the `thanos` and `loki` buckets; `add-cluster-observability` does that.
+- Creating the `thanos` and `loki` buckets; `add-cluster-observability` does
+  that.
 - Removing MinIO. nocodb, n8n, plane and lakefs still use it; a later change
   moves them.
 

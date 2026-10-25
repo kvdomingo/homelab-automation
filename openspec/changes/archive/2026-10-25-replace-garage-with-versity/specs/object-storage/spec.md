@@ -33,7 +33,8 @@ NOT be required.
 
 #### Scenario: Path-style request succeeds
 
-- **WHEN** a client with valid credentials lists `http://10.10.10.100:<port>/<bucket>`
+- **WHEN** a client with valid credentials lists
+  `http://10.10.10.100:<port>/<bucket>`
 - **THEN** the endpoint returns the bucket listing
 
 #### Scenario: Client configured for virtual-host style
@@ -44,7 +45,8 @@ NOT be required.
 ### Requirement: Credentials reach workloads through Infisical
 
 S3 access and secret keys SHALL reach cluster workloads only through
-`InfisicalSecret`-managed Kubernetes secrets. Keys SHALL NOT be committed to git.
+`InfisicalSecret`-managed Kubernetes secrets. Keys SHALL NOT be committed to
+git.
 
 #### Scenario: Workload needs S3 access
 

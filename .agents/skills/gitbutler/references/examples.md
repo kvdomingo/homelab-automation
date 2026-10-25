@@ -2,11 +2,19 @@
 
 Real-world examples of common workflows.
 
-**Note on CLI IDs:** Examples below use full branch names for branch-targeting mutations. Illustrative IDs like `nn` and `a1` keep other commands readable; in practice, **always read actual IDs from `but status -fv`** because they are generated for the current workspace snapshot. Commit IDs are short change-ID prefixes that stay stable across history edits (e.g., `kyn`; commits without a change ID fall back to a sha prefix), and file/hunk/stack IDs are auto-generated (e.g., `r`, `r:c`, `h0`). All IDs are unique across entity types within one snapshot.
+**Note on CLI IDs:** Examples below use full branch names for branch-targeting
+mutations. Illustrative IDs like `nn` and `a1` keep other commands readable; in
+practice, **always read actual IDs from `but status -fv`** because they are
+generated for the current workspace snapshot. Commit IDs are short change-ID
+prefixes that stay stable across history edits (e.g., `kyn`; commits without a
+change ID fall back to a sha prefix), and file/hunk/stack IDs are auto-generated
+(e.g., `r`, `r:c`, `h0`). All IDs are unique across entity types within one
+snapshot.
 
 ## Example 1: Starting Independent Parallel Work
 
-**Scenario:** Need to work on two independent features: a new API endpoint and UI styling updates.
+**Scenario:** Need to work on two independent features: a new API endpoint and
+UI styling updates.
 
 ```bash
 # 1. Check current state
@@ -37,11 +45,13 @@ but pr new api-endpoint -m "Add user details endpoint"
 but pr new ui-styling -m "Update button hover styles"
 ```
 
-**Why parallel branches?** The API endpoint and UI styling are independent - neither depends on the other. They can be reviewed and merged separately.
+**Why parallel branches?** The API endpoint and UI styling are independent -
+neither depends on the other. They can be reviewed and merged separately.
 
 ## Example 2: Building Stacked Features
 
-**Scenario:** Need to add authentication, then build a user profile page that requires auth.
+**Scenario:** Need to add authentication, then build a user profile page that
+requires auth.
 
 ```bash
 # 1. Check current state and update
@@ -68,11 +78,13 @@ but commit -b user-profile -m "Add user profile page" <file-ids>
 but pr new user-profile -t
 ```
 
-**Result:** Two PRs where user-profile targets add-authentication, with GitButler stack information in the PR descriptions.
+**Result:** Two PRs where user-profile targets add-authentication, with
+GitButler stack information in the PR descriptions.
 
 ## Example 3: Amending Fixes Into Existing Commits
 
-**Scenario:** Made a small typo fix that should be part of an existing commit, not a new commit.
+**Scenario:** Made a small typo fix that should be part of an existing commit,
+not a new commit.
 
 ```bash
 # 1. Check current commits and uncommitted changes
@@ -93,13 +105,16 @@ but status -fv
 but amend -t nn a1    # Amend just this file + get updated status
 ```
 
-**Why amend?** Keeps history clean. Small fixes belong in the commits they fix, not as separate "fix typo" commits. You know what you changed and why — pick the target commit yourself.
+**Why amend?** Keeps history clean. Small fixes belong in the commits they fix,
+not as separate "fix typo" commits. You know what you changed and why — pick the
+target commit yourself.
 
 ## Example 4: Reorganizing Commit History
 
 ### Scenario A: Squashing Commits
 
-**Situation:** Made 5 small WIP commits, want to combine into one logical commit.
+**Situation:** Made 5 small WIP commits, want to combine into one logical
+commit.
 
 ```bash
 # Before (newest first):
@@ -157,7 +172,8 @@ but move nn -b feature-b    # Move nn to top of feature-b
 
 ## Example 5: Stacking Existing Branches
 
-**Scenario:** Two independent branches exist, but one now depends on the other. Stack them.
+**Scenario:** Two independent branches exist, but one now depends on the other.
+Stack them.
 
 ```bash
 # 1. Check current state — two independent branches in separate stacks
@@ -180,7 +196,8 @@ but commit -b feature/backend -m "Add caching layer" <id>
 but commit -b feature/frontend -m "Add dialog component" <id>
 ```
 
-**Key point:** branch stack moves use full branch names like `feature/frontend`. Commit reordering still uses commit IDs.
+**Key point:** branch stack moves use full branch names like `feature/frontend`.
+Commit reordering still uses commit IDs.
 
 ## Example 6: Conflict Resolution
 
@@ -266,7 +283,8 @@ but pull
 
 ## Example 8: Working with Applied/Unapplied Branches
 
-**Scenario:** Have 3 branches, but two are causing conflicts. Temporarily unapply them.
+**Scenario:** Have 3 branches, but two are causing conflicts. Temporarily
+unapply them.
 
 ```bash
 # 1. Check active branches
@@ -300,7 +318,8 @@ but resolve ...
 
 ## Example 9: Fixing History Before Pushing
 
-**Scenario:** Made several commits, realized you need to reword messages and reorder.
+**Scenario:** Made several commits, realized you need to reword messages and
+reorder.
 
 ```bash
 # 1. Current state
@@ -448,17 +467,16 @@ but commit -b my-branch -m "Add parser" qs:5 qs:2 \
   && but commit -b my-branch -m "Add tests" uo:d
 ```
 
-The commits stack in the order you write them, so `Add parser` ends up below (older
-than) `Add tests`. Chain these commit commands when each references uncommitted IDs
-and a full branch name. If an ID stops resolving, re-read the diff and continue.
-Mutation output is concise by default. Add `--status-after` only when the next
-step needs workspace IDs or details that the mutation result does not provide.
-History edits — `amend`, `squash`, `move`, `uncommit`, `reword` — may also run in
-sequence off one status read when every commit ref involved is a change-ID ref;
-those stay stable across the edits. Run them one at a time when a ref is sha-based
-or `#N`-suffixed, or when the next command needs freshly issued IDs, and add
-`--status-after` to get them.
-
+The commits stack in the order you write them, so `Add parser` ends up below
+(older than) `Add tests`. Chain these commit commands when each references
+uncommitted IDs and a full branch name. If an ID stops resolving, re-read the
+diff and continue. Mutation output is concise by default. Add `--status-after`
+only when the next step needs workspace IDs or details that the mutation result
+does not provide. History edits — `amend`, `squash`, `move`, `uncommit`,
+`reword` — may also run in sequence off one status read when every commit ref
+involved is a change-ID ref; those stay stable across the edits. Run them one at
+a time when a ref is sha-based or `#N`-suffixed, or when the next command needs
+freshly issued IDs, and add `--status-after` to get them.
 
 ### Auto-completion
 
