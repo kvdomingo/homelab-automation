@@ -4,8 +4,10 @@
 
 - 7 k3s nodes: `srv-k8s-01..03` (amd64, ~16GB, 54-70% memory used) and
   `srv-pi5-01..04` (arm64, 8GB). Control plane: `srv-k8s-01..03` and
-  `srv-pi5-01`. The inventory lists `srv-pi5-01` under `k8s_agents` although it
-  runs as a server.
+  `srv-pi5-01`. `srv-pi5-01` is meant to be a server but currently runs as an
+  agent (its control-plane/etcd labels are stale), so it is rejoined as a server
+  first. That makes 4 etcd members: quorum is 3, so it still tolerates only one
+  failure.
 - k3s installs with `--disable=traefik,coredns,metrics-server` passed as CLI
   args in four ansible roles. No `/etc/rancher/k3s/config.yaml.d/` drop-ins.
 - Longhorn has no volumes yet. Schedulable space per replica (after its 25%
@@ -102,9 +104,10 @@ time (`serial: 1`):
   `kube-scheduler-arg: [bind-address=0.0.0.0]`
 
 Control-plane hosts come from a new inventory group `k8s_control_plane`
-(`srv-k8s-01..03`, `srv-pi5-01`), so existing groups and the playbooks that use
-them are unchanged. A drop-in instead of new CLI args keeps the four install
-roles untouched and survives `upgrade-k8s.yml`.
+(children `k8s_primary` and `k8s_servers`: `srv-k8s-01..03`, `srv-pi5-01`), so
+existing groups and the playbooks that use them are unchanged. A drop-in instead
+of new CLI args keeps the four install roles untouched and survives
+`upgrade-k8s.yml`.
 
 kube-prometheus-stack values list the control-plane IPs as `endpoints` for
 `kubeEtcd` (2381, http), `kubeControllerManager` (10257, https, skip verify),

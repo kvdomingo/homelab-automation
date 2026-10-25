@@ -2,27 +2,36 @@
 
 ## 1. Prerequisites (manual)
 
-- [ ] 1.1 Confirm `replace-garage-with-versity` group 1 is done; create buckets
+- [x] 1.1 Confirm `replace-garage-with-versity` group 1 is done; create buckets
       `thanos` and `loki` on Versity; verify
       `aws --endpoint-url http://10.10.10.100:<port> s3 ls` lists both
-- [ ] 1.2 Create a healthchecks.io check (period 5m, grace 5m) with a Discord
+- [x] 1.2 Create a healthchecks.io check (period 5m, grace 5m) with a Discord
       integration; verify a manual `curl <ping-url>` turns it green
-- [ ] 1.3 Create Infisical project `monitoring` (env `prod`) with
+- [x] 1.3 Create Infisical project `monitoring` (env `prod`) with
       `GRAFANA_ADMIN_USER`, `GRAFANA_ADMIN_PASSWORD`, `DISCORD_WEBHOOK_URL`,
       `HEALTHCHECKS_PING_URL`, `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY`, and
       grant the cluster identity access; verify with
       `infisical secrets --env prod`
+- [x] 1.4 Rejoin `srv-pi5-01` as a server:
+      `kubectl drain srv-pi5-01 --ignore-daemonsets --delete-emptydir-data`;
+      from `ansible/`,
+      `ansible srv-pi5-01 -b -m command -a /usr/local/bin/k3s-agent-uninstall.sh`,
+      `kubectl delete node srv-pi5-01`,
+      `ansible srv-k8s-01 -b -m fetch -a "src=/var/lib/rancher/k3s/server/node-token dest=outputs/node-token flat=true"`,
+      `infisical run -- ansible-playbook setup-k8s-servers.yml --limit srv-pi5-01`,
+      `kubectl uncordon srv-pi5-01`; verify the node's `k3s.io/node-args`
+      annotation starts with `server` and `kubectl get nodes` shows all Ready
 
 ## 2. k3s control-plane metrics
 
-- [x] 2.1 Add inventory group `k8s_control_plane` (`srv-k8s-01..03`,
-      `srv-pi5-01`) to `ansible/inventory/hosts.ini`; verify
+- [x] 2.1 Add inventory group `k8s_control_plane` (children `k8s_primary`,
+      `k8s_servers`) to `ansible/inventory/hosts.ini`; verify
       `ansible -i inventory/hosts.ini k8s_control_plane --list-hosts` prints
-      those 4
-- [ ] 2.2 Write `ansible/expose-k3s-metrics.yml` (drop-in
+      `srv-k8s-01..03` and `srv-pi5-01`
+- [x] 2.2 Write `ansible/expose-k3s-metrics.yml` (drop-in
       `/etc/rancher/k3s/config.yaml.d/90-metrics.yaml`, `serial: 1`, restart
       k3s, wait for node Ready); verify `ansible-playbook --check` passes
-- [ ] 2.3 Run the playbook; verify from another host that
+- [x] 2.3 Run the playbook; verify from another host that
       `curl -s <node>:10249/metrics` answers on every node and
       `curl -s <cp>:2381/metrics` answers on each control-plane node, and
       `kubectl get nodes` shows all Ready
@@ -64,8 +73,8 @@
 ## 5. Thanos
 
 - [x] 5.1 Add `core/apps/templates/thanos.yaml` (`stevehipwell/thanos` pinned)
-      with Query, Store Gateway and Compactor (downsampling on by default, raw 30d / 5m
-      180d / 1h 365d, `nfs-client` scratch PVCs), objstore from
+      with Query, Store Gateway and Compactor (downsampling on by default, raw
+      30d / 5m 180d / 1h 365d, `nfs-client` scratch PVCs), objstore from
       `monitoring-secrets`; verify `helm template core/apps` renders it
 - [ ] 5.2 After sync, verify Thanos Query's Stores page lists the sidecar and
       Store Gateway as healthy, and within 2-3h the `thanos` bucket contains
