@@ -17,7 +17,7 @@ Never apply changes by hand (`kubectl apply`, `helm upgrade`, `scp`). Push to
   `task tf-apply`.
 - **S3 endpoint**: Versity Gateway, a TrueNAS custom app at
   `http://10.10.10.100:7070`, managed by hand in the TrueNAS UI. Clients must
-  use path-style addressing.
+  use path-style addressing and region `ap-southeast-1`.
 
 ## Layout
 
