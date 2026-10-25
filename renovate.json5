@@ -8,6 +8,7 @@
   // config:recommended skips **/tests/**, which hides Helm test-hook images.
   ignorePaths: ["**/node_modules/**"],
   automergeType: "pr",
+  minimumReleaseAge: "3 days",
   // config:recommended caps PRs at 2/hour and 10 open.
   prHourlyLimit: 0,
   prConcurrentLimit: 0,
@@ -111,6 +112,7 @@
       matchUpdateTypes: ["digest"],
       groupName: "own image",
       automerge: true,
+      minimumReleaseAge: null,
       additionalBranchPrefix: "{{replace '^([^/]+)/.*$' '$1' (replace '^(?:apps|core)/apps/templates/([^/]+)\\.yaml$' '$1' packageFile)}}-",
       commitMessageSuffix: "({{replace '^([^/]+)/.*$' '$1' (replace '^(?:apps|core)/apps/templates/([^/]+)\\.yaml$' '$1' packageFile)}})",
     },
