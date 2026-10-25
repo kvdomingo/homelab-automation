@@ -1,0 +1,44 @@
+- name: Expose K3s control-plane metrics
+  hosts: k8s
+  become: true
+  serial: 1
+  vars:
+    is_control_plane: "{{ inventory_hostname in groups['k8s_control_plane'] }}"
+  tasks:
+    - name: Ensure config drop-in directory exists
+      ansible.builtin.file:
+        path: /etc/rancher/k3s/config.yaml.d
+        state: directory
+        mode: '755'
+
+    - name: Write metrics drop-in
+      ansible.builtin.copy:
+        dest: /etc/rancher/k3s/config.yaml.d/90-metrics.yaml
+        mode: '644'
+        content: |
+          kube-proxy-arg+:
+            - metrics-bind-address=0.0.0.0:10249
+          {% if is_control_plane %}
+          etcd-expose-metrics: true
+          kube-controller-manager-arg+:
+            - bind-address=0.0.0.0
+          kube-scheduler-arg+:
+            - bind-address=0.0.0.0
+          {% endif %}
+      register: dropin
+
+    - name: Restart K3s
+      when: dropin.changed
+      ansible.builtin.systemd:
+        name: "{{ 'k3s' if is_control_plane else 'k3s-agent' }}"
+        state: restarted
+
+    # Not `kubectl wait`: the API endpoint may be the node being restarted.
+    - name: Wait for K3s to serve metrics
+      when: dropin.changed
+      delegate_to: localhost
+      become: false
+      ansible.builtin.wait_for:
+        host: "{{ inventory_hostname }}"
+        port: 10249
+        timeout: 300

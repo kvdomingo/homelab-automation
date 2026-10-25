@@ -2,10 +2,10 @@
 
 ## Why
 
-The cluster has no metrics, logs or alerting. `promstack/` (kube-prometheus-stack
-via a manual `helmfile apply`) was installed once and abandoned because it did
-not work properly; only its CRDs remain. Problems in the cluster go unnoticed
-until something visibly breaks.
+The cluster has no metrics, logs or alerting. `promstack/`
+(kube-prometheus-stack via a manual `helmfile apply`) was installed once and
+abandoned because it did not work properly; only its CRDs remain. Problems in
+the cluster go unnoticed until something visibly breaks.
 
 ## What Changes
 

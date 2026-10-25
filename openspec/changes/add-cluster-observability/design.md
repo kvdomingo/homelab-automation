@@ -21,6 +21,7 @@
 **Goals:** see specs `cluster-metrics`, `cluster-logs`, `cluster-alerting`.
 
 **Non-Goals:**
+
 - Traces (Tempo), Mimir, Loki-based alert rules.
 - Thanos/Loki/Alloy dashboards beyond what charts ship by default.
 - Ingress for Prometheus, Alertmanager or Thanos Query. Grafana covers querying
@@ -30,7 +31,7 @@
 
 ### Layout
 
-```
+```text
 core/apps/templates/
   promstack.yaml   kube-prometheus-stack + infisical-secrets/monitoring
   thanos.yaml      stevehipwell/thanos (query, storegateway, compactor)
@@ -79,7 +80,7 @@ in `monitoring`. Keys: `GRAFANA_ADMIN_USER`, `GRAFANA_ADMIN_PASSWORD`,
   and `prometheus.thanosService.enabled: true`. The operator turns off local
   compaction when this is set.
 - Thanos chart: Query (store endpoints: sidecar gRPC service and the Store
-  Gateway), Store Gateway, Compactor with `--downsampling` and
+  Gateway), Store Gateway, Compactor (downsampling is on by default) with
   `--retention.resolution-raw=30d`, `-5m=180d`, `-1h=365d`. Everything else
   in the chart is disabled. Store Gateway and Compactor scratch go on
   `nfs-client` PVCs (cache/working space only; data is rebuilt from the bucket).
@@ -107,8 +108,8 @@ roles untouched and survives `upgrade-k8s.yml`.
 
 kube-prometheus-stack values list the control-plane IPs as `endpoints` for
 `kubeEtcd` (2381, http), `kubeControllerManager` (10257, https, skip verify),
-`kubeScheduler` (10259, https, skip verify); `kubeProxy` uses pod discovery on
-10249.
+`kubeScheduler` (10259, https, skip verify). `kubeProxy` lists every node IP
+on 10249: k3s runs kube-proxy in-process, so there are no pods to discover.
 
 ### Logs
 
@@ -140,7 +141,10 @@ Alertmanager route:
 
 One extra `PrometheusRule` covers silent object-storage failures that no
 default rule catches:
-- `ThanosSidecarUploadFailing`: `increase(thanos_objstore_bucket_operation_failures_total{job=~".*prometheus.*"}[15m]) > 0` for 15m
+
+- `ThanosSidecarUploadFailing`:
+  `increase(thanos_objstore_bucket_operation_failures_total{job=~".*prometheus.*"}[15m]) > 0`
+  for 15m
 - `ThanosCompactHalted`: `thanos_compact_halted == 1` for 5m
 
 Any default rule still firing after a 24h soak on a healthy cluster is

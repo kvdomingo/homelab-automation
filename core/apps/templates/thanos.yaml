@@ -1,0 +1,51 @@
+{{- if not .Values.disableThanos }}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: thanos
+  namespace: {{ include "apps.argocdNamespace" . | quote }}
+  finalizers:
+    {{- include "apps.finalizers" . | nindent 4 }}
+spec:
+  project: {{ .Values.project }}
+  source:
+    repoURL: https://stevehipwell.github.io/helm-charts
+    chart: thanos
+    targetRevision: 1.24.1
+    helm:
+      releaseName: thanos
+      valuesObject:
+        objstoreConfig:
+          create: false
+          name: monitoring-secrets
+          key: objstore.yml
+        serviceMonitor:
+          enabled: true
+        additionalEndpoints:
+          - dnssrv+_grpc._tcp.promstack-thanos-discovery.monitoring.svc.cluster.local
+        compact:
+          enabled: true
+          # Downsampling is on by default.
+          extraArgs:
+            - --retention.resolution-raw=30d
+            - --retention.resolution-5m=180d
+            - --retention.resolution-1h=365d
+          persistence:
+            enabled: true
+            storageClass: nfs-client
+            size: 10Gi
+        storeGateway:
+          persistence:
+            enabled: true
+            storageClass: nfs-client
+            size: 5Gi
+  destination:
+    server: {{ .Values.destination.server }}
+    namespace: monitoring
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+    automated:
+      selfHeal: true
+      prune: true
+{{- end }}
