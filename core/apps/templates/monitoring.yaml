@@ -353,10 +353,18 @@ spec:
   destination:
     server: {{ .Values.destination.server }}
     namespace: monitoring
+  # Charts omit fields the API server defaults into volumeClaimTemplates, which
+  # are immutable anyway.
+  ignoreDifferences:
+    - group: apps
+      kind: StatefulSet
+      jqPathExpressions:
+        - .spec.volumeClaimTemplates
   syncPolicy:
     syncOptions:
       - CreateNamespace=true
       - ServerSideApply=true
+      - RespectIgnoreDifferences=true
     automated:
       selfHeal: true
       prune: true
