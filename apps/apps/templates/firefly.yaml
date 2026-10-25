@@ -214,7 +214,7 @@ spec:
             periodSeconds: 10
     - repoURL: https://charts.bitnami.com/bitnami
       chart: redis
-      targetRevision: 28.3.1
+      targetRevision: 28.3.9
       helm:
         releaseName: redis
         valuesObject:
@@ -245,7 +245,7 @@ spec:
               tag: 12-debian-12-r45
     - repoURL: https://firefly-iii.github.io/kubernetes/
       chart: importer
-      targetRevision: 1.6.0
+      targetRevision: 1.6.1
       helm:
         releaseName: importer
         valuesObject:
