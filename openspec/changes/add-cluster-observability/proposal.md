@@ -44,7 +44,7 @@ None. New charts follow the existing `dependency-updates` rules.
 
 ## Impact
 
-- Added: `core/apps/templates/{promstack,thanos,loki,alloy}.yaml`,
+- Added: `core/apps/templates/monitoring.yaml` (one Application, all charts),
   `infisical-secrets/monitoring/`, a k3s config drop-in in `ansible/`.
 - Removed: `promstack/`, the `promstack` task in `Taskfile.yml`.
 - Storage: about 16Gi per Longhorn replica (Prometheus 10Gi, Loki 5Gi,

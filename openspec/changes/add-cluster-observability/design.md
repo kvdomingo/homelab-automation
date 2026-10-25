@@ -34,11 +34,12 @@
 ### Layout
 
 ```text
-core/apps/templates/
-  promstack.yaml   kube-prometheus-stack + infisical-secrets/monitoring
-  thanos.yaml      stevehipwell/thanos (query, storegateway, compactor)
-  loki.yaml        grafana/loki (SingleBinary)
-  alloy.yaml       grafana/alloy x2: alloy-logs (DaemonSet), alloy-events (Deployment, 1 replica)
+core/apps/templates/monitoring.yaml   one Application, sources:
+  infisical-secrets/monitoring
+  kube-prometheus-stack
+  stevehipwell/thanos (query, storegateway, compactor)
+  grafana/loki (SingleBinary)
+  grafana/alloy x2: alloy-logs (DaemonSet), alloy-events (Deployment, 1 replica)
 infisical-secrets/monitoring/secret.yaml
 ansible/expose-k3s-metrics.yml
 ```
@@ -48,7 +49,7 @@ All in namespace `monitoring`, project `core-prod`, Helm-repo sources in
 "Application Helm-repo chart" manager tracks them. No new Renovate config.
 
 - **ArgoCD, not helmfile.** Everything else in `core/` is ArgoCD-managed;
-  helmfile was a manual step that drifted. `promstack.yaml` uses
+  helmfile was a manual step that drifted. The `monitoring` app uses
   `ServerSideApply=true`: the kube-prometheus-stack CRDs exceed the
   client-side annotation limit. SSA also adopts the leftover CRDs.
 - **Operator webhook certs from cert-manager**
@@ -182,8 +183,8 @@ from the helmfile lists in `AGENTS.md`.
 
 1. Run `expose-k3s-metrics.yml`; check the ports answer on each node.
 2. Create the Infisical project, healthchecks.io check, and Versity buckets.
-3. Merge the ArgoCD apps. Sync order doesn't matter: Thanos Query and Grafana
-   retry until their backends exist.
+3. Merge the `monitoring` app. Sync order doesn't matter: Thanos Query and
+   Grafana retry until their backends exist.
 4. Soak 24h; disable default rules that don't fit k3s.
 5. Remove `promstack/`.
 

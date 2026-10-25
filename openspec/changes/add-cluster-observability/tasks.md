@@ -47,8 +47,8 @@
 
 ## 4. kube-prometheus-stack
 
-- [x] 4.1 Add `core/apps/templates/promstack.yaml` (wrapped in
-      `disablePromstack`, sources: `infisical-secrets/monitoring` +
+- [x] 4.1 Add `core/apps/templates/monitoring.yaml` (wrapped in
+      `disableMonitoring`, sources: `infisical-secrets/monitoring` +
       `prometheus-community/kube-prometheus-stack` pinned,
       `ServerSideApply=true`, `CreateNamespace=true`) with the values from
       design.md: Prometheus (30s, 14d/8GB, Longhorn 10Gi, selectors open, Thanos
@@ -62,9 +62,9 @@
       (`ThanosSidecarUploadFailing`, `ThanosCompactHalted`) via
       `additionalPrometheusRulesMap`; verify it appears in
       `kubectl get prometheusrule -n monitoring` after sync
-- [ ] 4.3 After sync, verify: app Healthy/Synced; every target in Prometheus is
-      up; Grafana login works with Infisical credentials; deleting the Grafana
-      pod keeps datasources and dashboards
+- [ ] 4.3 After sync, verify: `monitoring` app Healthy/Synced; every target in
+      Prometheus is up; Grafana login works with Infisical credentials; deleting
+      the Grafana pod keeps datasources and dashboards
 - [ ] 4.4 Verify alert delivery: Discord receives a test alert
       (`amtool alert add` or a temporary rule) firing and resolved, and the
       healthchecks.io check stays green from `Watchdog`; `Watchdog` does not
@@ -72,7 +72,7 @@
 
 ## 5. Thanos
 
-- [x] 5.1 Add `core/apps/templates/thanos.yaml` (`stevehipwell/thanos` pinned)
+- [x] 5.1 Add a `stevehipwell/thanos` source (pinned) to the `monitoring` app
       with Query, Store Gateway and Compactor (downsampling on by default, raw
       30d / 5m 180d / 1h 365d, `nfs-client` scratch PVCs), objstore from
       `monitoring-secrets`; verify `helm template core/apps` renders it
@@ -84,11 +84,11 @@
 
 ## 6. Logs
 
-- [x] 6.1 Add `core/apps/templates/loki.yaml` (`grafana/loki` pinned,
-      SingleBinary per design.md, Longhorn 5Gi, S3 via env, retention 720h,
+- [x] 6.1 Add a `grafana/loki` source (pinned) to the `monitoring` app
+      (SingleBinary per design.md, Longhorn 5Gi, S3 via env, retention 720h,
       caches/gateway/canary/minio off, auto-reload annotation); verify
       `helm template core/apps` renders it
-- [x] 6.2 Add `core/apps/templates/alloy.yaml` with two `grafana/alloy`
+- [x] 6.2 Add two `grafana/alloy` sources to the `monitoring` app as
       releases: `alloy-logs` DaemonSet tailing `/var/log/pods` with
       namespace/pod/container/node labels, and `alloy-events` single-replica
       Deployment with `loki.source.kubernetes_events`; verify

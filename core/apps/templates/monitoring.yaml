@@ -1,0 +1,363 @@
+{{- if not .Values.disableMonitoring }}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: monitoring
+  namespace: {{ include "apps.argocdNamespace" . | quote }}
+  finalizers:
+    {{- include "apps.finalizers" . | nindent 4 }}
+spec:
+  project: {{ .Values.project }}
+  sources:
+    - repoURL: https://github.com/kvdomingo/homelab-automation.git
+      targetRevision: main
+      path: infisical-secrets/monitoring
+    - repoURL: https://prometheus-community.github.io/helm-charts
+      chart: kube-prometheus-stack
+      targetRevision: 92.13.1
+      helm:
+        releaseName: kube-prometheus-stack
+        valuesObject:
+          fullnameOverride: promstack
+          additionalPrometheusRulesMap:
+            object-storage:
+              groups:
+                - name: object-storage
+                  rules:
+                    - alert: ThanosSidecarUploadFailing
+                      expr: increase(thanos_objstore_bucket_operation_failures_total{job="promstack-thanos-discovery"}[15m]) > 0
+                      for: 15m
+                      labels:
+                        severity: warning
+                      annotations:
+                        summary: Thanos sidecar is failing to upload blocks to object storage.
+                    - alert: ThanosCompactHalted
+                      expr: thanos_compact_halted == 1
+                      for: 5m
+                      labels:
+                        severity: warning
+                      annotations:
+                        summary: Thanos compactor has halted; retention and downsampling are stopped.
+          prometheusOperator:
+            admissionWebhooks:
+              certManager:
+                enabled: true
+          prometheus:
+            thanosService:
+              enabled: true
+            thanosServiceMonitor:
+              enabled: true
+            prometheusSpec:
+              scrapeInterval: 30s
+              retention: 14d
+              retentionSize: 8GB
+              ruleSelectorNilUsesHelmValues: false
+              serviceMonitorSelectorNilUsesHelmValues: false
+              podMonitorSelectorNilUsesHelmValues: false
+              probeSelectorNilUsesHelmValues: false
+              scrapeConfigSelectorNilUsesHelmValues: false
+              # No limit: OOM loops during compaction are worse than overcommit.
+              resources:
+                requests:
+                  cpu: 200m
+                  memory: 1Gi
+              storageSpec:
+                volumeClaimTemplate:
+                  spec:
+                    storageClassName: longhorn
+                    accessModes: [ ReadWriteOnce ]
+                    resources:
+                      requests:
+                        storage: 10Gi
+              thanos:
+                objectStorageConfig:
+                  existingSecret:
+                    name: monitoring-secrets
+                    key: objstore.yml
+          alertmanager:
+            alertmanagerSpec:
+              secrets:
+                - monitoring-secrets
+              storage:
+                volumeClaimTemplate:
+                  spec:
+                    storageClassName: longhorn
+                    accessModes: [ ReadWriteOnce ]
+                    resources:
+                      requests:
+                        storage: 1Gi
+            config:
+              route:
+                receiver: discord
+                routes:
+                  - receiver: healthchecks
+                    matchers:
+                      - alertname = "Watchdog"
+                    group_wait: 0s
+                    group_interval: 1m
+                    repeat_interval: 1m
+                  - receiver: "null"
+                    matchers:
+                      - alertname = "InfoInhibitor"
+              receivers:
+                - name: "null"
+                - name: discord
+                  discord_configs:
+                    - webhook_url_file: /etc/alertmanager/secrets/monitoring-secrets/DISCORD_WEBHOOK_URL
+                      send_resolved: true
+                - name: healthchecks
+                  webhook_configs:
+                    - url_file: /etc/alertmanager/secrets/monitoring-secrets/HEALTHCHECKS_PING_URL
+                      send_resolved: false
+          grafana:
+            annotations:
+              secrets.infisical.com/auto-reload: "true"
+            admin:
+              existingSecret: monitoring-secrets
+              userKey: GRAFANA_ADMIN_USER
+              passwordKey: GRAFANA_ADMIN_PASSWORD
+            ingress:
+              enabled: true
+              ingressClassName: traefik
+              annotations:
+                gethomepage.dev/enabled: "true"
+                gethomepage.dev/name: "Grafana"
+                gethomepage.dev/group: "Monitoring"
+                gethomepage.dev/icon: "grafana.svg"
+                gethomepage.dev/ping: "https://grafana.lab.kvd.studio/api/health"
+              hosts:
+                - grafana.lab.kvd.studio
+            sidecar:
+              datasources:
+                url: http://thanos-query.monitoring:10902
+            additionalDataSources:
+              - name: Loki
+                type: loki
+                uid: loki
+                access: proxy
+                url: http://loki.monitoring:3100
+          kubeEtcd:
+            endpoints: &controlPlane
+              - 10.10.10.110
+              - 10.10.10.111
+              - 10.10.10.112
+              - 10.10.10.151
+          kubeControllerManager:
+            endpoints: *controlPlane
+          kubeScheduler:
+            endpoints: *controlPlane
+          # k3s runs kube-proxy in-process, so there are no pods to discover.
+          kubeProxy:
+            endpoints:
+              - 10.10.10.110
+              - 10.10.10.111
+              - 10.10.10.112
+              - 10.10.10.151
+              - 10.10.10.152
+              - 10.10.10.153
+              - 10.10.10.154
+    - repoURL: https://stevehipwell.github.io/helm-charts
+      chart: thanos
+      targetRevision: 1.24.1
+      helm:
+        releaseName: thanos
+        valuesObject:
+          objstoreConfig:
+            create: false
+            name: monitoring-secrets
+            key: objstore.yml
+          serviceMonitor:
+            enabled: true
+          additionalEndpoints:
+            - dnssrv+_grpc._tcp.promstack-thanos-discovery.monitoring.svc.cluster.local
+          compact:
+            enabled: true
+            # Downsampling is on by default.
+            extraArgs:
+              - --retention.resolution-raw=30d
+              - --retention.resolution-5m=180d
+              - --retention.resolution-1h=365d
+            persistence:
+              enabled: true
+              storageClass: nfs-client
+              size: 10Gi
+          storeGateway:
+            persistence:
+              enabled: true
+              storageClass: nfs-client
+              size: 5Gi
+    - repoURL: https://grafana.github.io/helm-charts
+      chart: loki
+      targetRevision: 7.5.0
+      helm:
+        releaseName: loki
+        valuesObject:
+          deploymentMode: SingleBinary
+          loki:
+            auth_enabled: false
+            commonConfig:
+              replication_factor: 1
+            schemaConfig:
+              configs:
+                - from: "2026-10-01"
+                  store: tsdb
+                  object_store: s3
+                  schema: v13
+                  index:
+                    prefix: index_
+                    period: 24h
+            storage:
+              type: s3
+              bucketNames:
+                chunks: loki
+                ruler: loki
+              s3:
+                endpoint: 10.10.10.100:7070
+                accessKeyId: ${S3_ACCESS_KEY_ID}
+                secretAccessKey: ${S3_SECRET_ACCESS_KEY}
+                s3ForcePathStyle: true
+                insecure: true
+            limits_config:
+              retention_period: 720h
+            compactor:
+              retention_enabled: true
+              delete_request_store: s3
+          singleBinary:
+            replicas: 1
+            annotations:
+              secrets.infisical.com/auto-reload: "true"
+            extraArgs:
+              - -config.expand-env=true
+            extraEnvFrom:
+              - secretRef:
+                  name: monitoring-secrets
+            persistence:
+              storageClass: longhorn
+              size: 5Gi
+          read:
+            replicas: 0
+          write:
+            replicas: 0
+          backend:
+            replicas: 0
+          gateway:
+            enabled: false
+          chunksCache:
+            enabled: false
+          resultsCache:
+            enabled: false
+          lokiCanary:
+            enabled: false
+          test:
+            enabled: false
+          minio:
+            enabled: false
+    - repoURL: https://grafana.github.io/helm-charts
+      chart: alloy
+      targetRevision: 1.14.3
+      helm:
+        releaseName: alloy-logs
+        valuesObject:
+          controller:
+            type: daemonset
+            podAnnotations:
+              secrets.infisical.com/auto-reload: "true"
+          alloy:
+            mounts:
+              varlog: true
+            extraEnv:
+              - name: NODE_NAME
+                valueFrom:
+                  fieldRef:
+                    fieldPath: spec.nodeName
+            configMap:
+              content: |
+                discovery.kubernetes "pods" {
+                  role = "pod"
+                  selectors {
+                    role  = "pod"
+                    field = "spec.nodeName=" + sys.env("NODE_NAME")
+                  }
+                }
+
+                discovery.relabel "pods" {
+                  targets = discovery.kubernetes.pods.targets
+                  rule {
+                    source_labels = ["__meta_kubernetes_namespace"]
+                    target_label  = "namespace"
+                  }
+                  rule {
+                    source_labels = ["__meta_kubernetes_pod_name"]
+                    target_label  = "pod"
+                  }
+                  rule {
+                    source_labels = ["__meta_kubernetes_pod_container_name"]
+                    target_label  = "container"
+                  }
+                  rule {
+                    source_labels = ["__meta_kubernetes_pod_node_name"]
+                    target_label  = "node"
+                  }
+                  rule {
+                    source_labels = ["__meta_kubernetes_pod_uid", "__meta_kubernetes_pod_container_name"]
+                    separator     = "/"
+                    target_label  = "__path__"
+                    replacement   = "/var/log/pods/*$1/*.log"
+                  }
+                }
+
+                local.file_match "pods" {
+                  path_targets = discovery.relabel.pods.output
+                }
+
+                loki.source.file "pods" {
+                  targets    = local.file_match.pods.targets
+                  forward_to = [loki.process.pods.receiver]
+                }
+
+                loki.process "pods" {
+                  stage.cri {}
+                  forward_to = [loki.write.default.receiver]
+                }
+
+                loki.write "default" {
+                  endpoint {
+                    url = "http://loki.monitoring:3100/loki/api/v1/push"
+                  }
+                }
+    - repoURL: https://grafana.github.io/helm-charts
+      chart: alloy
+      targetRevision: 1.14.3
+      helm:
+        releaseName: alloy-events
+        valuesObject:
+          # One replica: a DaemonSet would ship every event once per node.
+          controller:
+            type: deployment
+            replicas: 1
+            podAnnotations:
+              secrets.infisical.com/auto-reload: "true"
+          alloy:
+            configMap:
+              content: |
+                loki.source.kubernetes_events "events" {
+                  log_format = "logfmt"
+                  forward_to = [loki.write.default.receiver]
+                }
+
+                loki.write "default" {
+                  endpoint {
+                    url = "http://loki.monitoring:3100/loki/api/v1/push"
+                  }
+                }
+  destination:
+    server: {{ .Values.destination.server }}
+    namespace: monitoring
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
+    automated:
+      selfHeal: true
+      prune: true
+{{- end }}
