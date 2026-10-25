@@ -11,7 +11,7 @@
 
 - [x] 2.1 Confirm with the user that the `test` bucket can be discarded
 - [x] 2.2 Delete `apps/apps/templates/garage.yaml` and `garage/`; verify `helm template apps/apps | grep -i garage` prints nothing
-- [ ] 2.3 After the push to `main` syncs, verify `kubectl get ns garage` returns NotFound; delete any leftover `garage` PVCs/PVs
+- [x] 2.3 After the push to `main` syncs, verify `kubectl get ns garage` returns NotFound; delete any leftover `garage` PVCs/PVs
 - [x] 2.4 Delete the `garage` Infisical project and the `zephyr3-wsl` key's local config
 
 ## 3. Documentation
