@@ -39,6 +39,9 @@ spec:
             hosts:
               - 'superset.{{ .Values.ingress.baseDomain }}'
           supersetNode:
+            resources:
+              requests:
+                cpu: 100m
             autoscaling:
               enabled: true
               minReplicas: 2
@@ -54,6 +57,9 @@ spec:
               db_user: superset
               db_name: superset
           supersetWorker:
+            resources:
+              requests:
+                cpu: 250m
             autoscaling:
               enabled: true
               minReplicas: 2
