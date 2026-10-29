@@ -25,10 +25,11 @@ Never apply changes by hand (`kubectl apply`, `helm upgrade`, `scp`). Push to
 
 ## Layout
 
-- `apps/apps/` and `core/apps/`: app-of-apps Helm charts. One ArgoCD
-  `Application` per file in `templates/`, each wrapped in
-  `{{- if not .Values.disable<Name> }}`. `apps/application.yaml` and
-  `core/application.yaml` are the roots (applied once at bootstrap).
+- `apps/apps/`, `apps-dev/apps/` and `core/apps/`: app-of-apps Helm charts.
+  One ArgoCD `Application` per file in `templates/`, each wrapped in
+  `{{- if not .Values.disable<Name> }}`. `apps/application.yaml`,
+  `apps-dev/application.yaml` and `core/application.yaml` are the roots
+  (applied once at bootstrap). `apps-dev` holds non-production environments.
 - `<app>/`: one directory per in-house Helm chart (`Chart.yaml`, `values.yaml`,
   `templates/`), referenced by `path:` from an `Application`.
 - Vendor charts are referenced directly in the `Application` (`sources:` with an
@@ -36,7 +37,7 @@ Never apply changes by hand (`kubectl apply`, `helm upgrade`, `scp`). Push to
   `apps/apps/templates/litellm.yaml`.
 - `infisical-secrets/<app>/`: `InfisicalSecret` CRs that materialize
   `<app>-secrets` in the app namespace. Added as an extra `sources:` entry.
-- `apps/apps/templates/<app>-previews.yaml`: per-PR preview environments for
+- `apps-dev/apps/templates/<app>-previews.yaml`: per-PR preview environments for
   an app repo (piloted on primerdriver). An ApplicationSet with a
   `pullRequest` generator deploys the chart with the PR head's
   `sha-<7>` image to `<app>-pr-<n>.lab.kvd.studio`, in a shared

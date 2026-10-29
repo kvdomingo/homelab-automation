@@ -79,13 +79,18 @@ test (e.g. a primer-design request) worth running.
 
 ### Previews: one ApplicationSet, one shared namespace
 
-`apps/apps/templates/primerdriver-previews.yaml`, wrapped in
+`apps-dev/apps/templates/primerdriver-previews.yaml`, wrapped in
 `disablePrimerDriverPreviews`, defines an ApplicationSet with:
+
+The ApplicationSet lives in `apps-dev`, a separate app-of-apps with its own
+`apps-dev` AppProject, so non-production Applications stay out of `apps-prod`.
+Its root `apps-dev/application.yaml` is applied once by hand, like the other
+roots.
 
 - `goTemplate: true` and a `pullRequest.github` generator on
   `kvdomingo/primerdriver`, `requeueAfterSeconds: 60`, `appSecretName` pointing
   at the GitHub App credentials.
-- Application name `primerdriver-pr-{{ .number }}` in project `apps-prod`,
+- Application name `primerdriver-pr-{{ .number }}` in project `apps-dev`,
   source `primerdriver/` at homelab `main`, destination namespace
   `primerdriver-preview` (`CreateNamespace=true`), automated sync with prune and
   selfHeal, and the `apps.finalizers` finalizer so deletion cascades.

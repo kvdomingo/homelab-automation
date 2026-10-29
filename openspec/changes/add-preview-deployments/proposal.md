@@ -46,7 +46,7 @@ it, and lets a healthy preview gate Renovate's auto-merges in the app repo.
 
 - `primerdriver/` chart: Deployment replaced by a Rollout, new preview Service,
   HPA target updated.
-- New `apps/apps/templates/primerdriver-previews.yaml` (ApplicationSet).
+- New `apps-dev/apps/templates/primerdriver-previews.yaml` (ApplicationSet).
 - `argocd/values.yaml`: GitHub notifier, template, and trigger; Infisical owns
   the notifications secret. Needs a manual `helmfile apply` after merge.
 - New `infisical-secrets/argocd/` and an Application that syncs it.

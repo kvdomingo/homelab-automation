@@ -68,7 +68,7 @@
 
 ## 5. Preview ApplicationSet
 
-- [x] 5.1 Add `apps/apps/templates/primerdriver-previews.yaml` (wrapped in
+- [x] 5.1 Add `apps-dev/apps/templates/primerdriver-previews.yaml` (wrapped in
       `disablePrimerDriverPreviews`): `goTemplate`, `pullRequest.github`
       generator with `requeueAfterSeconds: 60` and
       `appSecretName: github-app-primerdriver`, the Application template,
@@ -88,6 +88,9 @@
       head gets `failure` (not a stale `success`) and production is unaffected.
 - [ ] 5.5 Close the test PR. Verify within 5 minutes the Application and all its
       resources are gone from `primerdriver-preview`.
+- [ ] 5.6 (Manual, bootstrap) After merge, `kubectl apply -f
+      apps-dev/application.yaml`. Verify `apps-dev` is Synced/Healthy, owns
+      `primerdriver-previews`, and `apps-prod` no longer lists it.
 
 ## 6. Merge gate and Renovate
 
