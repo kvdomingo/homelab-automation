@@ -62,7 +62,7 @@
       (`ThanosSidecarUploadFailing`, `ThanosCompactHalted`) via
       `additionalPrometheusRulesMap`; verify it appears in
       `kubectl get prometheusrule -n monitoring` after sync
-- [ ] 4.3 After sync, verify: `monitoring` app Healthy/Synced; every target in
+- [x] 4.3 After sync, verify: `monitoring` app Healthy/Synced; every target in
       Prometheus is up; Grafana login works with Infisical credentials; deleting
       the Grafana pod keeps datasources and dashboards
 - [x] 4.4 Verify alert delivery: Discord receives a test alert
@@ -106,7 +106,7 @@
       (`count by (__name__)({job="kube-scheduler"})` vs
       `{job="kube-controller-manager"}`); if duplicated, add `metricRelabelings`
       per design.md and verify counts drop
-- [ ] 7.3 Check Longhorn usage per node; verify no node is below its reserve and
+- [x] 7.3 Check Longhorn usage per node; verify no node is below its reserve and
       `NodeFilesystemAlmostOutOfSpace` isn't firing
 - [x] 7.4 Delete `promstack/` and the `promstack` task in `Taskfile.yml`; remove
       `promstack/` from both helmfile lists in `AGENTS.md`; verify
