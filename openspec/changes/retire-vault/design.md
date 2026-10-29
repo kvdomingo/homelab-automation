@@ -6,7 +6,7 @@
   charts and the external `banyuhay`, `discai`, `apod`, `hd2-app` and
   `delphitools` charts (each ships an `InfisicalSecret`). No `<path:`
   placeholder or `avp.kubernetes.io` annotation remains, except in the
-  orphaned `plausible/` chart.
+  orphaned `plausible/`, `metabase/` and `maybe/` charts.
 - Eleven Applications still name `plugin: argocd-vault-plugin-helm`. The
   plugin runs `helm template $ARGOCD_APP_NAME -n $ARGOCD_APP_NAMESPACE`
   with `$HELM_VALUES` and pipes the output through AVP, which now changes
@@ -49,8 +49,8 @@ app fail with "plugin not found". So:
 
 1. Push the Application rewrites. Wait until all eleven are Synced and
    Healthy on native sources.
-2. Push the removal of `vault.yaml`, the AVP config in `argocd/`,
-   `plausible/` and the doc update. Run `helmfile apply` in `argocd/`.
+2. Push the removal of `vault.yaml`, the AVP config in `argocd/`, the
+   orphaned charts and the doc update. Run `helmfile apply` in `argocd/`.
 
 ### Drop the `manifests` release outright
 
@@ -59,11 +59,11 @@ Removing a release from `helmfile.yaml` does not uninstall it. Run
 `helmfile apply` that is already required. This is simpler than a
 two-commit `installed: false` round trip.
 
-### Delete `plausible/` instead of porting it
+### Delete orphaned charts instead of porting them
 
-No Application references it, so porting its secret to Infisical would be
-work on dead code. If Plausible comes back, it gets a new chart through the
-normal "Adding an app" flow.
+No Application references `plausible/`, `metabase/` or `maybe/`, so
+porting their secrets to Infisical would be work on dead code. An app that
+comes back gets a new chart through the normal "Adding an app" flow.
 
 ## Risks / Trade-offs
 
@@ -82,8 +82,8 @@ normal "Adding an app" flow.
 1. Rewrite the eleven Applications, push, and confirm all Synced and
    Healthy.
 2. Audit Vault KV against Infisical (manual, read-only).
-3. Delete `vault.yaml`, the AVP config, `argocd/manifests/` and
-   `plausible/`, update `AGENTS.md`, and push. Run `helmfile apply` and
+3. Delete `vault.yaml`, the AVP config, `argocd/manifests/` and the
+   orphaned charts, update `AGENTS.md`, and push. Run `helmfile apply` and
    `helm -n argocd uninstall manifests` in `argocd/`.
 4. After the user confirms, delete the `vault` PVC and namespace.
 

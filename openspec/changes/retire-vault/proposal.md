@@ -22,8 +22,9 @@ unpinned binaries, and a Vault token kept in a gitignored, hand-applied
 - **BREAKING** Remove the `vault` Application from `core/apps/` and tear down
   the `vault` namespace, including its data PVC. Secrets held only in Vault
   are lost.
-- Delete the orphaned `plausible/` chart. No Application references it, and
-  its only secret template is an AVP placeholder.
+- Delete the orphaned `plausible/`, `metabase/` and `maybe/` charts. No
+  Application references them, and their secret templates are AVP
+  placeholders.
 - Update `AGENTS.md`: Infisical is the only secrets mechanism.
 - Keep `secrets-store-csi-driver`. Its token request is for the `infisical`
   audience, not Vault.
@@ -50,7 +51,7 @@ None.
 - `core/apps/templates/vault.yaml` (deleted).
 - `argocd/values.yaml`, `argocd/helmfile.yaml`, `argocd/manifests/`
   (deleted). Needs a manual `helmfile apply` in `argocd/`.
-- `plausible/` (deleted), `AGENTS.md`.
+- `plausible/`, `metabase/`, `maybe/` (deleted), `AGENTS.md`.
 - Cluster: `vault` namespace and PVC, plus the `argocd` `cmp-plugin` and
   `vault-configuration` objects, which helmfile does not prune once their
   release is gone.
