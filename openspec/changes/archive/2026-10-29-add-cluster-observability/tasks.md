@@ -99,10 +99,10 @@
 
 ## 7. Soak and cleanup
 
-- [ ] 7.1 After 24h healthy, list firing alerts; fix or disable
+- [x] 7.1 After 24h healthy, list firing alerts; fix or disable
       (`defaultRules.disabled`) each one other than `Watchdog`/`InfoInhibitor`;
       verify Alertmanager shows only those two
-- [ ] 7.2 Check duplicate control-plane series
+- [x] 7.2 Check duplicate control-plane series
       (`count by (__name__)({job="kube-scheduler"})` vs
       `{job="kube-controller-manager"}`); if duplicated, add `metricRelabelings`
       per design.md and verify counts drop
