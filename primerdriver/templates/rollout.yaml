@@ -1,5 +1,5 @@
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
 metadata:
   name: {{ include "primerdriver.fullname" . }}
   labels:
@@ -12,6 +12,14 @@ spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
+  minReadySeconds: {{ .Values.rollout.minReadySeconds }}
+  progressDeadlineSeconds: {{ .Values.rollout.progressDeadlineSeconds }}
+  progressDeadlineAbort: {{ .Values.rollout.progressDeadlineAbort }}
+  strategy:
+    blueGreen:
+      activeService: {{ include "primerdriver.fullname" . }}
+      previewService: {{ include "primerdriver.fullname" . }}-preview
+      scaleDownDelaySeconds: {{ .Values.rollout.scaleDownDelaySeconds }}
   selector:
     matchLabels:
       {{- include "primerdriver.selectorLabels" . | nindent 6 }}

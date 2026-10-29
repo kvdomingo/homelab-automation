@@ -16,6 +16,7 @@ data:
         "kvdomingo/banyuhay",
         "kvdomingo/hannibot",
         "kvdomingo/homelab-automation",
+        "kvdomingo/primerdriver",
       ],
       "separateMinorPatch": true,
       // Not under "force": forced packageRules replace each repo's own rules.

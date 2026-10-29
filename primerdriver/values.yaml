@@ -103,6 +103,14 @@ readinessProbe:
     path: /api/health
     port: http
 
+# Blue-green promotion: the new ReplicaSet takes traffic once every pod has been
+# ready for minReadySeconds.
+rollout:
+  minReadySeconds: 30
+  progressDeadlineSeconds: 300
+  progressDeadlineAbort: true
+  scaleDownDelaySeconds: 600
+
 #This section is for setting up autoscaling more information can be found here: https://kubernetes.io/docs/concepts/workloads/autoscaling/
 autoscaling:
   enabled: false

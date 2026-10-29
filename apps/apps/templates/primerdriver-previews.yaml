@@ -1,0 +1,66 @@
+{{- if not .Values.disablePrimerDriverPreviews }}
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: primerdriver-previews
+  namespace: {{ include "apps.argocdNamespace" . | quote }}
+spec:
+  goTemplate: true
+  generators:
+    - pullRequest:
+        github:
+          owner: kvdomingo
+          repo: primerdriver
+          appSecretName: github-app-primerdriver
+        requeueAfterSeconds: 60
+  template:
+    metadata:
+      name: '{{`primerdriver-pr-{{ .number }}`}}'
+      annotations:
+        preview.kvd.studio/repo-url: https://github.com/kvdomingo/primerdriver
+        preview.kvd.studio/head-sha: '{{`{{ .head_sha }}`}}'
+        preview.kvd.studio/image-tag: '{{`sha-{{ trunc 7 .head_sha }}`}}'
+        notifications.argoproj.io/subscribe.on-preview-status.github: ""
+      finalizers:
+        {{- include "apps.finalizers" . | nindent 8 }}
+    spec:
+      project: {{ .Values.project }}
+      source:
+        repoURL: https://github.com/kvdomingo/homelab-automation.git
+        targetRevision: main
+        path: primerdriver
+        helm:
+          valuesObject:
+            image:
+              # head_short_sha is 8 characters; CI tags 7.
+              tag: '{{`sha-{{ trunc 7 .head_sha }}`}}'
+            ingress:
+              # Maps merge, so each annotation must be nulled to drop it.
+              annotations:
+                gethomepage.dev/enabled: null
+                gethomepage.dev/name: null
+                gethomepage.dev/group: null
+                gethomepage.dev/icon: null
+                gethomepage.dev/ping: null
+              hosts:
+                - host: '{{`primerdriver-pr-{{ .number }}`}}.{{ .Values.ingress.baseDomain }}'
+                  paths:
+                    - path: /
+                      pathType: Prefix
+            # A preview often syncs before CI has pushed its image, so it must
+            # not abort while waiting for the pull.
+            rollout:
+              progressDeadlineAbort: false
+              progressDeadlineSeconds: 900
+              scaleDownDelaySeconds: 0
+      destination:
+        server: {{ .Values.destination.server }}
+        # Shared: ArgoCD never deletes a namespace it created, so one per PR would leak.
+        namespace: primerdriver-preview
+      syncPolicy:
+        syncOptions:
+          - CreateNamespace=true
+        automated:
+          selfHeal: true
+          prune: true
+{{- end }}

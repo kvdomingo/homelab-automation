@@ -3595,7 +3595,8 @@ notifications:
   secret:
     # -- Whether helm chart creates notifications controller secret
     ## If true, will create a secret with the name below. Otherwise, will assume existence of a secret with that name.
-    create: true
+    # Created by infisical-secrets/argocd.
+    create: false
 
     # -- notifications controller Secret name
     name: "argocd-notifications-secret"
@@ -3665,7 +3666,11 @@ notifications:
   # -- Configures notification services such as slack, email or custom webhook
   # @default -- See [values.yaml]
   ## For more information: https://argo-cd.readthedocs.io/en/stable/operator-manual/notifications/services/overview/
-  notifiers: { }
+  notifiers:
+    service.github: |
+      appID: $github-appID
+      installationID: $github-installationID
+      privateKey: $github-privateKey
   # service.slack: |
   #   token: $slack-token
 
@@ -3817,7 +3822,33 @@ notifications:
 
   # -- The notification template is used to generate the notification content
   ## For more information: https://argo-cd.readthedocs.io/en/stable/operator-manual/notifications/templates/
-  templates: { }
+  # The default repoURLPath/revisionPath are the homelab repo and its main
+  # commit, so previews point them at the app repo's PR head instead.
+  templates:
+    template.preview-pending: |
+      github:
+        repoURLPath: '{{ index .app.metadata.annotations "preview.kvd.studio/repo-url" }}'
+        revisionPath: '{{ index .app.metadata.annotations "preview.kvd.studio/head-sha" }}'
+        status:
+          state: pending
+          label: preview/primerdriver
+          targetURL: '{{ .context.argocdUrl }}/applications/argocd/{{ .app.metadata.name }}'
+    template.preview-success: |
+      github:
+        repoURLPath: '{{ index .app.metadata.annotations "preview.kvd.studio/repo-url" }}'
+        revisionPath: '{{ index .app.metadata.annotations "preview.kvd.studio/head-sha" }}'
+        status:
+          state: success
+          label: preview/primerdriver
+          targetURL: 'https://{{ (index .app.spec.source.helm.valuesObject.ingress.hosts 0).host }}'
+    template.preview-failure: |
+      github:
+        repoURLPath: '{{ index .app.metadata.annotations "preview.kvd.studio/repo-url" }}'
+        revisionPath: '{{ index .app.metadata.annotations "preview.kvd.studio/head-sha" }}'
+        status:
+          state: failure
+          label: preview/primerdriver
+          targetURL: '{{ .context.argocdUrl }}/applications/argocd/{{ .app.metadata.name }}'
     # template.app-deployed: |
     #   email:
     #     subject: New version of an application {{.app.metadata.name}} is up and running.
@@ -4034,7 +4065,26 @@ notifications:
 
   # -- The trigger defines the condition when the notification should be sent
   ## For more information: https://argo-cd.readthedocs.io/en/stable/operator-manual/notifications/triggers/
-  triggers: { }
+  # The image-tag check keeps a still-Healthy previous build from marking a
+  # new head commit as success.
+  triggers:
+    trigger.on-preview-status: |
+      - description: Preview is deploying
+        oncePer: app.metadata.annotations["preview.kvd.studio/head-sha"] + ":pending"
+        send: [ preview-pending ]
+        when: app.status.health.status == 'Progressing'
+      - description: Preview is healthy on the PR head
+        oncePer: app.metadata.annotations["preview.kvd.studio/head-sha"] + ":success"
+        send: [ preview-success ]
+        when: >-
+          app.status.health.status == 'Healthy' and app.status.sync.status == 'Synced' and
+          any(app.status.summary.images, {# endsWith ':' + app.metadata.annotations["preview.kvd.studio/image-tag"]})
+      - description: Preview failed on the PR head
+        oncePer: app.metadata.annotations["preview.kvd.studio/head-sha"] + ":failure"
+        send: [ preview-failure ]
+        when: >-
+          app.status.health.status == 'Degraded' and
+          any(app.status.summary.images, {# endsWith ':' + app.metadata.annotations["preview.kvd.studio/image-tag"]})
     # trigger.on-deployed: |
     #   - description: Application is synced and healthy. Triggered once per commit.
     #     oncePer: app.status.sync.revision

@@ -36,6 +36,14 @@ Never apply changes by hand (`kubectl apply`, `helm upgrade`, `scp`). Push to
   `apps/apps/templates/litellm.yaml`.
 - `infisical-secrets/<app>/`: `InfisicalSecret` CRs that materialize
   `<app>-secrets` in the app namespace. Added as an extra `sources:` entry.
+- `apps/apps/templates/<app>-previews.yaml`: per-PR preview environments for
+  an app repo (piloted on primerdriver). An ApplicationSet with a
+  `pullRequest` generator deploys the chart with the PR head's
+  `sha-<7>` image to `<app>-pr-<n>.lab.kvd.studio`, in a shared
+  `<app>-preview` namespace, off Homepage. ArgoCD Notifications posts the
+  `preview/<app>` commit status (`argocd/values.yaml`), which is a required
+  check on the app repo's `main`. The production workload is a blue-green
+  Argo `Rollout`.
 - `argocd/`, `infisical/`, `core-services/`: bootstrap components installed
   with `helmfile apply`.
 - `ansible/`: node provisioning. Inventory is in `ansible/inventory/hosts.ini`.
