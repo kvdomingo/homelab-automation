@@ -54,13 +54,13 @@
       `kubectl argo rollouts get rollout primerdriver -n primerdriver` shows a
       promoted stable ReplicaSet, and
       `https://primerdriver.kvd.studio/api/health` answers.
-- [ ] 3.5 Verify the production gate: on the next tag bump, watch two
+- [x] 3.5 Verify the production gate: on the next tag bump, watch two
       ReplicaSets run, the switch happen after ~30s of readiness, and the old
       ReplicaSet scale down after 10 minutes.
 
 ## 4. primerdriver CI (kvdomingo/primerdriver repo)
 
-- [ ] 4.1 In `.github/workflows/build-and-push.yml`, add the `pull_request`
+- [x] 4.1 In `.github/workflows/build-and-push.yml`, add the `pull_request`
       trigger, set `DOCKER_METADATA_PR_HEAD_SHA: "true"`, and change concurrency
       to `build-${{ github.ref }}`. Verify a test PR publishes
       `ghcr.io/kvdomingo/primerdriver:sha-<first 7 of head sha>` and a push to
@@ -94,14 +94,14 @@
 
 ## 6. Merge gate and Renovate
 
-- [ ] 6.1 (Manual, GitHub) Add branch protection on primerdriver `main`
+- [x] 6.1 (Manual, GitHub) Add branch protection on primerdriver `main`
       requiring the `preview/primerdriver` status. Verify a PR with a pending
       preview shows "Merging is blocked".
 - [x] 6.2 Add `kvdomingo/primerdriver` to `repositories` in
       `renovate/templates/configmap.yaml`. Verify `helm template renovate`
       renders it; after the next run, verify Renovate opens primerdriver's
       onboarding PR.
-- [ ] 6.3 (primerdriver repo) Merge the onboarding PR with a `renovate.json`
+- [x] 6.3 (primerdriver repo) Merge the onboarding PR with a `renovate.json`
       that auto-merges minor and patch updates (`automergeType: pr`) and leaves
       majors manual. Verify the next Renovate dependency PR gets a preview and
       merges only after `preview/primerdriver` is `success`.
