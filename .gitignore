@@ -12,6 +12,8 @@ secrets.yaml
 ### Terraform template
 # Local .terraform directories
 terraform/.terraform/*
+.terragrunt-cache/
+.terragrunt-stack/
 
 # .tfstate files
 *.tfstate

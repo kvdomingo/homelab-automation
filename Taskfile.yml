@@ -116,16 +116,16 @@ tasks:
     cmd: kubectl apply -f application.yaml
 
   tf-init:
-    desc: Initialize Terraform
+    desc: Initialize the Terragrunt stack
     dir: terraform
-    cmd: terraform init {{.CLI_ARGS}}
+    cmd: terragrunt stack run init {{ .CLI_ARGS }}
 
   tf-plan:
-    desc: Generate Terraform plan
+    desc: Plan the Terragrunt stack
     dir: terraform
-    cmd: infisical run -- terraform plan -out=.tfplan {{.CLI_ARGS}}
+    cmd: infisical run -- terragrunt stack run plan --out-dir .tfplan {{ .CLI_ARGS }}
 
   tf-apply:
-    desc: Apply Terraform plan
+    desc: Apply the saved Terragrunt stack plans
     dir: terraform
-    cmd: infisical run -- terraform apply .tfplan {{.CLI_ARGS}}
+    cmd: infisical run -- terragrunt stack run apply --out-dir .tfplan {{ .CLI_ARGS }}

@@ -2,16 +2,11 @@ terraform {
   required_providers {
     cloudflare = {
       source  = "cloudflare/cloudflare"
-      version = ">= 4"
+      version = "~> 5.28"
     }
     infisical = {
       source  = "infisical/infisical"
       version = "~> 0.20"
     }
-  }
-
-  backend "gcs" {
-    prefix = "homelab/tfstate"
-    bucket = "my-projects-306716-terraform-backend"
   }
 }
