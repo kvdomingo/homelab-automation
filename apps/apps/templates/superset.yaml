@@ -60,6 +60,14 @@ spec:
             resources:
               requests:
                 cpu: 250m
+            # The chart's default `-A superset...` ping boots all of Superset
+            # (~9 CPU-s per probe), which kept the HPA pinned at max.
+            livenessProbe:
+              exec:
+                command:
+                  - sh
+                  - -c
+                  - celery -b "$REDIS_PROTO://$REDIS_HOST:$REDIS_PORT/$REDIS_CELERY_DB" inspect ping -d celery@$HOSTNAME
             autoscaling:
               enabled: true
               minReplicas: 2

@@ -29,9 +29,6 @@ spec:
             version: v3
           discord:
             enabled: true
-          podDisruptionBudget:
-            enabled: true
-            minAvailable: 2
           service:
             enabled: true
             type: ClusterIP
