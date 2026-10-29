@@ -85,8 +85,8 @@ before the first apply. Renames:
   (`secret` → `tunnel_secret`)
 - `cloudflare_tunnel_route` → `cloudflare_zero_trust_tunnel_cloudflared_route`
 - `cloudflare_tunnel_config` → `cloudflare_zero_trust_tunnel_cloudflared_config`
-  (nested `config {}` blocks become a `config = { ingress = [...],
-  warp_routing = {...} }` object)
+  (nested `config {}` blocks become a `config = { ingress = [...] }` object;
+  5.x dropped `warp_routing`, which Cloudflare now enables on every tunnel)
 - `cloudflare_record` → `cloudflare_dns_record` (`ttl` is required; default
   `1`, automatic)
 - `data "cloudflare_zone"` → `filter = { name = … }`

@@ -1,7 +1,7 @@
 output "dev_tunnel_id" {
-  value = cloudflare_tunnel.dev.id
+  value = cloudflare_zero_trust_tunnel_cloudflared.dev.id
 }
 
 output "lab_tunnel_id" {
-  value = cloudflare_tunnel.lab.id
+  value = cloudflare_zero_trust_tunnel_cloudflared.lab.id
 }

@@ -89,25 +89,25 @@ unit "dns-kvd-studio" {
         hannibot = {
           type    = "CNAME"
           name    = "hannibot"
-          content = "470bf1810574e5e9.vercel-dns-017.com."
+          content = "470bf1810574e5e9.vercel-dns-017.com"
           proxied = false
         }
         betterplaridel = {
           type    = "CNAME"
           name    = "betterplaridel"
-          content = "b94dec802dbb1537.vercel-dns-017.com."
+          content = "b94dec802dbb1537.vercel-dns-017.com"
           proxied = false
         }
         pili_planet_stg = {
           type    = "CNAME"
           name    = "pili-planet-stg"
-          content = "2043495636191cbc.vercel-dns-017.com."
+          content = "2043495636191cbc.vercel-dns-017.com"
           proxied = false
         }
         pili_planet = {
           type    = "CNAME"
           name    = "pili-planet"
-          content = "2043495636191cbc.vercel-dns-017.com."
+          content = "2043495636191cbc.vercel-dns-017.com"
           proxied = false
         }
       },
@@ -151,19 +151,19 @@ unit "dns-storyof-us" {
       _2024_with_daf = {
         type    = "CNAME"
         name    = "2024-with-daf"
-        content = "4cee16db81c20404.vercel-dns-017.com."
+        content = "4cee16db81c20404.vercel-dns-017.com"
         proxied = false
       }
       _2025_with_daf = {
         type    = "CNAME"
         name    = "2025-with-daf"
-        content = "ead1fc91919dd127.vercel-dns-017.com."
+        content = "ead1fc91919dd127.vercel-dns-017.com"
         proxied = false
       }
       _2026_with_daf = {
         type    = "CNAME"
         name    = "2026-with-daf"
-        content = "dd9a53cda5c03946.vercel-dns-017.com."
+        content = "dd9a53cda5c03946.vercel-dns-017.com"
         proxied = false
       }
     }

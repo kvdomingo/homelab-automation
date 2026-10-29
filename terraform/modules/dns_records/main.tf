@@ -2,7 +2,7 @@ terraform {
   required_providers {
     cloudflare = {
       source  = "cloudflare/cloudflare"
-      version = ">= 4"
+      version = "~> 5.28"
     }
     infisical = {
       source  = "infisical/infisical"
@@ -12,16 +12,24 @@ terraform {
 }
 
 data "cloudflare_zone" "default" {
-  name = var.base_domain
+  filter = {
+    name = var.base_domain
+  }
 }
 
-resource "cloudflare_record" "default" {
+resource "cloudflare_dns_record" "default" {
   for_each = var.records
 
   name     = each.value.name
   type     = each.value.type
-  zone_id  = data.cloudflare_zone.default.id
+  zone_id  = data.cloudflare_zone.default.zone_id
   content  = each.value.content
   proxied  = each.value.proxied
   priority = each.value.priority
+  ttl      = each.value.ttl
+}
+
+moved {
+  from = cloudflare_record.default
+  to   = cloudflare_dns_record.default
 }

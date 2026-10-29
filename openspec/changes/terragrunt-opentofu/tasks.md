@@ -61,14 +61,14 @@
 
 ## 6. Cloudflare v5
 
-- [ ] 6.1 Set the module cloudflare constraints to the latest 5.x minor and
+- [x] 6.1 Set the module cloudflare constraints to the latest 5.x minor and
   regenerate both module lock files for `linux_amd64`, `linux_arm64`,
   `darwin_arm64`
-- [ ] 6.2 Rewrite `modules/tunnels` with the v5 tunnel types and add the state
+- [x] 6.2 Rewrite `modules/tunnels` with the v5 tunnel types and add the state
   migration blocks (`moved`, or `removed` + `import`)
-- [ ] 6.3 Rewrite `modules/dns_records` with `cloudflare_dns_record` (`ttl`
+- [x] 6.3 Rewrite `modules/dns_records` with `cloudflare_dns_record` (`ttl`
   default 1) and the v5 `cloudflare_zone` filter; add migration blocks
-- [ ] 6.4 Verify `task tf-plan`: every unit shows only moves or imports, no
+- [x] 6.4 Verify `task tf-plan`: every unit shows only moves or imports, no
   create/replace/destroy, no tunnel replacement, and no deprecation warnings;
   otherwise stop without applying
 
