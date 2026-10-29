@@ -37,17 +37,17 @@
       nothing
 - [x] 3.5 Update `AGENTS.md` so Infisical is the only secrets mechanism;
       verify `grep -n vault-plugin AGENTS.md` returns nothing
-- [ ] 3.6 Run `prek run --all-files`, commit, and land on `main` after
+- [x] 3.6 Run `prek run --all-files`, commit, and land on `main` after
       approval; verify ArgoCD prunes the `vault` Application and all apps
       stay Healthy
 
 ## 4. Cluster cleanup (manual, after approval)
 
-- [ ] 4.1 In `argocd/`, run `helmfile apply` and
+- [x] 4.1 In `argocd/`, run `helmfile apply` and
       `helm -n argocd uninstall manifests`; verify the repo-server pod has
       no `avp` containers and `kubectl -n argocd get cm/cmp-plugin
       secret/vault-configuration` returns NotFound
-- [ ] 4.2 After user confirmation, delete the `vault` PVC and namespace;
+- [x] 4.2 After user confirmation, delete the `vault` PVC and namespace;
       verify `kubectl get ns vault` returns NotFound
 
 ## Workflow follow-up
