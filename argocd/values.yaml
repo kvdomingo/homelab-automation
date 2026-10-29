@@ -4070,17 +4070,19 @@ notifications:
   # Degraded health would otherwise fail the new commit at once. The operation
   # phase carries the PreSync smoke-test result, long before the progress
   # deadline; while it runs the Rollout is untouched, so pending also keys on it.
+  # oncePer includes the operation start so a re-sync of the same head (a chart
+  # change) posts a fresh pending and success instead of stopping at pending.
   triggers:
     trigger.on-preview-status: |
       - description: Preview is deploying
-        oncePer: app.metadata.annotations["preview.kvd.studio/head-sha"] + ":pending"
+        oncePer: app.metadata.annotations["preview.kvd.studio/head-sha"] + ":" + (app.status.operationState.startedAt ?? "") + ":pending"
         send: [ preview-pending ]
         when: >-
           app.status.health.status == 'Progressing' or
           (app.status.operationState.phase == 'Running' and
           app.status.operationState.operation.sync.source.helm.valuesObject.image.tag == app.metadata.annotations["preview.kvd.studio/image-tag"])
       - description: Preview is healthy on the PR head
-        oncePer: app.metadata.annotations["preview.kvd.studio/head-sha"] + ":success"
+        oncePer: app.metadata.annotations["preview.kvd.studio/head-sha"] + ":" + (app.status.operationState.startedAt ?? "") + ":success"
         send: [ preview-success ]
         when: >-
           app.status.health.status == 'Healthy' and app.status.sync.status == 'Synced' and
@@ -4088,7 +4090,7 @@ notifications:
           app.status.operationState.operation.sync.source.helm.valuesObject.image.tag == app.metadata.annotations["preview.kvd.studio/image-tag"] and
           any(app.status.summary.images, {# endsWith ':' + app.metadata.annotations["preview.kvd.studio/image-tag"]})
       - description: Preview failed on the PR head
-        oncePer: app.metadata.annotations["preview.kvd.studio/head-sha"] + ":failure"
+        oncePer: app.metadata.annotations["preview.kvd.studio/head-sha"] + ":" + (app.status.operationState.startedAt ?? "") + ":failure"
         send: [ preview-failure ]
         when: >-
           ((app.status.operationState.phase in ['Failed', 'Error'] or (app.status.operationState.retryCount ?? 0) > 0) and

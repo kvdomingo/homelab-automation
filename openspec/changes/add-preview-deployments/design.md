@@ -103,8 +103,9 @@ roots.
     `null` from custom resources, so the other Homepage annotations stay but
     Homepage skips the Ingress.
   - `rollout.progressDeadlineAbort: false`, `rollout.progressDeadlineSeconds:
-    900`. `scaleDownDelaySeconds` keeps the chart default: `0` means Rollouts
-    never scales the previous ReplicaSet down, so each push would leak a pod.
+    900`, `rollout.scaleDownDelaySeconds: 30`. Not `0`: Rollouts reads that
+    as never scaling the previous ReplicaSet down, so each push would leak a
+    pod. The chart's production 600s would keep each superseded pod 10 minutes.
   - `smokeTest.enabled: true` (see below).
 
 All previews share one namespace because ArgoCD does not delete a namespace it
@@ -136,9 +137,11 @@ trigger `on-preview-status` with three conditions:
 | success | health `Healthy`, sync `Synced`, last operation `Succeeded`, and `app.status.summary.images` contains the image tag | `success`, `targetURL` = preview URL |
 | failure | the last operation for the current image tag `Failed`/`Error` or retried, or it `Succeeded` and health is `Degraded` | `failure` |
 
-Each condition uses `oncePer` on the head-sha annotation (plus the state), so a
-status posts once per commit per state. The template sets
-`repoURLPath`/`revisionPath` to those annotations. The defaults point at
+Each condition uses `oncePer` on the head-sha annotation, the sync operation's
+start time, and the state, so a status posts once per state for each sync of a
+commit. Keying on the commit alone left a re-synced head (after a chart change)
+stuck on `pending`, because its `success` had already been sent. The template
+sets `repoURLPath`/`revisionPath` to those annotations. The defaults point at
 `spec.source.repoURL` and the sync revision, which are the homelab repo and its
 `main` commit. The operation's image tag ties each result to the current head:
 `summary.images` lists a new tag as soon as its pod spec exists, so a previous

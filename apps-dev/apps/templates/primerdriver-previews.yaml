@@ -51,6 +51,8 @@ spec:
             rollout:
               progressDeadlineAbort: false
               progressDeadlineSeconds: 900
+              # The chart's 600s keeps a superseded preview pod for 10 minutes.
+              scaleDownDelaySeconds: 30
       destination:
         server: {{ .Values.destination.server }}
         # Shared: ArgoCD never deletes a namespace it created, so one per PR would leak.
