@@ -103,7 +103,9 @@ roots.
     `null` from custom resources, so the other Homepage annotations stay but
     Homepage skips the Ingress.
   - `rollout.progressDeadlineAbort: false`, `rollout.progressDeadlineSeconds:
-    900`, `rollout.scaleDownDelaySeconds: 0`.
+    900`. `scaleDownDelaySeconds` keeps the chart default: `0` means Rollouts
+    never scales the previous ReplicaSet down, so each push would leak a pod.
+  - `smokeTest.enabled: true` (see below).
 
 All previews share one namespace because ArgoCD does not delete a namespace it
 created through `CreateNamespace`; a namespace per PR would leak one per closed
@@ -130,18 +132,20 @@ trigger `on-preview-status` with three conditions:
 
 | State | Condition | Status |
 |---|---|---|
-| pending | health `Progressing` | `pending` |
+| pending | health `Progressing`, or an operation for the current image tag is `Running` | `pending` |
 | success | health `Healthy`, sync `Synced`, last operation `Succeeded`, and `app.status.summary.images` contains the image tag | `success`, `targetURL` = preview URL |
-| failure | health `Degraded` and the image tag is present, or the last operation `Failed`/`Error` for the current image tag | `failure` |
+| failure | the last operation for the current image tag `Failed`/`Error`, or it `Succeeded` and health is `Degraded` | `failure` |
 
 Each condition uses `oncePer` on the head-sha annotation (plus the state), so a
 status posts once per commit per state. The template sets
 `repoURLPath`/`revisionPath` to those annotations. The defaults point at
 `spec.source.repoURL` and the sync revision, which are the homelab repo and its
-`main` commit. The image-tag check stops a still-Healthy previous build from
-marking a new commit `success` before its own Rollout has started.
+`main` commit. The operation's image tag ties each result to the current head:
+`summary.images` lists a new tag as soon as its pod spec exists, so a previous
+build's Healthy or Degraded state would otherwise be reported for the new
+commit.
 
-### Fast failure: smoke-test Sync hook
+### Fast failure: smoke-test PreSync hook
 
 The Rollout cannot report a broken build before its progress deadline: Rollouts
 counts image-pull waiting and crash-looping alike, `prePromotionAnalysis` only
@@ -149,15 +153,20 @@ starts once the new pods are available, and the initial deploy skips the
 strategy entirely. Previews keep a 900s deadline because, with webhooks, the
 Application switches to the new tag before CI has pushed the image.
 
-So previews enable a chart `smokeTest`: an ArgoCD `Sync` hook Job
+So previews enable a chart `smokeTest`: an ArgoCD `PreSync` hook Job
 (`BeforeHookCreation`, `backoffLimit: 0`, `activeDeadlineSeconds: 900`) that
 runs the app's own image, starts the server in the container, and polls
 `localhost:<port>/api/health` for `smokeTest.timeoutSeconds` (120). Because it
 uses the same image, it cannot start before the image exists, so a slow build
 only keeps it waiting. Probing `localhost` instead of the preview Service avoids
-a false pass from the previous, still-healthy ReplicaSet. A failing Job fails
-the sync operation, and the trigger posts `failure` about two minutes after the
-image is published. Success also requires the operation to have succeeded, so a
+a false pass from the previous, still-healthy ReplicaSet. It is `PreSync`, not
+`Sync`: a `Sync` hook shares a wave with the Rollout, and ArgoCD waits for the
+whole wave, so a broken Rollout held the failed operation open until its
+deadline. As `PreSync`, a failing Job fails the operation before the Rollout is
+touched, so the preview keeps serving its last good build, and the trigger posts
+`failure` about two minutes after the image is published. Until the hook passes,
+health does not move, so `pending` also fires on a running operation for the
+current image tag. Success also requires the operation to have succeeded, so a
 failed smoke test is never followed by a `success` for the same commit. The
 Degraded condition stays as the backstop.
 

@@ -84,7 +84,7 @@
       `https://primerdriver-pr-<n>.lab.kvd.studio` serves the PR build over
       valid TLS, the head commit gets `pending` then `success` with the preview
       link, and the preview is absent from Homepage.
-- [ ] 5.4 Push a commit that breaks `/api/health` to the test PR. Verify the new
+- [x] 5.4 Push a commit that breaks `/api/health` to the test PR. Verify the new
       head gets `failure` (not a stale `success`) and production is unaffected.
 - [ ] 5.5 Close the test PR. Verify within 5 minutes the Application and all its
       resources are gone from `primerdriver-preview`.
@@ -109,7 +109,7 @@
 ## 7. Fast preview failure
 
 - [x] 7.1 Add `primerdriver/templates/smoke-test.yaml` (wrapped in
-      `smokeTest.enabled`, default false): `Sync` hook Job with
+      `smokeTest.enabled`, default false): `PreSync` hook Job with
       `BeforeHookCreation`, `backoffLimit: 0`, `activeDeadlineSeconds: 900`, the
       app image, the chart's affinity, and a script that starts the server and
       polls `localhost:<port>/api/health` for `smokeTest.timeoutSeconds` (120).

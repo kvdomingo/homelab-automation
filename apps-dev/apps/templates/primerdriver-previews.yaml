@@ -51,7 +51,6 @@ spec:
             rollout:
               progressDeadlineAbort: false
               progressDeadlineSeconds: 900
-              scaleDownDelaySeconds: 0
       destination:
         server: {{ .Values.destination.server }}
         # Shared: ArgoCD never deletes a namespace it created, so one per PR would leak.
