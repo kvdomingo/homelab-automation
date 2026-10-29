@@ -12,8 +12,6 @@ spec:
     repoURL: https://github.com/kvdomingo/apod.git
     targetRevision: main
     path: helm/apod
-    plugin:
-      name: argocd-vault-plugin-helm
   destination:
     server: {{ .Values.destination.server }}
     namespace: apod

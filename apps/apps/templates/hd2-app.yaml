@@ -12,8 +12,6 @@ spec:
     repoURL: https://github.com/kvdomingo/hd2-app.git
     targetRevision: main
     path: infra/helm/hd2-app
-    plugin:
-      name: argocd-vault-plugin-helm
   destination:
     server: {{ .Values.destination.server }}
     namespace: hd2-app
