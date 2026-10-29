@@ -17,6 +17,13 @@ Never apply changes by hand (`kubectl apply`, `helm upgrade`, `scp`). Push to
   stack on OpenTofu (pinned in `mise.toml`), manual, `task tf-plan` then
   `task tf-apply`. One unit per concern (`tunnels`, `dns-<zone>`), each with
   its own state under `homelab/<unit>`.
+- **GitHub webhooks** (set by hand in each repo's settings, `application/json`,
+  secret `GITHUB_WEBHOOK_SECRET` from Infisical project `argocd`, env `prod`):
+  `homelab-automation` sends `push` to `https://argo.kvd.studio/api/webhook`
+  (ArgoCD server); `primerdriver` sends `pull_request` to
+  `https://argo.kvd.studio/api/webhook/appset` (ApplicationSet controller).
+  Cloudflare blocks both paths except from GitHub's hook IPs; rerun
+  `task tf-apply` if GitHub changes its ranges. Polling stays as a fallback.
 - **S3 endpoint**: Versity Gateway, a TrueNAS custom app at
   `http://10.10.10.100:7070`, managed by hand in the TrueNAS UI. Clients must
   use path-style addressing and region `ap-southeast-1`. The app needs

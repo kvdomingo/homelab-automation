@@ -12,7 +12,7 @@ spec:
           owner: kvdomingo
           repo: primerdriver
           appSecretName: github-app-primerdriver
-        requeueAfterSeconds: 60
+        requeueAfterSeconds: 600
   template:
     metadata:
       name: '{{`primerdriver-pr-{{ .number }}`}}'

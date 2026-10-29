@@ -157,3 +157,13 @@ unit "dns-storyof-us" {
     }
   }
 }
+
+unit "webhook-allowlist" {
+  source = "./units/webhook-allowlist"
+  path   = "webhook-allowlist"
+
+  values = {
+    base_domain = local.kvdstudio_domain
+    host        = "argo.${local.kvdstudio_domain}"
+  }
+}
