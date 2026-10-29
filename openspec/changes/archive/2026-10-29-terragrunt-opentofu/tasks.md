@@ -74,7 +74,7 @@
 
 ## 7. Integration
 
-- [ ] 7.1 After merge, check Renovate's Dependency Dashboard lists the
+- [x] 7.1 After merge, check Renovate's Dependency Dashboard lists the
   cloudflare and infisical providers (from `modules/*/versions.tf`) and the
   mise tools without errors; if the providers error on the OpenTofu lock
   files, add a package rule with the OpenTofu `registryUrls`
