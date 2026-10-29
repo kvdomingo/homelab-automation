@@ -51,7 +51,7 @@
       `https://argo.kvd.studio/api/webhook`, `application/json`, the secret,
       push events only. Verify the ping delivery returns 200, and a push to
       `main` makes an Application start syncing within 30s.
-- [ ] 3.3 (Manual, GitHub) In `primerdriver`, add a webhook to
+- [x] 3.3 (Manual, GitHub) In `primerdriver`, add a webhook to
       `https://argo.kvd.studio/api/webhook/appset`, `application/json`, the
       secret, pull request events only. Verify opening a test PR creates
       `primerdriver-pr-<n>` within 30s and closing it deletes the Application.
