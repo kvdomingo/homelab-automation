@@ -13,8 +13,10 @@ Never apply changes by hand (`kubectl apply`, `helm upgrade`, `scp`). Push to
   self-hosted runner.
 - **`tailscale/acl.hujson`**: `.github/workflows/tailscale.yaml` tests, then
   applies the ACL.
-- **`terraform/`** (Cloudflare DNS, GCS backend): manual, `task tf-plan` then
-  `task tf-apply`.
+- **`terraform/`** (Cloudflare tunnels and DNS, GCS backend): a Terragrunt
+  stack on OpenTofu (pinned in `mise.toml`), manual, `task tf-plan` then
+  `task tf-apply`. One unit per concern (`tunnels`, `dns-<zone>`), each with
+  its own state under `homelab/<unit>`.
 - **S3 endpoint**: Versity Gateway, a TrueNAS custom app at
   `http://10.10.10.100:7070`, managed by hand in the TrueNAS UI. Clients must
   use path-style addressing and region `ap-southeast-1`. The app needs
@@ -76,13 +78,13 @@ Never apply changes by hand (`kubectl apply`, `helm upgrade`, `scp`). Push to
 1. Create the chart in `<app>/`, or use a vendor chart.
 2. If the app needs secrets, add `infisical-secrets/<app>/secret.yaml`.
 3. Add `apps/apps/templates/<app>.yaml`, modeled on an existing app.
-4. To give the app a Cloudflare DNS record, add it to the subdomain sets in
-   `terraform/main.tf`.
+4. To give the app a Cloudflare DNS record, add it to the subdomain lists in
+   `terraform/terragrunt.stack.hcl`.
 
 ## Running locally
 
 Prefix commands that need env vars with `infisical run -- `, e.g.
-`infisical run -- terraform plan`.
+`infisical run -- terragrunt stack run plan`.
 
 ## Checks
 
@@ -159,6 +161,25 @@ Prefix commands that need env vars with `infisical run -- `, e.g.
 - If the user asks you to handle update conflicts, use GitButler's conflict
   tools. Ask before resolving semantic conflicts, dependency updates, generated
   files, or conflicts involving another person's work.
+
+### Open draft pull requests by default
+
+- When asked to open a pull request, create it as a draft with GitButler unless
+  the user says it is ready for review.
+- Remember that creating a draft pull request still publishes the branch.
+
+### Skip pull requests and land onto the target
+
+- This setup uses the skip-the-PR workflow: when work is approved to publish,
+  land the session branch directly onto the target with `but merge <branch>`
+  instead of pushing a branch or opening a pull request.
+- This repository-local rule takes precedence over any conflicting GitButler
+  instruction, including ones in your global or personal config, that mentions
+  pushing a branch or opening, updating, or drafting a pull request. Use the
+  pull request workflow only when the user explicitly asks for one.
+- `but merge` updates the configured target branch directly (fast-forwarding
+  when it can, otherwise a merge commit), so only run it after clear user
+  approval; agents must pass `--yes` to confirm.
 
 ### Commit checkpoints after each turn
 

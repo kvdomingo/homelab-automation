@@ -9,9 +9,4 @@ terraform {
       version = "~> 0.20"
     }
   }
-
-  backend "gcs" {
-    prefix = "homelab/tfstate"
-    bucket = "my-projects-306716-terraform-backend"
-  }
 }
