@@ -69,33 +69,3 @@ resource "cloudflare_zero_trust_tunnel_cloudflared_config" "lab" {
     )
   }
 }
-
-moved {
-  from = cloudflare_tunnel.dev
-  to   = cloudflare_zero_trust_tunnel_cloudflared.dev
-}
-
-moved {
-  from = cloudflare_tunnel.lab
-  to   = cloudflare_zero_trust_tunnel_cloudflared.lab
-}
-
-moved {
-  from = cloudflare_tunnel_route.dev
-  to   = cloudflare_zero_trust_tunnel_cloudflared_route.dev
-}
-
-moved {
-  from = cloudflare_tunnel_route.lab
-  to   = cloudflare_zero_trust_tunnel_cloudflared_route.lab
-}
-
-moved {
-  from = cloudflare_tunnel_config.dev
-  to   = cloudflare_zero_trust_tunnel_cloudflared_config.dev
-}
-
-moved {
-  from = cloudflare_tunnel_config.lab
-  to   = cloudflare_zero_trust_tunnel_cloudflared_config.lab
-}

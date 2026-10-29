@@ -28,8 +28,3 @@ resource "cloudflare_dns_record" "default" {
   priority = each.value.priority
   ttl      = each.value.ttl
 }
-
-moved {
-  from = cloudflare_record.default
-  to   = cloudflare_dns_record.default
-}

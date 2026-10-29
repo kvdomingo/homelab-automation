@@ -78,6 +78,6 @@
   cloudflare and infisical providers (from `modules/*/versions.tf`) and the
   mise tools without errors; if the providers error on the OpenTofu lock
   files, add a package rule with the OpenTofu `registryUrls`
-- [ ] 7.2 After a clean apply, delete the old `homelab/tfstate` object
-- [ ] 7.3 After that apply, remove the migration blocks; verify the plan
+- [x] 7.2 After a clean apply, delete the old `homelab/tfstate` object
+- [x] 7.3 After that apply, remove the migration blocks; verify the plan
   reports no changes
