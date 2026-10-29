@@ -16,7 +16,7 @@
       `githubAppInstallationID`, `githubAppPrivateKey`, label
       `argocd.argoproj.io/secret-type: repo-creds`). Verify
       `prek run --all-files` passes (gitleaks finds nothing).
-- [ ] 1.4 Add `core/apps/templates/argocd-secrets.yaml` (wrapped in
+- [x] 1.4 Add `core/apps/templates/argocd-secrets.yaml` (wrapped in
       `disableArgocdSecrets`) syncing `infisical-secrets/argocd/` into `argocd`.
       Verify `helm template core/apps` renders it; after merge, verify both
       Secrets exist in `argocd`.
@@ -33,7 +33,7 @@
       ingress host) and the `on-preview-status` trigger with the three
       conditions and `oncePer` from design.md. Verify `helmfile template` output
       contains them.
-- [ ] 2.3 After merge, run `helmfile apply` in `argocd/`. Verify
+- [x] 2.3 After merge, run `helmfile apply` in `argocd/`. Verify
       `argocd-notifications-controller` logs show no config or auth errors.
 
 ## 3. primerdriver chart: blue-green Rollout
@@ -50,7 +50,7 @@
       `kind: Rollout` in the HPA.
 - [x] 3.3 Verify `prek run --all-files` passes and the Renovate `image.tag`
       comment is unchanged.
-- [ ] 3.4 After merge, verify the ArgoCD app is Healthy,
+- [x] 3.4 After merge, verify the ArgoCD app is Healthy,
       `kubectl argo rollouts get rollout primerdriver -n primerdriver` shows a
       promoted stable ReplicaSet, and
       `https://primerdriver.kvd.studio/api/health` answers.
@@ -79,16 +79,16 @@
       per-PR previews via ApplicationSet, host `<app>-pr-<n>.lab.kvd.studio`,
       shared `<app>-preview` namespace, `preview/<app>` status). Verify the text
       matches what 5.1 deploys.
-- [ ] 5.3 After merge, open a test PR on primerdriver. Verify
+- [x] 5.3 After merge, open a test PR on primerdriver. Verify
       `primerdriver-pr-<n>` appears in ArgoCD,
       `https://primerdriver-pr-<n>.lab.kvd.studio` serves the PR build over
       valid TLS, the head commit gets `pending` then `success` with the preview
       link, and the preview is absent from Homepage.
 - [x] 5.4 Push a commit that breaks `/api/health` to the test PR. Verify the new
       head gets `failure` (not a stale `success`) and production is unaffected.
-- [ ] 5.5 Close the test PR. Verify within 5 minutes the Application and all its
+- [x] 5.5 Close the test PR. Verify within 5 minutes the Application and all its
       resources are gone from `primerdriver-preview`.
-- [ ] 5.6 (Manual, bootstrap) After merge, `kubectl apply -f
+- [x] 5.6 (Manual, bootstrap) After merge, `kubectl apply -f
       apps-dev/application.yaml`. Verify `apps-dev` is Synced/Healthy, owns
       `primerdriver-previews`, and `apps-prod` no longer lists it.
 
@@ -97,7 +97,7 @@
 - [ ] 6.1 (Manual, GitHub) Add branch protection on primerdriver `main`
       requiring the `preview/primerdriver` status. Verify a PR with a pending
       preview shows "Merging is blocked".
-- [ ] 6.2 Add `kvdomingo/primerdriver` to `repositories` in
+- [x] 6.2 Add `kvdomingo/primerdriver` to `repositories` in
       `renovate/templates/configmap.yaml`. Verify `helm template renovate`
       renders it; after the next run, verify Renovate opens primerdriver's
       onboarding PR.
@@ -116,11 +116,11 @@
       Enable it in the preview `valuesObject`. Verify `helm template
       primerdriver --set smokeTest.enabled=true` renders the Job and the default
       render does not.
-- [ ] 7.2 Update `on-preview-status` in `argocd/values.yaml`: success also
+- [x] 7.2 Update `on-preview-status` in `argocd/values.yaml`: success also
       requires operation phase `Succeeded`; failure also fires on operation
       phase `Failed`/`Error` for the current image tag. After merge, run
       `helmfile apply` in `argocd/`.
-- [ ] 7.3 After merge, push a commit that breaks `/api/health` to a test PR.
+- [x] 7.3 After merge, push a commit that breaks `/api/health` to a test PR.
       Verify `failure` posts within 5 minutes of its image being published and
       no `success` follows; push a fix and verify `success`.
 

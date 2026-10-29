@@ -105,7 +105,12 @@ tasks:
     dir: core
     cmd: kubectl apply -f application.yaml
 
-  setup-apps:
+  setup-apps-dev:
+    desc: Setup dev apps
+    dir: apps-dev
+    cmd: kubectl apply -f application.yaml
+
+  setup-apps-prod:
     desc: Setup prod apps
     dir: apps
     cmd: kubectl apply -f application.yaml
