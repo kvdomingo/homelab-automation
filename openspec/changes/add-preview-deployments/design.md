@@ -99,8 +99,9 @@ roots.
     is 8 characters; `docker/metadata-action` tags 7.
   - `ingress.hosts`: only `primerdriver-pr-{{ .number }}.lab.kvd.studio`. Lists
     replace, so the `kvd.studio` host disappears.
-  - each `gethomepage.dev/*` annotation set to `null`. Maps merge, so `{}` would
-    keep them.
+  - `gethomepage.dev/enabled: "false"`. Maps merge, and the API server strips
+    `null` from custom resources, so the other Homepage annotations stay but
+    Homepage skips the Ingress.
   - `rollout.progressDeadlineAbort: false`, `rollout.progressDeadlineSeconds:
     900`, `rollout.scaleDownDelaySeconds: 0`.
 

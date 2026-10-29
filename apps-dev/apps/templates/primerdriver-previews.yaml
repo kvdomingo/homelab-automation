@@ -35,13 +35,10 @@ spec:
               # head_short_sha is 8 characters; CI tags 7.
               tag: '{{`sha-{{ trunc 7 .head_sha }}`}}'
             ingress:
-              # Maps merge, so each annotation must be nulled to drop it.
+              # Maps merge and the API server strips nulls from CRs, so the
+              # chart's Homepage annotations stay; disabling discovery hides it.
               annotations:
-                gethomepage.dev/enabled: null
-                gethomepage.dev/name: null
-                gethomepage.dev/group: null
-                gethomepage.dev/icon: null
-                gethomepage.dev/ping: null
+                gethomepage.dev/enabled: "false"
               hosts:
                 - host: '{{`primerdriver-pr-{{ .number }}`}}.{{ .Values.ingress.baseDomain }}'
                   paths:
