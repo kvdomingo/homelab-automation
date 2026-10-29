@@ -42,6 +42,9 @@ spec:
           basicauth:
             enabled: true
             user: kvdomingo
+            # Unused placeholder for the chart's non-empty check; with
+            # secret.create=false the real password comes from keel-secrets.
+            password: from-keel-secrets
           secret:
             name: keel-secrets
             create: false
