@@ -44,6 +44,8 @@ spec:
                   paths:
                     - path: /
                       pathType: Prefix
+            smokeTest:
+              enabled: true
             # A preview often syncs before CI has pushed its image, so it must
             # not abort while waiting for the pull.
             rollout:

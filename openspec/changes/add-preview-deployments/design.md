@@ -131,8 +131,8 @@ trigger `on-preview-status` with three conditions:
 | State | Condition | Status |
 |---|---|---|
 | pending | health `Progressing` | `pending` |
-| success | health `Healthy`, sync `Synced`, and `app.status.summary.images` contains the image tag | `success`, `targetURL` = preview URL |
-| failure | health `Degraded` and the image tag is present | `failure` |
+| success | health `Healthy`, sync `Synced`, last operation `Succeeded`, and `app.status.summary.images` contains the image tag | `success`, `targetURL` = preview URL |
+| failure | health `Degraded` and the image tag is present, or the last operation `Failed`/`Error` for the current image tag | `failure` |
 
 Each condition uses `oncePer` on the head-sha annotation (plus the state), so a
 status posts once per commit per state. The template sets
@@ -140,6 +140,26 @@ status posts once per commit per state. The template sets
 `spec.source.repoURL` and the sync revision, which are the homelab repo and its
 `main` commit. The image-tag check stops a still-Healthy previous build from
 marking a new commit `success` before its own Rollout has started.
+
+### Fast failure: smoke-test Sync hook
+
+The Rollout cannot report a broken build before its progress deadline: Rollouts
+counts image-pull waiting and crash-looping alike, `prePromotionAnalysis` only
+starts once the new pods are available, and the initial deploy skips the
+strategy entirely. Previews keep a 900s deadline because, with webhooks, the
+Application switches to the new tag before CI has pushed the image.
+
+So previews enable a chart `smokeTest`: an ArgoCD `Sync` hook Job
+(`BeforeHookCreation`, `backoffLimit: 0`, `activeDeadlineSeconds: 900`) that
+runs the app's own image, starts the server in the container, and polls
+`localhost:<port>/api/health` for `smokeTest.timeoutSeconds` (120). Because it
+uses the same image, it cannot start before the image exists, so a slow build
+only keeps it waiting. Probing `localhost` instead of the preview Service avoids
+a false pass from the previous, still-healthy ReplicaSet. A failing Job fails
+the sync operation, and the trigger posts `failure` about two minutes after the
+image is published. Success also requires the operation to have succeeded, so a
+failed smoke test is never followed by a `success` for the same commit. The
+Degraded condition stays as the backstop.
 
 Alternative: a CI job in primerdriver polling the preview URL. GitHub-hosted
 runners cannot reach `lab.kvd.studio`, and personal-account self-hosted runners

@@ -106,6 +106,24 @@
       majors manual. Verify the next Renovate dependency PR gets a preview and
       merges only after `preview/primerdriver` is `success`.
 
+## 7. Fast preview failure
+
+- [x] 7.1 Add `primerdriver/templates/smoke-test.yaml` (wrapped in
+      `smokeTest.enabled`, default false): `Sync` hook Job with
+      `BeforeHookCreation`, `backoffLimit: 0`, `activeDeadlineSeconds: 900`, the
+      app image, the chart's affinity, and a script that starts the server and
+      polls `localhost:<port>/api/health` for `smokeTest.timeoutSeconds` (120).
+      Enable it in the preview `valuesObject`. Verify `helm template
+      primerdriver --set smokeTest.enabled=true` renders the Job and the default
+      render does not.
+- [ ] 7.2 Update `on-preview-status` in `argocd/values.yaml`: success also
+      requires operation phase `Succeeded`; failure also fires on operation
+      phase `Failed`/`Error` for the current image tag. After merge, run
+      `helmfile apply` in `argocd/`.
+- [ ] 7.3 After merge, push a commit that breaks `/api/health` to a test PR.
+      Verify `failure` posts within 5 minutes of its image being published and
+      no `success` follows; push a fix and verify `success`.
+
 ## Workflow follow-up
 
 - Archive the change once all tasks are done and verified.

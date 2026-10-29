@@ -4065,8 +4065,9 @@ notifications:
 
   # -- The trigger defines the condition when the notification should be sent
   ## For more information: https://argo-cd.readthedocs.io/en/stable/operator-manual/notifications/triggers/
-  # The image-tag check keeps a still-Healthy previous build from marking a
-  # new head commit as success.
+  # The image-tag checks keep a previous build's health or sync result from
+  # being reported for a new head commit. The operation phase carries the
+  # smoke-test hook's result, which arrives long before the progress deadline.
   triggers:
     trigger.on-preview-status: |
       - description: Preview is deploying
@@ -4078,13 +4079,17 @@ notifications:
         send: [ preview-success ]
         when: >-
           app.status.health.status == 'Healthy' and app.status.sync.status == 'Synced' and
+          app.status.operationState.phase == 'Succeeded' and
+          app.status.operationState.operation.sync.source.helm.valuesObject.image.tag == app.metadata.annotations["preview.kvd.studio/image-tag"] and
           any(app.status.summary.images, {# endsWith ':' + app.metadata.annotations["preview.kvd.studio/image-tag"]})
       - description: Preview failed on the PR head
         oncePer: app.metadata.annotations["preview.kvd.studio/head-sha"] + ":failure"
         send: [ preview-failure ]
         when: >-
-          app.status.health.status == 'Degraded' and
-          any(app.status.summary.images, {# endsWith ':' + app.metadata.annotations["preview.kvd.studio/image-tag"]})
+          (app.status.operationState.phase in ['Failed', 'Error'] and
+          app.status.operationState.operation.sync.source.helm.valuesObject.image.tag == app.metadata.annotations["preview.kvd.studio/image-tag"]) or
+          (app.status.health.status == 'Degraded' and
+          any(app.status.summary.images, {# endsWith ':' + app.metadata.annotations["preview.kvd.studio/image-tag"]}))
     # trigger.on-deployed: |
     #   - description: Application is synced and healthy. Triggered once per commit.
     #     oncePer: app.status.sync.revision

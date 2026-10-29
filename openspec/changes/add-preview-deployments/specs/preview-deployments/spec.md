@@ -89,8 +89,15 @@ SHALL link to the preview's URL.
 
 #### Scenario: Broken build
 
-- **WHEN** the preview's build fails to become healthy
+- **WHEN** the preview's build fails its health check
 - **THEN** the head commit gets a `failure` status `preview/primerdriver`
+  within 5 minutes of the build's image being published
+
+#### Scenario: Slow build
+
+- **WHEN** a preview syncs before CI has published the head commit's image
+- **THEN** the head commit stays `pending` until the image exists and does not
+  get `failure` for the wait alone
 
 #### Scenario: Status belongs to the new commit
 

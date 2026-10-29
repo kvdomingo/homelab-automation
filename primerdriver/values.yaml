@@ -111,6 +111,12 @@ rollout:
   progressDeadlineAbort: true
   scaleDownDelaySeconds: 600
 
+# Sync-hook Job that starts the image and probes /api/health; used by previews
+# to report a broken build without waiting for the progress deadline.
+smokeTest:
+  enabled: false
+  timeoutSeconds: 120
+
 #This section is for setting up autoscaling more information can be found here: https://kubernetes.io/docs/concepts/workloads/autoscaling/
 autoscaling:
   enabled: false
