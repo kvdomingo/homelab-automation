@@ -98,34 +98,22 @@ unit "dns-kvd-studio" {
           content = "b94dec802dbb1537.vercel-dns-017.com"
           proxied = false
         }
-        pili_planet_stg = {
-          type    = "CNAME"
-          name    = "pili-planet-stg"
-          content = "2043495636191cbc.vercel-dns-017.com"
-          proxied = false
-        }
-        pili_planet = {
-          type    = "CNAME"
-          name    = "pili-planet"
-          content = "2043495636191cbc.vercel-dns-017.com"
-          proxied = false
-        }
       },
       {
         for k, v in local.github_pages_ipv4 : "primerdriver-docs-ipv4-${k}" => {
-          name    = "primerdriver-docs"
-          type    = "A"
-          content = v
-          proxied = true
-        }
+        name    = "primerdriver-docs"
+        type    = "A"
+        content = v
+        proxied = true
+      }
       },
       {
         for k, v in local.github_pages_ipv6 : "primerdriver-docs-ipv6-${k}" => {
-          name    = "primerdriver-docs"
-          type    = "AAAA"
-          content = v
-          proxied = true
-        }
+        name    = "primerdriver-docs"
+        type    = "AAAA"
+        content = v
+        proxied = true
+      }
       },
     )
   }
