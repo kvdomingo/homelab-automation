@@ -24,6 +24,8 @@ Never apply changes by hand (`kubectl apply`, `helm upgrade`, `scp`). Push to
   `https://argo.kvd.studio/api/webhook/appset` (ApplicationSet controller).
   Cloudflare blocks both paths except from GitHub's hook IPs; rerun
   `task tf-apply` if GitHub changes its ranges. Polling stays as a fallback.
+  The ApplicationSet controller reads the secret only at startup: restart it
+  after rotating.
 - **S3 endpoint**: Versity Gateway, a TrueNAS custom app at
   `http://10.10.10.100:7070`, managed by hand in the TrueNAS UI. Clients must
   use path-style addressing and region `ap-southeast-1`. The app needs
