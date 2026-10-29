@@ -134,7 +134,7 @@ trigger `on-preview-status` with three conditions:
 |---|---|---|
 | pending | health `Progressing`, or an operation for the current image tag is `Running` | `pending` |
 | success | health `Healthy`, sync `Synced`, last operation `Succeeded`, and `app.status.summary.images` contains the image tag | `success`, `targetURL` = preview URL |
-| failure | the last operation for the current image tag `Failed`/`Error`, or it `Succeeded` and health is `Degraded` | `failure` |
+| failure | the last operation for the current image tag `Failed`/`Error` or retried, or it `Succeeded` and health is `Degraded` | `failure` |
 
 Each condition uses `oncePer` on the head-sha annotation (plus the state), so a
 status posts once per commit per state. The template sets
@@ -166,9 +166,13 @@ deadline. As `PreSync`, a failing Job fails the operation before the Rollout is
 touched, so the preview keeps serving its last good build, and the trigger posts
 `failure` about two minutes after the image is published. Until the hook passes,
 health does not move, so `pending` also fires on a running operation for the
-current image tag. Success also requires the operation to have succeeded, so a
-failed smoke test is never followed by a `success` for the same commit. The
-Degraded condition stays as the backstop.
+current image tag. Automated syncs on this cluster run with `retry.limit: 5`
+even when `syncPolicy.retry` is unset, and each retry reruns the smoke test and
+blocks the next commit's sync, so previews set `retry.limit: 0`, and the trigger
+also treats a retried operation for the current tag as a failure. Success also
+requires the operation to have succeeded, so a failed smoke test is never
+followed by a `success` for the same commit. The Degraded condition stays as the
+backstop.
 
 Alternative: a CI job in primerdriver polling the preview URL. GitHub-hosted
 runners cannot reach `lab.kvd.studio`, and personal-account self-hosted runners

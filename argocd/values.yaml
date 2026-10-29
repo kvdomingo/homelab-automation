@@ -4091,7 +4091,7 @@ notifications:
         oncePer: app.metadata.annotations["preview.kvd.studio/head-sha"] + ":failure"
         send: [ preview-failure ]
         when: >-
-          (app.status.operationState.phase in ['Failed', 'Error'] and
+          ((app.status.operationState.phase in ['Failed', 'Error'] or (app.status.operationState.retryCount ?? 0) > 0) and
           app.status.operationState.operation.sync.source.helm.valuesObject.image.tag == app.metadata.annotations["preview.kvd.studio/image-tag"]) or
           (app.status.health.status == 'Degraded' and app.status.operationState.phase == 'Succeeded' and
           app.status.operationState.operation.sync.source.helm.valuesObject.image.tag == app.metadata.annotations["preview.kvd.studio/image-tag"])

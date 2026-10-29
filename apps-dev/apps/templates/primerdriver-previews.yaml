@@ -61,4 +61,8 @@ spec:
         automated:
           selfHeal: true
           prune: true
+        # Automated syncs otherwise retry 5 times; each retry reruns the
+        # deterministic smoke test and blocks the next commit's sync.
+        retry:
+          limit: 0
 {{- end }}
