@@ -64,9 +64,9 @@ Never apply changes by hand (`kubectl apply`, `helm upgrade`, `scp`). Push to
 - Cluster mixes amd64 and arm64 (Pi 5 agents). Images that are amd64-only need
   node affinity `kubernetes.io/arch NotIn [arm64, arm]`.
 - Bitnami images come from `bitnamilegacy/*`.
-- Secrets: new apps use Infisical (`infisical-secrets/`). Older apps use
-  `argocd-vault-plugin-helm`. Never commit plaintext secrets. `gitleaks` runs in
-  pre-commit.
+- Secrets come only from Infisical: `infisical-secrets/<app>/` or an
+  `InfisicalSecret` in the chart. There is no Vault and no ArgoCD secrets
+  plugin. Never commit plaintext secrets. `gitleaks` runs in pre-commit.
 - Workloads that consume an `InfisicalSecret` get the deployment annotation
   `secrets.infisical.com/auto-reload: "true"` so they redeploy when the secret
   changes.

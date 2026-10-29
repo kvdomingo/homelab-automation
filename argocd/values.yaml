@@ -2835,87 +2835,16 @@ repoServer:
   # -- Additional containers to be added to the repo server pod
   ## Ref: https://argo-cd.readthedocs.io/en/stable/user-guide/config-management-plugins/
   ## Note: Supports use of custom Helm templates
-  extraContainers:
-    # argocd-vault-plugin with plain YAML
-    - name: avp
-      command: [ /var/run/argocd/argocd-cmp-server ]
-      image: quay.io/argoproj/argocd:v3.5.6
-      securityContext:
-        runAsNonRoot: true
-        runAsUser: 999
-      volumeMounts:
-        - mountPath: /var/run/argocd
-          name: var-files
-        - mountPath: /home/argocd/cmp-server/plugins
-          name: plugins
-        - mountPath: /tmp
-          name: tmp
-
-        # Register plugins into sidecar
-        - mountPath: /home/argocd/cmp-server/config/plugin.yaml
-          subPath: avp.yaml
-          name: cmp-plugin
-
-        # Important: Mount tools into $PATH
-        - name: custom-tools
-          subPath: argocd-vault-plugin
-          mountPath: /usr/local/bin/argocd-vault-plugin
-        - name: custom-tools
-          subPath: yq
-          mountPath: /usr/local/bin/yq
-    - name: avp-helm
-      command: [ /var/run/argocd/argocd-cmp-server ]
-      image: quay.io/argoproj/argocd:v3.5.6
-      securityContext:
-        runAsNonRoot: true
-        runAsUser: 999
-      volumeMounts:
-        - mountPath: /var/run/argocd
-          name: var-files
-        - mountPath: /home/argocd/cmp-server/plugins
-          name: plugins
-        - mountPath: /tmp
-          name: tmp
-        - mountPath: /home/argocd/cmp-server/config/plugin.yaml
-          subPath: avp-helm.yaml
-          name: cmp-plugin
-        - name: custom-tools
-          subPath: argocd-vault-plugin
-          mountPath: /usr/local/bin/argocd-vault-plugin
-        - name: custom-tools
-          subPath: yq
-          mountPath: /usr/local/bin/yq
+  extraContainers: [ ]
 
   # -- Init containers to add to the repo server pods
-  initContainers:
-    - name: download-tools
-      image: registry.access.redhat.com/ubi8:8.10-1792743128
-      env:
-        - name: AVP_VERSION
-          value: 1.18.1
-      command: [ sh, -c ]
-      args:
-        - >-
-          curl -L https://github.com/argoproj-labs/argocd-vault-plugin/releases/download/v${AVP_VERSION}/argocd-vault-plugin_${AVP_VERSION}_linux_amd64 -o argocd-vault-plugin &&
-          curl -L https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -o yq &&
-          chmod +x argocd-vault-plugin &&
-          chmod +x yq &&
-          mv argocd-vault-plugin /custom-tools/ &&
-          mv yq /custom-tools/
-      volumeMounts:
-        - mountPath: /custom-tools
-          name: custom-tools
+  initContainers: [ ]
 
   # -- Additional volumeMounts to the repo server main container
   volumeMounts: [ ]
 
   # -- Additional volumes to the repo server pod
-  volumes:
-    - configMap:
-        name: cmp-plugin
-      name: cmp-plugin
-    - name: custom-tools
-      emptyDir: { }
+  volumes: [ ]
 
   # -- Volumes to be used in replacement of emptydir on default volumes
   existingVolumes: { }
