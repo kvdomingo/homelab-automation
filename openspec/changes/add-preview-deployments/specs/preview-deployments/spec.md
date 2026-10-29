@@ -44,7 +44,8 @@ Homepage dashboard.
 
 #### Scenario: Opening a preview
 
-- **WHEN** a user on the home network opens `https://primerdriver-pr-42.lab.kvd.studio`
+- **WHEN** a user on the home network opens
+  `https://primerdriver-pr-42.lab.kvd.studio`
 - **THEN** they reach PR #42's build over valid TLS
 
 #### Scenario: External access

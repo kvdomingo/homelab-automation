@@ -5,8 +5,8 @@
 - `primerdriver/` is a stock `helm create` chart: one Deployment (1 replica,
   amd64-only affinity), a ClusterIP Service on 8000, an Ingress for
   `primerdriver.lab.kvd.studio` and `primerdriver.kvd.studio` with Homepage
-  annotations, and readiness/liveness probes on `/api/health`. Its only config is
-  `PORT`; it has no secrets, PVCs, or database.
+  annotations, and readiness/liveness probes on `/api/health`. Its only config
+  is `PORT`; it has no secrets, PVCs, or database.
 - Argo Rollouts v1.10.1 runs from `argo-rollouts/install.yaml`. No workload uses
   it yet.
 - ArgoCD is installed by `argocd/helmfile.yaml` (chart 10.11.3). The
@@ -48,8 +48,8 @@ The chart's Deployment becomes a `Rollout` with `strategy.blueGreen`:
 Ingress). The HPA's `scaleTargetRef` points at the Rollout.
 
 Canary with weighted traffic would need Traefik `TraefikService` objects and
-more than one replica to mean anything. Blue-green matches Vercel's atomic switch
-and needs no ingress integration.
+more than one replica to mean anything. Blue-green matches Vercel's atomic
+switch and needs no ingress integration.
 
 ### Health gate from readiness plus `minReadySeconds`, not an AnalysisTemplate
 
@@ -148,8 +148,8 @@ both: installed on `kvdomingo/primerdriver` only, with Metadata read, Pull
 requests read, and Commit statuses read/write.
 
 Credentials live in an Infisical project and reach the cluster through
-`infisical-secrets/argocd/secret.yaml`, modeled on the existing InfisicalSecrets,
-producing two Secrets in `argocd`:
+`infisical-secrets/argocd/secret.yaml`, modeled on the existing
+InfisicalSecrets, producing two Secrets in `argocd`:
 
 - `argocd-notifications-secret` with `github-appID`, `github-installationID`,
   `github-privateKey`, referenced as `$github-*` from the notifier config. The
@@ -197,8 +197,8 @@ ArgoCD is not itself an ArgoCD Application, so a small
   10 open Renovate PRs; primerdriver is small.
 - [Notification config lives in a helmfile release, outside ArgoCD sync] →
   The apply task includes the manual `helmfile apply`, per AGENTS.md.
-- [The gate only proves the app starts and answers `/api/health`] → Upgrade to an
-  AnalysisTemplate with a functional smoke test later; the commit status
+- [The gate only proves the app starts and answers `/api/health`] → Upgrade to
+  an AnalysisTemplate with a functional smoke test later; the commit status
   plumbing stays the same.
 
 ## Migration Plan
