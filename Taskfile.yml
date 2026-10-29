@@ -128,4 +128,4 @@ tasks:
   tf-apply:
     desc: Apply the saved Terragrunt stack plans
     dir: terraform
-    cmd: infisical run -- terragrunt stack run apply --out-dir .tfplan {{ .CLI_ARGS }}
+    cmd: infisical run -- terragrunt stack run apply --non-interactive --out-dir .tfplan {{ .CLI_ARGS }}
