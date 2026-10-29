@@ -213,7 +213,7 @@ spec:
             periodSeconds: 10
     - repoURL: https://charts.bitnami.com/bitnami
       chart: redis
-      targetRevision: 28.3.9
+      targetRevision: 28.3.10
       helm:
         releaseName: redis
         valuesObject:
