@@ -36,8 +36,8 @@ Never apply changes by hand (`kubectl apply`, `helm upgrade`, `scp`). Push to
   `apps/apps/templates/litellm.yaml`.
 - `infisical-secrets/<app>/`: `InfisicalSecret` CRs that materialize
   `<app>-secrets` in the app namespace. Added as an extra `sources:` entry.
-- `argocd/`, `infisical/`, `promstack/`, `core-services/`: bootstrap components
-  installed with `helmfile apply`.
+- `argocd/`, `infisical/`, `core-services/`: bootstrap components installed
+  with `helmfile apply`.
 - `ansible/`: node provisioning. Inventory is in `ansible/inventory/hosts.ini`.
   Run playbooks from `ansible/`, e.g. `ansible-playbook setup-k8s-servers.yml`.
   The ansible tasks in `Taskfile.yml` point at old paths.
@@ -60,7 +60,7 @@ Never apply changes by hand (`kubectl apply`, `helm upgrade`, `scp`). Push to
   image rebuilt from the same commit (`postgresql-pig`) is pinned as
   `<tag>@sha256:<digest>` instead.
 - After merging an update to a helmfile component (`argocd/`, `infisical/`,
-  `promstack/`, `core-services/`, `arrstack/`), run `helmfile apply` there.
+  `core-services/`, `arrstack/`), run `helmfile apply` there.
 - Cluster mixes amd64 and arm64 (Pi 5 agents). Images that are amd64-only need
   node affinity `kubernetes.io/arch NotIn [arm64, arm]`.
 - Bitnami images come from `bitnamilegacy/*`.

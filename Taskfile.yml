@@ -95,11 +95,6 @@ tasks:
     dir: argocd
     cmd: helmfile apply
 
-  setup-monitoring:
-    desc: Setup monitoring
-    dir: promstack
-    cmd: helmfile apply
-
   setup-infisical:
     desc: Setup Infisical
     dir: infisical

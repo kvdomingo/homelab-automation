@@ -142,12 +142,29 @@ spec:
               - 10.10.10.111
               - 10.10.10.112
               - 10.10.10.151
+          # k3s serves one shared registry on every component port; keep only
+          # each component's own series.
           kubeControllerManager:
             endpoints: *controlPlane
+            serviceMonitor:
+              metricRelabelings:
+                - sourceLabels: [ __name__ ]
+                  regex: (workqueue|rest_client|process|go)_.+
+                  action: keep
           kubeScheduler:
             endpoints: *controlPlane
+            serviceMonitor:
+              metricRelabelings:
+                - sourceLabels: [ __name__ ]
+                  regex: (scheduler|rest_client|process|go)_.+
+                  action: keep
           # k3s runs kube-proxy in-process, so there are no pods to discover.
           kubeProxy:
+            serviceMonitor:
+              metricRelabelings:
+                - sourceLabels: [ __name__ ]
+                  regex: (kubeproxy|rest_client|process|go)_.+
+                  action: keep
             endpoints:
               - 10.10.10.110
               - 10.10.10.111

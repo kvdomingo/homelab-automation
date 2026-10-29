@@ -76,10 +76,10 @@
       with Query, Store Gateway and Compactor (downsampling on by default, raw
       30d / 5m 180d / 1h 365d, `nfs-client` scratch PVCs), objstore from
       `monitoring-secrets`; verify `helm template core/apps` renders it
-- [ ] 5.2 After sync, verify Thanos Query's Stores page lists the sidecar and
+- [x] 5.2 After sync, verify Thanos Query's Stores page lists the sidecar and
       Store Gateway as healthy, and within 2-3h the `thanos` bucket contains
       uploaded blocks (`aws ... s3 ls s3://thanos/`)
-- [ ] 5.3 Verify Grafana panels over a range older than 2h return data through
+- [x] 5.3 Verify Grafana panels over a range older than 2h return data through
       Thanos Query
 
 ## 6. Logs
@@ -108,7 +108,7 @@
       per design.md and verify counts drop
 - [ ] 7.3 Check Longhorn usage per node; verify no node is below its reserve and
       `NodeFilesystemAlmostOutOfSpace` isn't firing
-- [ ] 7.4 Delete `promstack/` and the `promstack` task in `Taskfile.yml`; remove
+- [x] 7.4 Delete `promstack/` and the `promstack` task in `Taskfile.yml`; remove
       `promstack/` from both helmfile lists in `AGENTS.md`; verify
       `grep -rn promstack AGENTS.md Taskfile.yml` only matches the new ArgoCD
       app (if at all) and `prek run --all-files` passes
