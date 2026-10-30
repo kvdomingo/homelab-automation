@@ -14,7 +14,7 @@ spec:
       path: infisical-secrets/monitoring
     - repoURL: https://prometheus-community.github.io/helm-charts
       chart: kube-prometheus-stack
-      targetRevision: 92.14.0
+      targetRevision: 92.14.1
       helm:
         releaseName: kube-prometheus-stack
         valuesObject:
