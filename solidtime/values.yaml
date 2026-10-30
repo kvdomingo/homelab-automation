@@ -186,7 +186,7 @@ gotenberg:
     # This sets the pull policy for images.
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
-    tag: "8.38.1"
+    tag: "8.39.0"
   service:
     port: 3000
   livenessProbe:
