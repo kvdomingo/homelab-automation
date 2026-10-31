@@ -14,7 +14,7 @@ spec:
       path: infisical-secrets/lakefs
     - repoURL: https://charts.lakefs.io
       chart: lakefs
-      targetRevision: 1.12.46
+      targetRevision: 1.12.47
       helm:
         releaseName: lakefs
         valuesObject:
