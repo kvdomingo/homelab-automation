@@ -11,7 +11,7 @@ spec:
   source:
     repoURL: https://helm.plane.so/
     chart: plane-ce
-    targetRevision: 1.8.5
+    targetRevision: 1.8.6
     helm:
       releaseName: plane
       valuesObject:
