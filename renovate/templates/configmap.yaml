@@ -22,19 +22,34 @@ data:
       // Not under "force": forced packageRules replace each repo's own rules.
       "packageRules": [
         {
-          "matchDatasources": ["python-version"],
+          "description": "Libraries: minor and patch only",
+          "matchCategories": ["js", "python"],
+          "matchUpdateTypes": ["major"],
+          "enabled": false,
+        },
+        {
+          "description": "Library and tooling images, e.g. `COPY --from=` in Dockerfiles",
+          "matchDatasources": ["docker"],
+          "matchPackageNames": ["ghcr.io/astral-sh/uv"],
+          "matchUpdateTypes": ["major"],
+          "enabled": false,
+        },
+        {
+          "description": "Languages: patch only",
+          "matchDatasources": ["python-version", "node-version", "golang-version"],
           "matchUpdateTypes": ["major", "minor"],
           "enabled": false,
         },
         {
-          "matchManagers": ["pep621", "mise", "docker", "docker-compose"],
-          "matchPackageNames": ["python"],
+          "description": "Language images under any registry or namespace, e.g. python, docker.io/library/node, oven/bun",
+          "matchDatasources": ["docker"],
+          "matchPackageNames": ["/^(.+/)?(python|node|golang|bun|deno)$/"],
           "matchUpdateTypes": ["major", "minor"],
           "enabled": false,
         },
         {
-          "matchManagers": ["terraform"],
-          "matchDepTypes": ["provider"],
+          "description": "Terraform/OpenTofu providers: minor and patch only",
+          "matchDatasources": ["terraform-provider"],
           "matchUpdateTypes": ["major"],
           "enabled": false,
         },
