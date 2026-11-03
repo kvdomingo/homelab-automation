@@ -63,8 +63,10 @@ Create a commit
   with commit or worktree targets. Otherwise, if BRANCH does not exist, it is
   created as an unstacked branch. If BRANCH is omitted, an unstacked branch with
   a generated name is created. If BRANCH is a worktree or a branch checked out
-  in one, the commit is placed on the tip of that worktree's branch. Attempting
-  to place a commit on a branch that exists but is not applied is an error.
+  in one, the commit is placed on the tip of that worktree's branch. Run from a
+  linked worktree with a detached HEAD, a new BRANCH starts at that HEAD and is
+  checked out there before the commit is placed on it. Attempting to place a
+  commit on a branch that exists but is not applied is an error.
 - `-A, --above <BRANCH_OR_COMMIT>` Place the commit above BRANCH_OR_COMMIT,
   which must be an applied branch or commit. If BRANCH_OR_COMMIT is a commit,
   the new commit is placed on the same branch as the targeted commit. If
@@ -101,7 +103,8 @@ Create a new branch
 
 ### but branch delete <BRANCHES>
 
-Delete branches and their commits from the workspace
+Delete branches and their commits from the workspace, or local branches that
+aren't applied
 
 - `<BRANCHES>...` One or more branches to delete
 
@@ -148,27 +151,28 @@ an existing branch that isn't in the workspace
 
 - `[NAME]` The branch to check out, created if it doesn't exist, or a generated
   one
-- `-A, --above <COMMIT>` Start the new branch at COMMIT instead of the workspace
-  base. Accepts a commit SHA or CLI ID, not a branch. Conflicted commits are
-  refused.
+- `-A, --above <BRANCH_OR_COMMIT>` Start the new branch at BRANCH_OR_COMMIT
+  instead of the workspace base. Accepts a branch by name or CLI ID, a commit by
+  SHA or CLI ID, or any Git revision like origin/main. Conflicted commits and
+  the GitButler workspace commit are refused.
 
 ### but worktree archive <WORKTREE>
 
-Hide a worktree from the workspace
+Hide a worktree from the workspace until but runs inside it again
 
-- `<WORKTREE>` The worktree, by CLI ID (see but wt list) or name
+- `<WORKTREE>` The worktree, by CLI ID (see but wt list), name, or path
 
 ### but worktree unarchive <WORKTREE>
 
 Show an archived worktree in the workspace again
 
-- `<WORKTREE>` The worktree, by CLI ID (see but wt list) or name
+- `<WORKTREE>` The worktree, by CLI ID (see but wt list), name, or path
 
 ### but worktree remove <WORKTREE>
 
 Remove a worktree from disk, like git worktree remove
 
-- `<WORKTREE>` The worktree, by CLI ID (see but wt list) or name
+- `<WORKTREE>` The worktree, by CLI ID (see but wt list), name, or path
 - `-f, --force` Remove the worktree even if it has uncommitted changes
 
 ### but discard [CHANGES]
@@ -212,8 +216,8 @@ Resolve conflicts of a conflicted commit, without entering resolution mode
 - `--ours` Take the ours side: the new base the commit was rebased onto
 - `--theirs` Take the theirs side: the commit's own version
 - `--ai` Let the configured AI model merge the targeted conflicts
-- `-F, --file <FILE>` Read the replacement content from this file (otherwise
-  from stdin)
+- `-F, --file <FILE>` Read the replacement content from FILE, or from stdin when
+  FILE is -. Without it, the content is read from stdin
 
 ### but resolve status
 

@@ -1,6 +1,6 @@
 ---
 name: but
-version: 0.23.1
+version: 0.23.2
 description: "Commit, push, branch, and manage version control with GitButler. Use for commits, selective dirty-file or hunk commits, branches, diffs, PRs, history edits, squashes, amends, undo, merge, fetching, pulling and syncing a branch with its remote, apply, unapply, and linked worktrees. For selected dirty files or hunks, inspect with `but diff`; use compact `but status` for commit order, branch/stack placement, or conflict overview; use `but status -fv` when file IDs or per-commit file details matter. Replaces git write commands, including fetch and pull. Applies in every checkout of the repository, even when a plain branch is checked out, including linked worktrees such as `.claude/worktrees/*`, and to git writes made while testing or cleaning up (stash, checkout -- <file>, restore, reset)."
 author: GitButler Team
 ---
@@ -47,7 +47,9 @@ the result does not provide.
 
 In a linked worktree, such as `.claude/worktrees/*`, omit `-b` so the commit
 goes on the branch the worktree has checked out. Use that branch as the new
-branch; do not stack another one on it.
+branch; do not stack another one on it. A worktree with a detached HEAD has no
+branch yet. There, `but commit -b <new-name> -m "<msg>"` creates the branch at
+HEAD, checks it out in that worktree, and commits to it.
 
 ## IDs
 
@@ -372,24 +374,25 @@ not use `but undo` to unstack.
 
 ### Work in a linked worktree
 
-Use a worktree when the task needs a separate checkout, for example to build or
-test one branch while other work stays in the main checkout.
-
 1. `but worktree new <branch-name>` checks out that branch in a new directory,
    creating it if needed (an existing branch must not be in the workspace), and
-   prints that directory. Add `-A <commit>` to start the branch at that commit
-   instead of the workspace base. Worktrees made by other tools must sit outside
-   the repository directory or be listed in `.git/info/exclude`; otherwise a
-   bare `but commit` in the main checkout records them in the branch.
+   prints that directory. Add `-A <branch-or-commit>` to start the branch there
+   instead of the workspace base; it takes any Git revision, like a SHA or
+   `origin/main`. Worktrees made by other tools must sit outside the repository
+   directory or be listed in `.git/info/exclude`; otherwise a bare `but commit`
+   in the main checkout records them in the branch.
 2. Run `but` from that directory, or with `but -C <path>`. There, a bare
    `but commit -m "<msg>"` or `but diff` takes that worktree's changes, a bare
    path names a file there, and the commit goes on the worktree's branch. Do the
    work on that branch, also in a worktree another tool made. `-b <new-name>` is
-   refused there; stack a new branch on it only when the user asks for a
-   separate branch. If `but` says the worktree "is not managed by GitButler", it
-   is archived: `but worktree unarchive <name>`. `but undo` refuses to restore a
-   branch a worktree has checked out, so reverse a mistake there with the
-   inverse command (`uncommit`, `reword`).
+   refused there, except in a worktree with a detached HEAD, where it names the
+   worktree's branch; stack a new branch on it only when the user asks for a
+   separate branch. `but undo` doesn't restore a branch a worktree has checked
+   out. It refuses, or it reports success and leaves that branch as it is, so
+   undoing a `move` out of the branch leaves the commit on neither branch.
+   Reverse a command that changed the worktree's branch with its inverse
+   (`uncommit`, `reword`, or `move` the commit back), also when you ran it from
+   another checkout.
 3. `but status` from any checkout shows the worktree as a lane of its own, with
    the same IDs everywhere. `@` always means the main worktree's uncommitted
    changes; `<worktree>:@` names a linked worktree's changes from anywhere.
@@ -400,7 +403,8 @@ test one branch while other work stays in the main checkout.
    `but resolve apply <path>:<N> --commit <commit-id>`.
 5. When done, `but worktree remove <name>` deletes the directory and keeps the
    branch. It refuses while the worktree has uncommitted changes; `-f` discards
-   them.
+   them. To delete the branch as well, run `but branch delete <name>`
+   afterwards.
 
 ### Create or manage pull requests
 
@@ -421,6 +425,12 @@ name, current branch/stack CLI ID, or numeric review ID. See
 
 When `but pr new` prints a `<pr-created>` line, copy that line into the text of
 your reply. It tells the app running you that this session opened the PR.
+
+If you run in the Claude desktop app, end the `but pr new` line with the shell
+comment `# gh pr create`, for example
+`but pr new <branch-name> -F - <<'EOF' # gh pr create`. While
+`gitbutler/workspace` is checked out, the app counts a PR as opened by this
+session only when the command text contains `gh pr create`.
 
 ### Dependency conflict with another branch
 
@@ -458,8 +468,9 @@ Conflicts do not interrupt operations in GitButler: a rebase always completes,
 and commits that conflicted are marked `{conflicted}` in `but status`. Find them
 from the warning that history-editing commands (`move`, `discard`, …) print,
 from the `but pull` summary, or from `but status`. Resolve them one conflict at
-a time, without entering any mode. Work through one branch at a time, oldest
-commit first — the loop is:
+a time, without entering any mode. Resolve any uncommitted `{conflicted}` files
+first, as in Conflicts in uncommitted files; `apply` refuses while one is left.
+Work through one branch at a time, oldest commit first — the loop is:
 
 1. `but resolve conflicts <branch>` — shows the conflicts of that branch's
    oldest conflicted commit, numbered per file. Each conflict has three
@@ -519,9 +530,9 @@ single branch is checked out, `but resolve <commit-id>` refuses, so use `apply`.
 
 `but status` marks uncommitted files with unresolved merge conflicts
 `{conflicted}`; they are excluded from committable changes and outside
-`but resolve` mode. Edit the file to the wanted contents (or delete it), then
-`but resolve <path>...` to mark it resolved with that state; it then shows as an
-ordinary uncommitted change.
+`but resolve` mode. Edit the file to the wanted contents with no conflict
+markers left (or delete it), then `but resolve <path>...` to mark it resolved
+with that state; it then shows as an ordinary uncommitted change.
 
 ## Git-to-But Map
 
@@ -550,8 +561,9 @@ ordinary uncommitted change.
   unapplying back to one stack checks that branch out again. Commands and IDs
   are the same either way. It does need a local branch tracking the remote's
   default branch: if commands fail with "No target branch is configured", run
-  `git branch --track main origin/main` (with the default branch's name), not
-  `--set-upstream-to` on your own branch, which makes that branch the target.
+  `but config target origin/main` (with the default branch's name), which
+  creates `main` to track it if missing. Never `git branch --set-upstream-to` on
+  your own branch, which makes that branch the target.
 - `but undo` restores the whole snapshot, so uncommitted edits made after the
   undone operation are lost (`but redo` brings them back). Commit them first.
 - Read-only git inspection (`git log`, `git blame`, `git show --stat`) is

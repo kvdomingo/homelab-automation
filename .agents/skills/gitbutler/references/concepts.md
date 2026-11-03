@@ -170,7 +170,7 @@ while `but commit --empty` and `but pick` without a target go on its branch, and
 a bare `but discard` discards that worktree's changes. `but absorb` and
 `but branch new` without `--above`/`--below` refuse there instead of acting on
 the main worktree, and every such default is refused in a worktree GitButler
-doesn't manage (it is archived, or its `HEAD` is unusable).
+doesn't manage (its `HEAD` is unusable).
 
 ## Parallel vs Stacked Branches
 
@@ -355,7 +355,8 @@ Git commands that don't modify state are safe to use:
 **Safe (read-only):**
 
 - `git log` - View history
-- `git diff` - See changes (but prefer `but diff` — it supports CLI IDs)
+- `git diff` - See changes against Git revisions and ranges such as `HEAD~1` or
+  `main...HEAD` (prefer `but diff` for CLI IDs; it doesn't take revisions)
 - `git show` - View commits
 - `git blame` - See line history
 - `git reflog` - View reference log
