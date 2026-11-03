@@ -77,6 +77,9 @@ spec:
             {{- with .Values.volumeMounts }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
+          envFrom:
+            - configMapRef:
+                name: '{{ include "wallos.fullname" . }}-configmap'
       volumes:
         - name: db
           persistentVolumeClaim:
