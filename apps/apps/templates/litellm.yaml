@@ -53,9 +53,25 @@ spec:
                 litellm_params:
                   model: openai/gpt-6.1-sol
                   api_key: os.environ/OPENAI_API_KEY
+              - model_name: gpt-6.1-terra
+                litellm_params:
+                  model: openai/gpt-6.1-terra
+                  api_key: os.environ/OPENAI_API_KEY
               - model_name: gpt-6-luna
                 litellm_params:
                   model: openai/gpt-6-luna
+                  api_key: os.environ/OPENAI_API_KEY
+              - model_name: gpt-embedding-3-large
+                litellm_params:
+                  model: openai/text-embedding-3-large
+                  api_key: os.environ/OPENAI_API_KEY
+              - model_name: gpt-embedding-3-small
+                litellm_params:
+                  model: openai/text-embedding-3-small
+                  api_key: os.environ/OPENAI_API_KEY
+              - model_name: gpt-embedding-2
+                litellm_params:
+                  model: openai/text-embedding-ada-002
                   api_key: os.environ/OPENAI_API_KEY
               - model_name: claude-fable-5-1
                 litellm_params:
@@ -89,6 +105,18 @@ spec:
                 litellm_params:
                   model: gemini/gemini-3.1-pro-preview
                   api_key: os.environ/GEMINI_API_KEY
+              - model_name: gemini-embedding-2
+                litellm_params:
+                  model: gemini/gemini-embedding-2
+                  api_key: os.environ/GEMINI_API_KEY
+              - model_name: gemini-embedding-1
+                litellm_params:
+                  model: gemini/gemini-embedding-001
+                  api_key: os.environ/GEMINI_API_KEY
+              - model_name: jev-1.13
+                litellm_params:
+                  model: typesafe/jev-1.13.0
+                  api_key: os.environ/TYPESAFE_API_KEY
             callbacks: [ smtp_email ]
           metricsServer:
             enabled: true
