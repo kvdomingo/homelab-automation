@@ -1,14 +1,15 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: {{ include "ai-memory.fullname" . }}
   labels:
     {{- include "ai-memory.labels" . | nindent 4 }}
-  {{- with .Values.deploymentAnnotations }}
+  {{- with .Values.statefulSetAnnotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
+  serviceName: {{ include "ai-memory.fullname" . }}
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}

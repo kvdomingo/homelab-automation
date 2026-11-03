@@ -31,7 +31,7 @@ serviceAccount:
   # If not set and create is true, a name is generated using the fullname template.
   name: ""
 
-deploymentAnnotations:
+statefulSetAnnotations:
   secrets.infisical.com/auto-reload: "true"
 
 # This is for setting Kubernetes Annotations to a Pod.
@@ -159,10 +159,10 @@ autoscaling:
   targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80
 
-# Additional volumes on the output Deployment definition.
+# Additional volumes on the output StatefulSet definition.
 volumes: [ ]
 
-# Additional volumeMounts on the output Deployment definition.
+# Additional volumeMounts on the output StatefulSet definition.
 volumeMounts: [ ]
 
 nodeSelector: { }
