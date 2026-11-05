@@ -20,7 +20,7 @@ spec:
         valuesObject:
           image:
             # renovate: datasource=docker depName=vaultwarden/server
-            tag: "1.37.4-alpine"
+            tag: "1.37.5-alpine"
             pullPolicy: Always
           replicas: 3
           commonAnnotations:
