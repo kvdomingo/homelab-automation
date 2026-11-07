@@ -14,7 +14,7 @@ spec:
       path: infisical-secrets/home-assistant
     - repoURL: http://pajikos.github.io/home-assistant-helm-chart/
       chart: home-assistant
-      targetRevision: 0.3.89
+      targetRevision: 0.3.90
       helm:
         valuesObject:
           image:
