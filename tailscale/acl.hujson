@@ -35,6 +35,18 @@
       "dst": [
         "tag:gameserver:8211"
       ]
+    },
+    // Reach homelab DNS and ingress via subnet router
+    {
+      "action": "accept",
+      "src": [
+        "autogroup:admin"
+      ],
+      "dst": [
+        "10.10.1.54:53",
+        "10.10.2.54:53",
+        "10.10.0.0/16:80,443"
+      ]
     }
   ],
   // Define users and devices that can use Tailscale SSH.
