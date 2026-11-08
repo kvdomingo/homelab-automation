@@ -55,7 +55,7 @@ spec:
                 name: {{ include "umami.fullname" . }}-secrets
       initContainers:
         - name: {{ .Chart.Name }}-init-wait-db
-          image: ghcr.io/kvdomingo/postgresql-pig:18@sha256:83db575559e100ffee7674ace5db10cd2bf3e6f623bdcf2524a92aa2942f2e41
+          image: ghcr.io/kvdomingo/postgresql-pig:18@sha256:cee2f4b6f8f5ac19f4a163083fa5d40c771d5f86f1d1bcd08a2625ea4986fa75
           imagePullPolicy: Always
           command:
             - /bin/sh
