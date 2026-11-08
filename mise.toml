@@ -4,7 +4,7 @@ helm = "latest"
 helmfile = { version = "latest", workflow = "releaser.yaml" }
 infisical = { version = "latest", asset_pattern = "cli_{{ version }}_linux_amd64.tar.gz" }
 kubectl = "1.37.2"
-opentofu = "1.13.8"
+opentofu = "1.13.9"
 prek = "latest"
 rumdl = "latest"
 terragrunt = "1.2.1"
