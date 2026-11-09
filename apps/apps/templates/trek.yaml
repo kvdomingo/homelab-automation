@@ -42,7 +42,7 @@ spec:
               gethomepage.dev/name: "Trek"
               gethomepage.dev/group: "Apps"
               gethomepage.dev/icon: "https://avatars.githubusercontent.com/u/306517056"
-              gethomepage.dev/ping: "trek.lab.kvd.studio/api/health"
+              gethomepage.dev/ping: "https://trek.lab.kvd.studio/api/health"
             hosts:
               - host: trek.lab.kvd.studio
                 paths:
