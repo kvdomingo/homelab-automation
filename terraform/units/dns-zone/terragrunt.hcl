@@ -17,7 +17,8 @@ dependency "tunnels" {
 }
 
 inputs = {
-  base_domain = values.base_domain
+  base_domain             = values.base_domain
+  github_pages_subdomains = try(values.github_pages_subdomains, [])
   records = merge(
     try(values.records, {}),
     {

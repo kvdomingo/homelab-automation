@@ -16,7 +16,7 @@ locals {
     "nocodb",
     "primerdriver",
     "solidtime",
-    "tandoor",
+    "trek",
     "umami",
     "unreceiptify",
   ]
@@ -25,19 +25,6 @@ locals {
     "@",
     "api",
   ]
-
-  github_pages_ipv4 = {
-    1 = "185.199.108.153"
-    2 = "185.199.109.153"
-    3 = "185.199.110.153"
-    4 = "185.199.111.153"
-  }
-  github_pages_ipv6 = {
-    1 = "2606:50c0:8000::153"
-    2 = "2606:50c0:8001::153"
-    3 = "2606:50c0:8002::153"
-    4 = "2606:50c0:8003::153"
-  }
 }
 
 unit "tunnels" {
@@ -57,65 +44,48 @@ unit "dns-kvd-studio" {
   path   = "dns-kvd-studio"
 
   values = {
-    base_domain           = local.kvdstudio_domain
-    dev_tunnel_subdomains = keys(local.dev_kvd_studio_subdomains)
-    lab_tunnel_subdomains = local.lab_kvd_studio_subdomains
-    records = merge(
-      {
-        bluesky_verification = {
-          type    = "TXT"
-          name    = "_atproto"
-          content = "did=did:plc:f3p5jcwsxjdhgippakojyyak"
-          proxied = false
-        }
-        gcp_domain_verification = {
-          type    = "TXT"
-          name    = "@"
-          content = "google-site-verification=tIAe-0kYQ5fk42kI2nw2HGh50tUB-SDRf44JyxvSaFc"
-          proxied = false
-        }
-        microsoft_domain_verification = {
-          type    = "TXT"
-          name    = "@"
-          content = "MS=B9DD85B6C0438DB6C634911330D9848E1BB2E7EB"
-          proxied = false
-        }
-        openai_verification = {
-          type    = "TXT"
-          name    = "@"
-          content = "openai-domain-verification=dv-1rHkOFyDBYYVTS3rj8qDXpip"
-          proxied = false
-        }
-        hannibot = {
-          type    = "CNAME"
-          name    = "hannibot"
-          content = "470bf1810574e5e9.vercel-dns-017.com"
-          proxied = false
-        }
-        betterplaridel = {
-          type    = "CNAME"
-          name    = "betterplaridel"
-          content = "b94dec802dbb1537.vercel-dns-017.com"
-          proxied = false
-        }
-      },
-      {
-        for k, v in local.github_pages_ipv4 : "primerdriver-docs-ipv4-${k}" => {
-        name    = "primerdriver-docs"
-        type    = "A"
-        content = v
-        proxied = true
+    base_domain             = local.kvdstudio_domain
+    dev_tunnel_subdomains   = keys(local.dev_kvd_studio_subdomains)
+    lab_tunnel_subdomains   = local.lab_kvd_studio_subdomains
+    github_pages_subdomains = ["primerdriver-docs"]
+    records = {
+      bluesky_verification = {
+        type    = "TXT"
+        name    = "_atproto"
+        content = "did=did:plc:f3p5jcwsxjdhgippakojyyak"
+        proxied = false
       }
-      },
-      {
-        for k, v in local.github_pages_ipv6 : "primerdriver-docs-ipv6-${k}" => {
-        name    = "primerdriver-docs"
-        type    = "AAAA"
-        content = v
-        proxied = true
+      gcp_domain_verification = {
+        type    = "TXT"
+        name    = "@"
+        content = "google-site-verification=tIAe-0kYQ5fk42kI2nw2HGh50tUB-SDRf44JyxvSaFc"
+        proxied = false
       }
-      },
-    )
+      microsoft_domain_verification = {
+        type    = "TXT"
+        name    = "@"
+        content = "MS=B9DD85B6C0438DB6C634911330D9848E1BB2E7EB"
+        proxied = false
+      }
+      openai_verification = {
+        type    = "TXT"
+        name    = "@"
+        content = "openai-domain-verification=dv-1rHkOFyDBYYVTS3rj8qDXpip"
+        proxied = false
+      }
+      hannibot = {
+        type    = "CNAME"
+        name    = "hannibot"
+        content = "470bf1810574e5e9.vercel-dns-017.com"
+        proxied = false
+      }
+      betterplaridel = {
+        type    = "CNAME"
+        name    = "betterplaridel"
+        content = "b94dec802dbb1537.vercel-dns-017.com"
+        proxied = false
+      }
+    }
   }
 }
 

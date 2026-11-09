@@ -15,3 +15,8 @@ variable "records" {
     priority = null
   }
 }
+
+variable "github_pages_subdomains" {
+  type    = list(string)
+  default = []
+}
