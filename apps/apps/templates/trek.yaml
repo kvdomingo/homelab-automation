@@ -14,13 +14,13 @@ spec:
       path: infisical-secrets/trek
     - repoURL: https://chart.liketrek.com
       chart: trek
-      targetRevision: 5.1.2
+      targetRevision: 5.1.3
       helm:
         releaseName: trek
         valuesObject:
           image:
             repository: mauriceboe/trek
-            tag: 5.1.2
+            tag: 5.1.3
           env:
             TZ: Asia/Manila
             ALLOWED_ORIGINS: trek.lab.kvd.studio,trek.kvd.studio
