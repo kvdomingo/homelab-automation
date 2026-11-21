@@ -187,3 +187,14 @@ redis:
 
   # -- Redis deployment type (e.g., standalone or cluster)
   architecture: standalone
+
+  master:
+    # jemalloc in the bitnami image crashes on the Pi 5's 16K-page kernel
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+            - matchExpressions:
+                - key: kubernetes.io/arch
+                  operator: NotIn
+                  values: [arm64, arm]
