@@ -4,6 +4,10 @@ metadata:
   name: {{ include "umami.fullname" . }}
   labels:
     {{- include "umami.labels" . | nindent 4 }}
+  {{- with .Values.deploymentAnnotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
@@ -53,6 +57,8 @@ spec:
           envFrom:
             - secretRef:
                 name: {{ include "umami.fullname" . }}-secrets
+            - configMapRef:
+                name: {{ include "umami.fullname" . }}-configmap
       initContainers:
         - name: {{ .Chart.Name }}-init-wait-db
           image: ghcr.io/kvdomingo/postgresql-pig:18@sha256:9acb2f3d0602184b8dbc63a47f075598ad3a90fe0adae8bf205937240b71991b

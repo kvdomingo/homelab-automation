@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "umami.fullname" . }}-configmap
+  labels:
+    {{- include "umami.labels" . | nindent 4 }}
+data:
+  DISABLE_TELEMETRY: "1"
+  IGNORE_IP: "192.168.0.1/16, 10.0.0.0/8, 172.16.0.0/12, 100.64.0.0/10"
+  MCP_ENABLED: "1"
+  TRUSTED_PROXIES: "loopback, linklocal, private"
+  USE_UUIDV7: "1"

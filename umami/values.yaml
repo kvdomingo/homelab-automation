@@ -10,7 +10,7 @@ image:
   # Overrides the image tag whose default is the chart appVersion.
   tag: "3.4.1"
 
-annotations:
+deploymentAnnotations:
   secrets.infisical.com/auto-reload: "true"
 
 imagePullSecrets: [ ]
