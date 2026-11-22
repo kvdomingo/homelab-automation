@@ -8,7 +8,9 @@ description: "Use this skill for any request whose goal is read-only retrieval f
 # ai-memory retrieval
 
 Use this skill for read-only ai-memory lookups, catch-up, and evaluating
-remembered project knowledge before you design, debug, or edit.
+remembered project knowledge before you design, debug, or edit. When the harness
+has no ai-memory MCP tools, every tool these skills name can be called as
+`ai-memory call <tool> '<json>'`.
 
 ## Tools in this cluster
 
@@ -39,10 +41,11 @@ remembered project knowledge before you design, debug, or edit.
 - `memory_briefing` returns a structured read-only snapshot for agent
   consumption, including a bounded `pinned` list of the project's pinned
   standing-context pages (present only when the project has pins) and
-  `recent_sessions`, the sessions with the newest captured work. An entry there
-  with `ended: false` and `handed_off: false` that is not `current` was cut off
-  or is still running; read it before an older handoff or page when the user
-  asks to continue.
+  `recent_sessions`, the sessions with the newest captured work (default 5; set
+  `recent_sessions_limit` from 1 to 50 for a busy project). An entry there with
+  `ended: false` and `handed_off: false` that is not `current` was cut off or is
+  still running; read it before an older handoff or page when the user asks to
+  continue.
 - `memory_explore` returns a prose digest when the user asks for an open-ended
   catch-up.
 
@@ -99,6 +102,11 @@ preference written with `scope: "global"`, omit `workspace` and `project`.
   if the narrow read is insufficient. Do not also read a `sessions/<id>.md` page
   for the same session in the same lookup, because it repeats the content
   returned by the observations call.
+- After a context compaction, re-ground before continuing: read the injected
+  post-compaction anchor, or else call the session observations tool with
+  `session_id: "current"` (or your session id) and
+  `kinds: ["user-prompt", "stop"]`, and trust those recorded prompts over the
+  summary. The handoff skill covers the details.
 
 ## Broaden on miss
 
