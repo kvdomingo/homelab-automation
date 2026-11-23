@@ -93,6 +93,18 @@ spec:
                 litellm_params:
                   model: gemini/gemini-4-argon
                   api_key: os.environ/GEMINI_API_KEY
+              - model_name: gemini-4-carbon
+                litellm_params:
+                  model: gemini/gemini-4-carbon
+                  api_key: os.environ/GEMINI_API_KEY
+              - model_name: gemini-4-neon
+                litellm_params:
+                  model: gemini/gemini-4-neon
+                  api_key: os.environ/GEMINI_API_KEY
+              - model_name: gemini-4-hydrogen
+                litellm_params:
+                  model: gemini/gemini-4-hydrogen
+                  api_key: os.environ/GEMINI_API_KEY
               - model_name: gemini-3.8-flash
                 litellm_params:
                   model: gemini/gemini-3.8-flash
