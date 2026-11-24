@@ -19,6 +19,7 @@ base_system_packages:
   - curl
   - direnv
   - dvipng
+  - fastfetch
   - flex
   - fzf
   - gcc
@@ -68,7 +69,6 @@ base_system_packages:
   - lsb-release
   - mesa-utils
   - nasm
-  - neofetch
   - ncat
   - net-tools
   - nmap
