@@ -1,0 +1,74 @@
+{{- if not .Values.disableAgenticOS }}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: agenticos
+  namespace: {{ include "apps.argocdNamespace" . | quote }}
+  finalizers:
+    {{- include "apps.finalizers" . | nindent 4 }}
+spec:
+  project: {{ .Values.project }}
+  sources:
+    - repoURL: https://github.com/kvdomingo/homelab-automation.git
+      targetRevision: main
+      path: infisical-secrets/agenticos
+    - repoURL: https://valkey.io/valkey-helm/
+      chart: valkey
+      targetRevision: 1.0.0
+      helm:
+        releaseName: agenticos-valkey
+    - repoURL: https://github.com/vstorm-co/agenticos.git
+      targetRevision: v1.92.0
+      path: charts/agenticos
+      helm:
+        releaseName: agenticos
+        valuesObject:
+          # Keep in sync with targetRevision above.
+          image:
+            tag: "1.92.0"
+          existingSecret: agenticos-secrets
+          public:
+            siteUrl: https://agenticos.lab.kvd.studio
+            apiUrl: https://agenticos-api.lab.kvd.studio
+            websocketUrl: wss://agenticos-api.lab.kvd.studio
+          postgres:
+            host: 10.10.10.103
+            database: agenticos
+            user: agenticos
+            sslMode: prefer
+          redis:
+            host: agenticos-valkey
+            ssl: false
+          storage:
+            bucket: agenticos
+            region: ap-southeast-1
+            endpoint: https://versity.dev.kvd.studio
+            pathStyle: true
+            encryption: none
+          trustedProxy:
+            enabled: true
+            namespaceLabels:
+              kubernetes.io/metadata.name: traefik
+            podLabels:
+              app.kubernetes.io/name: traefik
+          ingress:
+            enabled: true
+            className: traefik
+            siteHost: agenticos.lab.kvd.studio
+            apiHost: agenticos-api.lab.kvd.studio
+            annotations:
+              gethomepage.dev/enabled: "true"
+              gethomepage.dev/name: "AgenticOS"
+              gethomepage.dev/group: "AI"
+              gethomepage.dev/href: "https://agenticos.lab.kvd.studio"
+              gethomepage.dev/ping: "https://agenticos.lab.kvd.studio"
+  destination:
+    server: {{ .Values.destination.server }}
+    namespace: agenticos
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+    automated:
+      selfHeal: true
+      prune: true
+{{- end }}
