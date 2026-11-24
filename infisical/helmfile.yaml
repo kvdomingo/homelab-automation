@@ -8,7 +8,7 @@ releases:
     chart: ./manifests
   - name: infisical
     chart: infisical/infisical-standalone
-    version: 1.12.3
+    version: 1.12.4
     namespace: infisical2
     values:
       - values.yaml
