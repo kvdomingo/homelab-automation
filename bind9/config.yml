@@ -3,7 +3,7 @@ x-common-http-router: &common-http-router
     - https
   middlewares:
     - secured
-  tls: {}
+  tls: { }
 
 http:
   routers:
@@ -106,6 +106,10 @@ http:
     versity:
       rule: "Host(`versity.dev.kvd.studio`)"
       service: versity
+      <<: *common-http-router
+    versity-admin:
+      rule: "Host(`versity-admin.dev.kvd.studio`)"
+      service: versity-api
       <<: *common-http-router
 
   services:
@@ -229,12 +233,17 @@ http:
     versity-api:
       loadBalancer:
         servers:
-          - url: "http://10.10.10.100:7071"
+          - url: "http://10.10.10.100:7070"
         passHostHeader: true
     versity:
       loadBalancer:
         servers:
-          - url: "http://10.10.10.100:7070"
+          - url: "http://10.10.10.100:7071"
+        passHostHeader: true
+    versity-admin:
+      loadBalancer:
+        servers:
+          - url: "http://10.10.10.100:7072"
         passHostHeader: true
 
   serversTransports:
