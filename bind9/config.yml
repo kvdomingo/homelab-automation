@@ -111,6 +111,10 @@ http:
       rule: "Host(`versity-admin.dev.kvd.studio`)"
       service: versity-api
       <<: *common-http-router
+    mausbox:
+      rule: "Host(`mausbox.dev.kvd.studio`)"
+      service: mausbox
+      <<: *common-http-router
 
   services:
     homepage:
@@ -244,6 +248,11 @@ http:
       loadBalancer:
         servers:
           - url: "http://10.10.10.100:7072"
+        passHostHeader: true
+    mausbox:
+      loadBalancer:
+        servers:
+          - url: "http://10.10.10.105:8799"
         passHostHeader: true
 
   serversTransports:
